@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X, Search, Globe } from "lucide-react";
+import Link from "next/link";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,12 +43,12 @@ export default function Header() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
             className="flex items-center"
           >
-            <a
-              href="#"
+            <Link
+              href="/"
               className="text-lg md:text-xl font-bold tracking-[0.35em] uppercase font-display select-none hover:text-brand-sky transition-colors duration-300"
             >
               AURA<span className="text-brand-sky">.</span>STREET
-            </a>
+            </Link>
           </motion.div>
 
           {/* 3. Center Navigation Links (Desktop only, wrapped in glassmorphic capsule on scroll) */}
@@ -58,15 +59,15 @@ export default function Header() {
               }`}
             >
               {["Collections", "Shop", "Editorial", "Archive"].map((link) => (
-                <a
+                <Link
                   key={link}
-                  href={`#${link.toLowerCase()}`}
+                  href={`/${link.toLowerCase()}`}
                   className="relative text-[10px] uppercase tracking-[0.25em] font-medium text-neutral-400 hover:text-white transition-colors duration-300 group py-1"
                 >
                   {link}
                   {/* Subtle animated underline */}
                   <span className="absolute bottom-0 left-0 w-full h-[1px] bg-brand-sky scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                </a>
+                </Link>
               ))}
             </div>
           </nav>
@@ -131,17 +132,20 @@ export default function Header() {
             {/* Links List */}
             <div className="flex flex-col gap-6 my-auto pl-4">
               {["Collections", "Shop", "Editorial", "Archive"].map((link, idx) => (
-                <motion.a
+                <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   key={link}
-                  href={`#${link.toLowerCase()}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-3xl font-bold uppercase tracking-[0.15em] font-display hover:text-brand-sky transition-colors text-white"
                 >
-                  {link}
-                </motion.a>
+                  <Link
+                    href={`/${link.toLowerCase()}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-3xl font-bold uppercase tracking-[0.15em] font-display hover:text-brand-sky transition-colors text-white block"
+                  >
+                    {link}
+                  </Link>
+                </motion.div>
               ))}
             </div>
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { ArrowDown, ChevronRight, Compass } from "lucide-react";
+import Link from "next/link";
 import DynamicBg from "@/components/DynamicBg";
 import CustomCursor from "@/components/CustomCursor";
 import Header from "@/components/Header";
@@ -56,6 +58,19 @@ export default function Home() {
 
       {/* 4. Full-Screen Interactive Hero Section */}
       <section className="relative w-full min-h-screen flex items-center px-6 md:px-12 pt-24 md:pt-0">
+        {/* Premium Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/hero-editorial.png"
+            alt="AURA STREET Hero"
+            fill
+            className="object-cover opacity-30 mix-blend-luminosity"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black" />
+        </div>
+
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           
           {/* Hero Content Left */}
@@ -97,23 +112,23 @@ export default function Home() {
               variants={itemFadeUp}
               className="flex flex-wrap items-center gap-5 mb-16"
             >
-              <a
-                href="#shop"
+              <Link
+                href="/shop"
                 className="px-8 py-4 bg-white text-black hover:bg-brand-sky hover:text-black rounded text-[10px] uppercase tracking-[0.25em] font-extrabold flex items-center gap-2 group transition-all duration-300 shadow-lg shadow-white/5"
                 data-magnetic
               >
                 <span>Shop Collection</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
-              </a>
+              </Link>
 
-              <a
-                href="#editorial"
+              <Link
+                href="/editorial"
                 className="px-8 py-4 rounded border border-neutral-900 bg-neutral-950/20 hover:border-brand-sky hover:bg-neutral-950/60 text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-400 hover:text-white transition-all duration-300 flex items-center gap-2"
                 data-magnetic
               >
                 <Compass className="w-3.5 h-3.5 text-brand-sky text-glow-sky" />
                 <span>View Editorial</span>
-              </a>
+              </Link>
             </motion.div>
 
             {/* Technical Specifications highlights */}
