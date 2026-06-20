@@ -175,7 +175,7 @@ export default function Editorial() {
             </motion.p>
             
             <motion.p variants={fadeUp} className="text-sm md:text-base text-neutral-400 leading-relaxed mb-12">
-              The weight of the fabric isn't just about warmth; it's about how a garment holds its shape, how it drapes across the body, how it moves through space. We engineer our patterns using 3D body-scanning technology, creating silhouettes that are both oversized and precise. The paradox is intentional: comfort without compromise, volume without excess.
+              The weight of the fabric isn&apos;t just about warmth; it&apos;s about how a garment holds its shape, how it drapes across the body, how it moves through space. We engineer our patterns using 3D body-scanning technology, creating silhouettes that are both oversized and precise. The paradox is intentional: comfort without compromise, volume without excess.
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex items-center gap-8 text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-bold border-l-2 border-white/20 pl-4">
@@ -213,7 +213,7 @@ export default function Editorial() {
             </motion.span>
             
             <motion.blockquote variants={fadeUp} className="text-2xl md:text-4xl font-display font-light leading-relaxed mb-16 text-white/90">
-              "The city is our runway. From the concrete canyons of Tokyo's Shibuya district to the rain-slicked streets of East London, AURA STREET garments are designed to perform in the urban environment."
+              &quot;The city is our runway. From the concrete canyons of Tokyo&apos;s Shibuya district to the rain-slicked streets of East London, AURA STREET garments are designed to perform in the urban environment.&quot;
             </motion.blockquote>
 
             <motion.p variants={fadeUp} className="text-sm md:text-base text-neutral-400 leading-relaxed mb-16 max-w-2xl mx-auto">
