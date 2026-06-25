@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { Lock, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+type Role = "superadmin" | "admin" | "user";
+
 export default function AdminLogin() {
   const router = useRouter();
-  const [role, setRole] = useState<"admin" | "superadmin">("admin");
+  const [role, setRole] = useState<Role>("admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,11 +18,23 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     
-    // Mock authentication delay
+    // Mock authentication delay and role-based redirect
     setTimeout(() => {
       setLoading(false);
-      router.push("/admin/dashboard");
+      if (role === "superadmin") {
+        router.push("/super-admin/dashboard");
+      } else if (role === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/user-dashboard");
+      }
     }, 1500);
+  };
+
+  const getPlaceholder = () => {
+    if (role === "superadmin") return "super@aurastreet.com";
+    if (role === "admin") return "admin@aurastreet.com";
+    return "staff@aurastreet.com";
   };
 
   return (
@@ -39,7 +53,7 @@ export default function AdminLogin() {
             AURA<span className="text-brand-sky">.</span>STREET
           </h1>
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-500">
-            Secure Admin Portal
+            Secure Portal Gateway
           </p>
         </div>
 
@@ -49,10 +63,21 @@ export default function AdminLogin() {
           <div className="flex bg-black/50 p-1 rounded-lg border border-white/5 mb-8">
             <button
               type="button"
-              onClick={() => setRole("admin")}
-              className={`flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-md transition-all ${
-                role === "admin" 
+              onClick={() => setRole("user")}
+              className={`flex-1 py-2 text-[9px] uppercase tracking-widest font-bold rounded-md transition-all ${
+                role === "user" 
                   ? "bg-white/10 text-white shadow-lg border border-white/5" 
+                  : "text-neutral-500 hover:text-neutral-300"
+              }`}
+            >
+              User
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("admin")}
+              className={`flex-1 py-2 text-[9px] uppercase tracking-widest font-bold rounded-md transition-all ${
+                role === "admin" 
+                  ? "bg-brand-sky/20 text-brand-sky shadow-lg border border-brand-sky/30" 
                   : "text-neutral-500 hover:text-neutral-300"
               }`}
             >
@@ -61,9 +86,9 @@ export default function AdminLogin() {
             <button
               type="button"
               onClick={() => setRole("superadmin")}
-              className={`flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-md transition-all ${
+              className={`flex-1 py-2 text-[9px] uppercase tracking-widest font-bold rounded-md transition-all ${
                 role === "superadmin" 
-                  ? "bg-brand-sky/20 text-brand-sky shadow-lg border border-brand-sky/30" 
+                  ? "bg-red-500/20 text-red-500 shadow-lg border border-red-500/30" 
                   : "text-neutral-500 hover:text-neutral-300"
               }`}
             >
@@ -81,7 +106,7 @@ export default function AdminLogin() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={role === "superadmin" ? "super@aurastreet.com" : "admin@aurastreet.com"}
+                  placeholder={getPlaceholder()}
                   className="w-full bg-black border border-neutral-800 rounded-lg py-3 px-4 text-sm focus:outline-none focus:border-brand-sky transition-colors text-white placeholder:text-neutral-700"
                   required
                 />
