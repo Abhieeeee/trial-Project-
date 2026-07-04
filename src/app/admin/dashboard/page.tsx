@@ -1,292 +1,134 @@
-"use client";
-
-import { motion } from "framer-motion";
+import Link from "next/link";
 import {
-  TrendingUp, ShoppingBag, Users, Activity,
-  ArrowUpRight, ArrowDownRight, Package,
-  BarChart2, AlertCircle
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  Clock3,
+  PackageCheck,
+  ShoppingBag,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 
-const stats = [
-  { title: "Monthly Revenue", value: "€124,500", change: "+12.5%", trend: "up", icon: TrendingUp, note: "vs last month" },
-  { title: "Active Orders", value: "142", change: "+5.2%", trend: "up", icon: ShoppingBag, note: "pending fulfillment" },
-  { title: "Customers", value: "8,234", change: "+18.1%", trend: "up", icon: Users, note: "lifetime registered" },
-  { title: "Conversion Rate", value: "3.2%", change: "-0.4%", trend: "down", icon: Activity, note: "store visits → sale" },
+import { Badge } from "@/components/admin/Badge";
+import { operationalQueue, weeklySales } from "@/lib/admin";
+import { orderRows } from "@/lib/catalog";
+
+const metrics = [
+  { title: "Sales Today", value: "EUR 18,420", change: "+12.4%", icon: TrendingUp },
+  { title: "Orders Today", value: "84", change: "+9.1%", icon: ShoppingBag },
+  { title: "To Fulfill", value: "31", change: "Due today", icon: PackageCheck },
+  { title: "Open Tickets", value: "12", change: "4 urgent", icon: Users },
 ];
 
-const topProducts = [
-  { rank: 1, name: "Moto Jacket", category: "Jackets", units: 48, revenue: "€32,640", trend: "up" },
-  { rank: 2, name: "Tech Shell Jacket", category: "Jackets", units: 35, revenue: "€18,200", trend: "up" },
-  { rank: 3, name: "Essential Hoodie", category: "Hoodies", units: 90, revenue: "€22,050", trend: "up" },
-  { rank: 4, name: "Tech Cargo Pants", category: "Pants", units: 61, revenue: "€19,520", trend: "down" },
-  { rank: 5, name: "Street Runner", category: "Sneakers", units: 22, revenue: "€9,020", trend: "up" },
-];
-
-const recentActivity = [
-  { id: 1, action: "Order #8924 placed", user: "Alex Chen", time: "2 min ago", amount: "€680", type: "order" },
-  { id: 2, action: "Order #8923 shipped", user: "System", time: "15 min ago", amount: "", type: "ship" },
-  { id: 3, action: "New customer registered", user: "Sarah Miller", time: "1 hr ago", amount: "", type: "user" },
-  { id: 4, action: "Order #8922 placed", user: "David Kim", time: "2 hrs ago", amount: "€245", type: "order" },
-  { id: 5, action: "Low stock: Tech Cargo Pants (M)", user: "System", time: "3 hrs ago", amount: "", type: "alert" },
-];
-
-const orderPipeline = [
-  { label: "Pending", count: 28, color: "bg-yellow-500", pct: 20 },
-  { label: "Shipped", count: 74, color: "bg-brand-sky", pct: 52 },
-  { label: "Delivered", count: 32, color: "bg-green-500", pct: 23 },
-  { label: "Cancelled", count: 8, color: "bg-red-500", pct: 5 },
-];
-
-const barData = [
-  { day: "Mon", height: 40, value: "€8,200" },
-  { day: "Tue", height: 60, value: "€12,100" },
-  { day: "Wed", height: 35, value: "€7,150" },
-  { day: "Thu", height: 80, value: "€16,400" },
-  { day: "Fri", height: 50, value: "€10,000" },
-  { day: "Sat", height: 90, value: "€18,800" },
-  { day: "Sun", height: 75, value: "€15,500" },
-];
-
-const cardClass = "bg-neutral-900 border border-neutral-800 rounded-2xl";
-
-export default function AdminDashboard() {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-
+export default function AdminDashboardPage() {
   return (
-    <div className="pb-16 space-y-8">
-
-      {/* ── Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-neutral-800">
+    <div className="pb-12">
+      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-500 font-bold mb-1">Admin Portal</p>
-          <h1 className="text-2xl font-display font-bold uppercase tracking-widest text-white">Dashboard</h1>
+          <p className="mb-3 text-[9px] font-bold uppercase tracking-[0.22em] text-brand-sky">Operations workspace</p>
+          <h1 className="text-3xl font-bold uppercase tracking-[0.12em] text-white">Admin Dashboard</h1>
+          <p className="mt-3 max-w-2xl text-xs uppercase tracking-[0.12em] text-neutral-400">
+            Run daily sales, fulfillment, stock, and customer operations.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2">
-            {dateStr}
-          </span>
-          <span className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-[9px] uppercase tracking-widest font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            Live
-          </span>
+        <div className="flex items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.16em] text-neutral-400">
+          <Clock3 className="h-3.5 w-3.5 text-brand-sky" />
+          Live operations / Jul 04, 2026
         </div>
       </div>
 
-      {/* ── KPI Cards ── */}
-      <motion.div
-        initial="hidden" animate="show"
-        variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
-        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5"
-      >
-        {stats.map((s, i) => (
-          <motion.div
-            key={i}
-            variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
-            className={`${cardClass} p-5 relative overflow-hidden group`}
-          >
-            {/* faint bg icon */}
-            <s.icon className="absolute -right-3 -bottom-3 w-20 h-20 text-white/[0.03] group-hover:text-white/[0.06] transition-colors" />
-
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-2 bg-black rounded-xl border border-neutral-800">
-                <s.icon className="w-4 h-4 text-brand-sky" />
-              </div>
-              <div className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${s.trend === "up" ? "text-green-500" : "text-red-500"}`}>
-                {s.trend === "up" ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                {s.change}
-              </div>
+      <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => (
+          <div key={metric.title} className="rounded-lg border border-neutral-800 bg-neutral-900 p-5">
+            <div className="mb-5 flex items-center justify-between">
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-neutral-500">{metric.title}</p>
+              <metric.icon className="h-4 w-4 text-brand-sky" />
             </div>
-
-            <div className="text-2xl font-display font-bold text-white mb-1">{s.value}</div>
-            <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">{s.title}</div>
-            <div className="text-[9px] text-neutral-600 mt-1">{s.note}</div>
-          </motion.div>
+            <p className="text-2xl font-bold text-white">{metric.value}</p>
+            <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-400">{metric.change}</p>
+          </div>
         ))}
-      </motion.div>
+      </section>
 
-      {/* ── Charts Row ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-
-        {/* Revenue Bar Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.5 }}
-          className={`${cardClass} p-6 xl:col-span-2 flex flex-col`}
-        >
-          <div className="flex items-center justify-between mb-6">
+      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[1.5fr_1fr]">
+        <section className="rounded-lg border border-neutral-800 bg-neutral-900 p-5 md:p-6">
+          <div className="mb-8 flex items-center justify-between gap-4">
             <div>
-              <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Revenue Overview</p>
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest">Weekly Sales</h3>
+              <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-white">7-day sales</h2>
+              <p className="mt-2 text-[9px] uppercase tracking-[0.16em] text-neutral-500">EUR 118,000 gross revenue</p>
             </div>
-            <select className="bg-black border border-neutral-800 text-neutral-400 text-[10px] uppercase tracking-widest rounded-lg px-3 py-2 outline-none focus:border-brand-sky transition-colors">
-              <option>This Week</option>
-              <option>This Month</option>
-              <option>This Year</option>
-            </select>
+            <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] text-emerald-400">
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              14.8%
+            </span>
           </div>
-
-          {/* Bars */}
-          <div className="flex-1 min-h-[240px] flex items-end gap-3">
-            {barData.map((bar, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative">
-                {/* Tooltip */}
-                <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-800 text-white text-[9px] px-2 py-1 rounded whitespace-nowrap pointer-events-none">
-                  {bar.value}
+          <div className="flex h-64 items-end gap-2 sm:gap-4">
+            {weeklySales.map((entry) => (
+              <div key={entry.day} className="group flex h-full min-w-0 flex-1 flex-col justify-end gap-3">
+                <div className="relative flex flex-1 items-end overflow-hidden rounded-t-sm border border-neutral-800 bg-black">
+                  <div className="w-full border-t border-brand-sky/60 bg-brand-sky/25 transition-colors group-hover:bg-brand-sky/45" style={{ height: `${entry.value}%` }} />
+                  <span className="absolute inset-x-0 top-2 hidden text-center text-[8px] font-bold text-white lg:block">{entry.amount}</span>
                 </div>
-                <div className="w-full rounded-t-lg overflow-hidden flex items-end" style={{ height: 200 }}>
-                  <div
-                    className="w-full bg-brand-sky/20 border-t-2 border-brand-sky group-hover:bg-brand-sky/40 transition-all duration-300"
-                    style={{ height: `${bar.height}%` }}
-                  />
-                </div>
-                <span className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold">{bar.day}</span>
+                <span className="text-center text-[8px] font-bold uppercase tracking-[0.12em] text-neutral-500">{entry.day}</span>
               </div>
             ))}
           </div>
-        </motion.div>
+        </section>
 
-        {/* Order Pipeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.5 }}
-          className={`${cardClass} p-6 flex flex-col`}
-        >
-          <div className="mb-6">
-            <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Order Breakdown</p>
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest">Pipeline</h3>
-          </div>
-
-          <div className="flex-1 flex flex-col justify-center gap-5">
-            {/* Total doughnut-style indicator */}
-            <div className="flex items-center justify-between p-4 bg-black/50 rounded-xl border border-neutral-800">
-              <span className="text-[10px] uppercase tracking-widest font-bold text-neutral-400">Total Orders</span>
-              <span className="text-xl font-display font-bold text-white">142</span>
-            </div>
-
-            {orderPipeline.map((o, i) => (
-              <div key={i} className="space-y-2">
-                <div className="flex justify-between text-[10px] uppercase tracking-widest font-bold">
-                  <span className="text-neutral-400">{o.label}</span>
-                  <span className="text-white">{o.count}</span>
-                </div>
-                <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
-                  <div className={`h-full ${o.color} rounded-full transition-all duration-700`} style={{ width: `${o.pct}%` }} />
-                </div>
+        <section className="rounded-lg border border-neutral-800 bg-neutral-900 p-5 md:p-6">
+          <h2 className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-white">Operations queue</h2>
+          <div className="space-y-3">
+            {operationalQueue.map((item) => (
+              <div key={item.label} className="flex items-center gap-4 rounded-md border border-neutral-800 bg-black px-4 py-4">
+                <item.icon className={`h-4 w-4 ${item.tone}`} />
+                <p className="min-w-0 flex-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-300">{item.label}</p>
+                <span className={`text-lg font-bold ${item.tone}`}>{item.count}</span>
               </div>
             ))}
           </div>
-        </motion.div>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Link href="/admin/orders" className="rounded-md bg-white px-3 py-3 text-center text-[9px] font-bold uppercase tracking-[0.14em] text-black transition-colors hover:bg-brand-sky">Process orders</Link>
+            <Link href="/admin/inventory" className="rounded-md border border-neutral-700 px-3 py-3 text-center text-[9px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:border-brand-sky hover:text-brand-sky">Check stock</Link>
+          </div>
+        </section>
       </div>
 
-      {/* ── Bottom Row: Top Products + Activity ── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-
-        {/* Top Products Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}
-          className={`${cardClass} xl:col-span-2 overflow-hidden`}
-        >
-          <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-neutral-800">
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Sales Performance</p>
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest">Top Products</h3>
-            </div>
-            <BarChart2 className="w-4 h-4 text-neutral-500" />
+      <section className="overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900">
+        <div className="flex flex-col gap-3 border-b border-neutral-800 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-white">Recent orders</h2>
+            <p className="mt-2 text-[9px] uppercase tracking-[0.15em] text-neutral-500">Review and continue fulfillment operations</p>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold border-b border-neutral-800">
-                  <th className="px-6 py-3">#</th>
-                  <th className="px-6 py-3">Product</th>
-                  <th className="px-6 py-3">Category</th>
-                  <th className="px-6 py-3 text-right">Units</th>
-                  <th className="px-6 py-3 text-right">Revenue</th>
-                  <th className="px-6 py-3 text-right">Trend</th>
+          <Link href="/admin/orders" className="text-[9px] font-bold uppercase tracking-[0.16em] text-brand-sky hover:text-white">View all orders</Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-left">
+            <thead className="border-b border-neutral-800 bg-black/50 text-[8px] font-bold uppercase tracking-[0.16em] text-neutral-500">
+              <tr>
+                <th className="px-5 py-4">Order</th><th className="px-5 py-4">Customer</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Total</th><th className="px-5 py-4">Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderRows.slice(0, 5).map((order) => (
+                <tr key={order.id} className="border-b border-neutral-800 last:border-0">
+                  <td className="px-5 py-4 text-[10px] font-bold tracking-[0.12em] text-white">{order.id}</td>
+                  <td className="px-5 py-4"><p className="text-xs text-white">{order.customer}</p><p className="mt-1 text-[9px] text-neutral-500">{order.email}</p></td>
+                  <td className="px-5 py-4"><Badge status={order.status as "Pending" | "Shipped" | "Delivered" | "Cancelled"} /></td>
+                  <td className="px-5 py-4 text-xs font-bold text-brand-sky">{order.total}</td>
+                  <td className="px-5 py-4">
+                    <span className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.13em] text-neutral-300">
+                      {order.status === "Pending" ? <AlertTriangle className="h-3.5 w-3.5 text-amber-300" /> : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />}
+                      {order.status === "Pending" ? "Confirm & pack" : "View timeline"}
+                    </span>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {topProducts.map((p) => (
-                  <tr key={p.rank} className="border-b border-neutral-800/50 last:border-0 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-4 text-[10px] font-bold text-neutral-500">{String(p.rank).padStart(2, "0")}</td>
-                    <td className="px-6 py-4 text-xs font-bold text-white">{p.name}</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-neutral-800 text-neutral-400 text-[9px] uppercase tracking-widest rounded">{p.category}</span>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-white text-right font-bold">{p.units}</td>
-                    <td className="px-6 py-4 text-xs text-brand-sky text-right font-bold">{p.revenue}</td>
-                    <td className="px-6 py-4 text-right">
-                      {p.trend === "up"
-                        ? <ArrowUpRight className="w-4 h-4 text-green-500 ml-auto" />
-                        : <ArrowDownRight className="w-4 h-4 text-red-500 ml-auto" />
-                      }
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
-
-        {/* Recent Activity */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }}
-          className={`${cardClass} p-6 flex flex-col`}
-        >
-          <div className="mb-6">
-            <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Live Feed</p>
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest">Activity</h3>
-          </div>
-
-          <div className="flex-1 flex flex-col gap-5">
-            {recentActivity.map((a, idx) => {
-              const iconMap: Record<string, React.ReactNode> = {
-                order: <ShoppingBag className="w-3.5 h-3.5 text-brand-sky" />,
-                ship: <Package className="w-3.5 h-3.5 text-green-500" />,
-                user: <Users className="w-3.5 h-3.5 text-yellow-500" />,
-                alert: <AlertCircle className="w-3.5 h-3.5 text-red-500" />,
-              };
-              return (
-                <div key={a.id} className="flex gap-3">
-                  <div className="relative shrink-0">
-                    <div className="w-7 h-7 rounded-full bg-black border border-neutral-800 flex items-center justify-center">
-                      {iconMap[a.type]}
-                    </div>
-                    {idx < recentActivity.length - 1 && (
-                      <div className="absolute top-7 left-1/2 -translate-x-1/2 w-px h-8 bg-neutral-800" />
-                    )}
-                  </div>
-                  <div className="flex-1 pt-0.5">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-[11px] font-semibold text-white leading-tight">{a.action}</p>
-                      {a.amount && <span className="text-[10px] font-bold text-brand-sky shrink-0">{a.amount}</span>}
-                    </div>
-                    <div className="flex justify-between text-[9px] uppercase tracking-widest text-neutral-500 mt-1">
-                      <span>{a.user}</span>
-                      <span>{a.time}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <button className="mt-6 w-full py-3 border border-neutral-800 rounded-xl text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 hover:bg-white/5 hover:text-white transition-colors">
-            View All Activity
-          </button>
-        </motion.div>
-
-      </div>
-
-      {/* ── DB Integration Note ── */}
-      <div className="p-4 bg-brand-sky/5 border border-brand-sky/20 rounded-xl flex items-start gap-3">
-        <AlertCircle className="w-4 h-4 text-brand-sky shrink-0 mt-0.5" />
-        <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">
-          All data is currently mocked. Connect Supabase to enable live analytics.
-          <span className="text-brand-sky ml-2 cursor-pointer hover:underline">View Integration Plan →</span>
-        </p>
-      </div>
-
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }
+

@@ -4,7 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(pointer: fine)").matches;
+  });
   const [isHovered, setIsHovered] = useState(false);
   const [isMagnetic, setIsMagnetic] = useState(false);
   
@@ -21,11 +24,8 @@ export default function CustomCursor() {
   const activeMagneticRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    // Check if device supports hover interactions (hide on touch devices)
     const mediaQuery = window.matchMedia("(pointer: fine)");
     if (!mediaQuery.matches) return;
-
-    setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
       let targetX = e.clientX;

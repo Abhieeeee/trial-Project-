@@ -35,8 +35,9 @@ export default function HoodieModel() {
           const isWarp = (Math.floor(x / 2) + Math.floor(y / 2)) % 2 === 0;
           const fiberHeight = isWarp ? waveX : waveY;
           
-          // Add micro-noise for organic feel
-          const noise = (Math.random() - 0.5) * 6;
+          // Deterministic micro-noise keeps the weave organic without changing between renders.
+          const seed = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+          const noise = (seed - Math.floor(seed) - 0.5) * 6;
           
           data[idx] = Math.max(0, Math.min(255, 128 + fiberHeight + noise)); // X normal offset
           data[idx + 1] = Math.max(0, Math.min(255, 128 + (isWarp ? waveY : waveX) + noise)); // Y normal offset

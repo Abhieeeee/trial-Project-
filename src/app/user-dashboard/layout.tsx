@@ -2,12 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, ShoppingBag, LogOut, Menu, X, User } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  async function handleSignOut() {
+    try {
+      await createClient().auth.signOut();
+    } finally {
+      router.replace("/admin/login");
+      router.refresh();
+    }
+  }
 
   const navItems = [
     { name: "My Dashboard", href: "/user-dashboard", icon: LayoutDashboard },
@@ -66,13 +77,14 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
               <div className="text-[8px] uppercase tracking-widest text-neutral-500">Basic Access</div>
             </div>
           </div>
-          <Link
-            href="/admin/login"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 hover:text-white transition-colors"
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 hover:text-white transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
-          </Link>
+          </button>
         </div>
       </aside>
 
