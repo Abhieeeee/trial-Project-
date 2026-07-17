@@ -10,6 +10,7 @@ type Role = "superadmin" | "admin" | "user";
 
 export default function AdminLogin() {
   const router = useRouter();
+  const supabase = createClient();
 
   const [role, setRole] = useState<Role>("admin");
   const [email, setEmail] = useState("");
@@ -26,8 +27,6 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const supabase = createClient();
     const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (authError) {
