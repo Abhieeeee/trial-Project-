@@ -27,6 +27,9 @@ export default function CustomCursor() {
     const mediaQuery = window.matchMedia("(pointer: fine)");
     if (!mediaQuery.matches) return;
 
+    // Dynamically hide standard cursor when custom cursor component mounts
+    document.documentElement.classList.add("custom-cursor-active");
+
     const handleMouseMove = (e: MouseEvent) => {
       let targetX = e.clientX;
       let targetY = e.clientY;
@@ -99,6 +102,7 @@ export default function CustomCursor() {
     window.addEventListener("mouseover", handleMouseOver);
 
     return () => {
+      document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
     };

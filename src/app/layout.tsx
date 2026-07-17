@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="h-full antialiased custom-cursor-active"
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white">
         <SmoothScroll>{children}</SmoothScroll>
