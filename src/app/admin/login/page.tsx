@@ -32,11 +32,22 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [envStatus, setEnvStatus] = useState<string>("Verifying connectivity...");
 
   useEffect(() => {
     // Force sign out to clear any old cached sessions/cookies
     supabase.auth.signOut();
   }, [supabase]);
+
+  useEffect(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !anon || url.includes("placeholder-url")) {
+      setEnvStatus("BUILD ERROR: Vercel environment variables are missing! Check Vercel settings and redeploy.");
+    } else {
+      setEnvStatus(`DATALINK ONLINE: ${url.replace("https://", "").substring(0, 20)}...`);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,6 +312,15 @@ export default function AdminLogin() {
                 />
                 <Lock className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" />
               </div>
+            </div>
+
+            {/* Database Link Connectivity Display */}
+            <div className={`text-[10px] uppercase tracking-[0.15em] font-black border py-3 px-5 rounded-xl text-center select-text transition-colors duration-500 ${
+              envStatus.includes("ERROR") 
+                ? "bg-red-500/10 border-red-500/30 text-red-400" 
+                : "bg-black/60 border-neutral-800 text-neutral-500"
+            }`}>
+              {envStatus}
             </div>
 
             {/* Authenticate Button */}
