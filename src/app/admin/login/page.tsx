@@ -5,6 +5,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight, AlertCircle, ShieldAlert, Cpu, Terminal, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Orbitron, JetBrains_Mono } from "next/font/google";
+
+// ── Google Fonts configuration ────────────────────────────────
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
+  weight: ["400", "700", "900"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "700"],
+});
 
 type Role = "superadmin" | "admin" | "user";
 
@@ -75,33 +89,39 @@ export default function AdminLogin() {
     switch (role) {
       case "superadmin":
         return {
-          glow: "bg-red-500/10",
-          border: "border-red-500/30",
-          hoverBorder: "focus:border-red-500 border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.15)]",
-          text: "text-red-500",
-          btnBg: "bg-red-500 text-white hover:bg-red-600 shadow-[0_0_40px_rgba(239,68,68,0.4)]",
-          badge: "bg-red-500/10 text-red-400 border-red-500/30",
-          bgOverlay: "from-red-950/20 via-black to-black",
+          colorClass: "text-red-500",
+          glowClass: "bg-red-500/10",
+          borderClass: "border-red-500/30",
+          hoverBorderClass: "focus:border-red-500 border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.15)]",
+          btnClass: "bg-red-500 text-white hover:bg-red-600 shadow-[0_0_40px_rgba(239,68,68,0.4)]",
+          badgeClass: "bg-red-500/10 text-red-400 border-red-500/30",
+          bgGradient: "from-red-950/20 via-black to-black",
+          highlightClass: "bg-red-500/15 text-red-400 border-red-500/30",
+          hudColor: "rgba(239, 68, 68, 0.12)",
         };
       case "admin":
         return {
-          glow: "bg-sky-500/10",
-          border: "border-sky-500/30",
-          hoverBorder: "focus:border-sky-500 border-sky-500/60 shadow-[0_0_20px_rgba(125,211,252,0.2)]",
-          text: "text-sky-400",
-          btnBg: "bg-sky-500 text-black hover:bg-sky-400 shadow-[0_0_40px_rgba(125,211,252,0.45)]",
-          badge: "bg-sky-500/10 text-sky-300 border-sky-500/30",
-          bgOverlay: "from-sky-950/20 via-black to-black",
+          colorClass: "text-sky-400",
+          glowClass: "bg-sky-500/10",
+          borderClass: "border-sky-500/30",
+          hoverBorderClass: "focus:border-sky-500 border-sky-500/60 shadow-[0_0_20px_rgba(125,211,252,0.2)]",
+          btnClass: "bg-sky-500 text-black hover:bg-sky-400 shadow-[0_0_40px_rgba(125,211,252,0.45)]",
+          badgeClass: "bg-sky-500/10 text-sky-300 border-sky-500/30",
+          bgGradient: "from-sky-950/20 via-black to-black",
+          highlightClass: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+          hudColor: "rgba(125, 211, 252, 0.12)",
         };
       default:
         return {
-          glow: "bg-white/10",
-          border: "border-white/20",
-          hoverBorder: "focus:border-white border-white/50 shadow-[0_0_20px_rgba(255,255,255,0.1)]",
-          text: "text-white",
-          btnBg: "bg-white text-black hover:bg-neutral-200 shadow-[0_0_40px_rgba(255,255,255,0.2)]",
-          badge: "bg-white/5 text-neutral-300 border-white/20",
-          bgOverlay: "from-neutral-900/40 via-black to-black",
+          colorClass: "text-white",
+          glowClass: "bg-white/10",
+          borderClass: "border-white/20",
+          hoverBorderClass: "focus:border-white border-white/50 shadow-[0_0_20px_rgba(255,255,255,0.1)]",
+          btnClass: "bg-white text-black hover:bg-neutral-200 shadow-[0_0_40px_rgba(255,255,255,0.2)]",
+          badgeClass: "bg-white/5 text-neutral-300 border-white/20",
+          bgGradient: "from-neutral-900/40 via-black to-black",
+          highlightClass: "bg-white/15 text-white border-white/30",
+          hudColor: "rgba(255, 255, 255, 0.08)",
         };
     }
   };
@@ -109,22 +129,39 @@ export default function AdminLogin() {
   const theme = getRoleTheme();
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden font-mono select-none">
+    <div className={`min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden select-none ${orbitron.variable} ${jetbrainsMono.variable} font-mono`}>
       
-      {/* 1. Futuristic Grid Background */}
+      {/* 1. Dynamic Grid Background */}
       <div 
-        className="absolute inset-0 opacity-25 transition-all duration-500"
+        className="absolute inset-0 opacity-20 transition-all duration-500"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px',
+          backgroundSize: '50px 50px',
         }}
       />
-      <div className={`absolute inset-0 bg-gradient-to-b ${theme.bgOverlay} pointer-events-none transition-colors duration-500`} />
+      <div className={`absolute inset-0 bg-gradient-to-b ${theme.bgGradient} pointer-events-none transition-colors duration-500`} />
 
-      {/* 2. Massive Adaptive Aura Halo */}
+      {/* 2. Interactive Scifi HUD Orbits */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <svg 
+          className="w-[800px] h-[800px] opacity-25 animate-spin-slow transition-colors duration-500"
+          viewBox="0 0 800 800"
+          style={{ color: theme.hudColor }}
+        >
+          {/* Outer dashed scanner */}
+          <circle cx="400" cy="400" r="380" stroke="currentColor" strokeWidth="1" strokeDasharray="8,20" fill="none" />
+          {/* Segmented layout rings */}
+          <circle cx="400" cy="400" r="320" stroke="currentColor" strokeWidth="2" strokeDasharray="80,120,40,60" fill="none" />
+          <circle cx="400" cy="400" r="260" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10,15,30,15" fill="none" />
+          {/* Inner details */}
+          <path d="M 400 160 L 400 180 M 400 620 L 400 640 M 160 400 L 180 400 M 620 400 L 640 400" stroke="currentColor" strokeWidth="2" />
+        </svg>
+      </div>
+
+      {/* 3. Massive Adaptive Background Glow */}
       <AnimatePresence mode="wait">
         <motion.div
           key={role}
@@ -132,11 +169,11 @@ export default function AdminLogin() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.8 }}
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[850px] rounded-full blur-[170px] pointer-events-none transition-colors duration-500 ${theme.glow}`}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[850px] rounded-full blur-[170px] pointer-events-none transition-colors duration-500 ${theme.glowClass}`}
         />
       </AnimatePresence>
 
-      {/* 3. Luxury Login Terminal Container */}
+      {/* 4. Luxury Login Terminal Container */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -144,10 +181,10 @@ export default function AdminLogin() {
         className="w-full max-w-2xl relative z-10"
       >
         {/* Futuristic Tab Header */}
-        <div className="flex items-center justify-between px-10 py-5 bg-neutral-950/80 border-t border-x border-white/10 rounded-t-[32px] backdrop-blur-3xl">
+        <div className="flex items-center justify-between px-10 py-6 bg-neutral-950/80 border-t border-x border-white/10 rounded-t-[32px] backdrop-blur-3xl">
           <div className="flex items-center gap-3">
             <Cpu className="w-5 h-5 text-neutral-400 animate-pulse" />
-            <span className="text-xs sm:text-sm uppercase tracking-[0.3em] text-neutral-200 font-black">
+            <span className="text-xs sm:text-sm uppercase tracking-[0.3em] text-neutral-200 font-black font-display">
               SYSTEM CONTROL PANEL // ACCESS STATE
             </span>
           </div>
@@ -159,15 +196,18 @@ export default function AdminLogin() {
         </div>
 
         {/* Card Body */}
-        <div className="border border-white/10 bg-neutral-950/85 rounded-b-[32px] p-10 sm:p-16 backdrop-blur-3xl relative overflow-hidden shadow-3xl">
-          
+        <motion.div 
+          animate={{ borderColor: theme.hudColor }}
+          transition={{ duration: 0.5 }}
+          className="border bg-neutral-950/85 rounded-b-[32px] p-10 sm:p-16 backdrop-blur-3xl relative overflow-hidden shadow-3xl"
+        >
           {/* Cyberpunk Scanline */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.015] to-transparent h-1/3 w-full pointer-events-none animate-pulse" />
 
           {/* Luxury Brand Title */}
           <div className="text-center mb-12">
             <h1 className="text-4xl sm:text-5xl font-black tracking-[0.45em] uppercase font-display text-white mb-4 select-none">
-              AURA<span className={theme.text}>.</span>STREET
+              AURA<span className={theme.colorClass}>.</span>STREET
             </h1>
             <div className="flex items-center justify-center gap-3 text-xs sm:text-sm uppercase tracking-[0.4em] font-extrabold text-neutral-400">
               <Terminal className="w-5 h-5 text-neutral-500" />
@@ -175,29 +215,31 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          {/* Large High-Contrast Selector */}
-          <div className="flex bg-black/80 p-2.5 rounded-2xl border border-white/5 mb-12">
-            {(["user", "admin", "superadmin"] as Role[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => {
-                  setRole(r);
-                  setError(null);
-                }}
-                className={`flex-1 py-4 text-xs sm:text-sm uppercase tracking-[0.25em] font-black rounded-xl transition-all duration-300 ${
-                  role === r
-                    ? r === "superadmin"
-                      ? "bg-red-500/10 text-red-500 border border-red-500/30"
-                      : r === "admin"
-                      ? "bg-sky-500/10 text-sky-400 border border-sky-500/30"
-                      : "bg-white/10 text-white border border-white/20"
-                    : "text-neutral-500 hover:text-neutral-300"
-                }`}
-              >
-                {r === "superadmin" ? "SUPER ADMIN" : r === "admin" ? "ADMIN" : "STAFF"}
-              </button>
-            ))}
+          {/* Role Toggle Selector with Smooth Sliding Indicator */}
+          <div className="flex bg-black/80 p-2.5 rounded-2xl border border-white/5 mb-12 relative">
+            {(["user", "admin", "superadmin"] as Role[]).map((r) => {
+              const isActive = role === r;
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => {
+                    setRole(r);
+                    setError(null);
+                  }}
+                  className="flex-1 py-4 text-xs sm:text-sm uppercase tracking-[0.25em] font-black rounded-xl transition-all duration-300 relative z-10 text-neutral-400 hover:text-white"
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeRoleHighlight"
+                      className={`absolute inset-0 rounded-xl border transition-colors duration-500 ${theme.highlightClass}`}
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
+                  )}
+                  {r === "superadmin" ? "SUPER ADMIN" : r === "admin" ? "ADMIN" : "STAFF"}
+                </button>
+              );
+            })}
           </div>
 
           {/* Error Panel */}
@@ -226,7 +268,7 @@ export default function AdminLogin() {
                 <label className="text-xs sm:text-sm uppercase tracking-[0.3em] font-black text-neutral-400">
                   [SECURE EMAIL ADDRESS]
                 </label>
-                <span className={`text-[10px] sm:text-xs uppercase tracking-widest font-black px-4 py-1.5 border rounded-lg ${theme.badge}`}>
+                <span className={`text-[10px] sm:text-xs uppercase tracking-widest font-black px-4 py-1.5 border rounded-lg transition-colors duration-500 ${theme.badgeClass}`}>
                   {role} Mode
                 </span>
               </div>
@@ -240,7 +282,7 @@ export default function AdminLogin() {
                     : role === "admin" ? "admin@aurastreet.com"
                     : "staff@aurastreet.com"
                   }
-                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorder}`}
+                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
                   required
                 />
                 <KeyRound className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" />
@@ -261,7 +303,7 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorder}`}
+                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
                   required
                 />
                 <Lock className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" />
@@ -272,7 +314,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full mt-8 py-6 rounded-2xl text-xs sm:text-sm uppercase tracking-[0.35em] font-black flex items-center justify-center gap-4 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group ${theme.btnBg}`}
+              className={`w-full mt-8 py-6 rounded-2xl text-xs sm:text-sm uppercase tracking-[0.35em] font-black flex items-center justify-center gap-4 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group ${theme.btnClass}`}
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -284,12 +326,12 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-        </div>
+        </motion.div>
 
         {/* Footer Warning */}
         <div className="text-center mt-10 flex items-center justify-center gap-3 text-neutral-400">
           <ShieldAlert className="w-5 h-5 shrink-0 text-neutral-500" />
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-black">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-black font-display">
             RESTRICTED AREA // MULTI-FACTOR AUTHENTICATION ACTIVE
           </p>
         </div>
