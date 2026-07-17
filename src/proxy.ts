@@ -4,19 +4,23 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Allow public login page always
   if (pathname === "/admin/login") {
     return NextResponse.next({ request });
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(
+  // 1. Create client-side cookie client to retrieve the logged-in user session
+  const supabaseAuth = createServerClient(
     supabaseUrl,
     supabaseAnonKey,
     {
@@ -33,16 +37,28 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseAuth.auth.getUser();
 
-  // Protect admin routes
+  // Protect admin, super-admin, and user-dashboard routes
   if (pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/user-dashboard")) {
     if (!user) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 
-    // Fetch role from profiles table
-    const { data: profile } = await supabase
+    // 2. Use service role client to securely fetch the profile.
+    // This bypasses RLS issues inside Edge Runtime and guarantees role checking works.
+    const supabaseAdmin = createServerClient(
+      supabaseUrl,
+      supabaseServiceKey,
+      {
+        cookies: {
+          getAll() { return request.cookies.getAll(); },
+          setAll() {}, // Read-only for admin operations
+        },
+      }
+    );
+
+    const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("role")
       .eq("id", user.id)
