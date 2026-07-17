@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight, AlertCircle, ShieldAlert, Cpu, Terminal, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Orbitron, JetBrains_Mono } from "next/font/google";
+import { Orbitron, Space_Grotesk } from "next/font/google";
 
 // ── Google Fonts configuration ────────────────────────────────
 const orbitron = Orbitron({
@@ -14,10 +14,10 @@ const orbitron = Orbitron({
   weight: ["400", "700", "900"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "700"],
+  variable: "--font-sans",
+  weight: ["400", "500", "700"],
 });
 
 type Role = "superadmin" | "admin" | "user";
@@ -97,7 +97,7 @@ export default function AdminLogin() {
           badgeClass: "bg-red-500/10 text-red-400 border-red-500/30",
           bgGradient: "from-red-950/20 via-black to-black",
           highlightClass: "bg-red-500/15 text-red-400 border-red-500/30",
-          hudColor: "rgba(239, 68, 68, 0.12)",
+          hudColor: "rgba(239, 68, 68, 0.15)",
         };
       case "admin":
         return {
@@ -109,7 +109,7 @@ export default function AdminLogin() {
           badgeClass: "bg-sky-500/10 text-sky-300 border-sky-500/30",
           bgGradient: "from-sky-950/20 via-black to-black",
           highlightClass: "bg-sky-500/15 text-sky-300 border-sky-500/30",
-          hudColor: "rgba(125, 211, 252, 0.12)",
+          hudColor: "rgba(125, 211, 252, 0.15)",
         };
       default:
         return {
@@ -121,7 +121,7 @@ export default function AdminLogin() {
           badgeClass: "bg-white/5 text-neutral-300 border-white/20",
           bgGradient: "from-neutral-900/40 via-black to-black",
           highlightClass: "bg-white/15 text-white border-white/30",
-          hudColor: "rgba(255, 255, 255, 0.08)",
+          hudColor: "rgba(255, 255, 255, 0.1)",
         };
     }
   };
@@ -129,7 +129,7 @@ export default function AdminLogin() {
   const theme = getRoleTheme();
 
   return (
-    <div className={`min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden select-none ${orbitron.variable} ${jetbrainsMono.variable} font-mono`}>
+    <div className={`min-h-screen bg-black text-white flex items-center justify-center p-6 relative overflow-hidden select-none ${orbitron.variable} ${spaceGrotesk.variable} font-sans`}>
       
       {/* 1. Dynamic Grid Background */}
       <div 
@@ -144,21 +144,25 @@ export default function AdminLogin() {
       />
       <div className={`absolute inset-0 bg-gradient-to-b ${theme.bgGradient} pointer-events-none transition-colors duration-500`} />
 
-      {/* 2. Interactive Scifi HUD Orbits */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* 2. Interactive Scifi HUD Orbits & Tech Marks */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        {/* Animated HUD Radar circles */}
         <svg 
-          className="w-[800px] h-[800px] opacity-25 animate-spin-slow transition-colors duration-500"
+          className="w-[850px] h-[850px] opacity-25 animate-spin-slow transition-colors duration-500"
           viewBox="0 0 800 800"
           style={{ color: theme.hudColor }}
         >
           {/* Outer dashed scanner */}
-          <circle cx="400" cy="400" r="380" stroke="currentColor" strokeWidth="1" strokeDasharray="8,20" fill="none" />
+          <circle cx="400" cy="400" r="380" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10,25" fill="none" />
           {/* Segmented layout rings */}
-          <circle cx="400" cy="400" r="320" stroke="currentColor" strokeWidth="2" strokeDasharray="80,120,40,60" fill="none" />
-          <circle cx="400" cy="400" r="260" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10,15,30,15" fill="none" />
-          {/* Inner details */}
-          <path d="M 400 160 L 400 180 M 400 620 L 400 640 M 160 400 L 180 400 M 620 400 L 640 400" stroke="currentColor" strokeWidth="2" />
+          <circle cx="400" cy="400" r="320" stroke="currentColor" strokeWidth="2" strokeDasharray="120,90,40,90" fill="none" />
+          <circle cx="400" cy="400" r="260" stroke="currentColor" strokeWidth="1" strokeDasharray="15,20,40,20" fill="none" />
+          {/* Radar axis crosshair */}
+          <path d="M 400 120 L 400 150 M 400 650 L 400 680 M 120 400 L 150 400 M 650 400 L 680 400" stroke="currentColor" strokeWidth="2" />
         </svg>
+        
+        {/* Faint ambient scanlines */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.005] to-transparent h-1/2 w-full animate-pulse pointer-events-none" />
       </div>
 
       {/* 3. Massive Adaptive Background Glow */}
@@ -169,7 +173,7 @@ export default function AdminLogin() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.8 }}
-          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[850px] rounded-full blur-[170px] pointer-events-none transition-colors duration-500 ${theme.glowClass}`}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full blur-[180px] pointer-events-none transition-colors duration-500 ${theme.glowClass}`}
         />
       </AnimatePresence>
 
@@ -181,10 +185,10 @@ export default function AdminLogin() {
         className="w-full max-w-2xl relative z-10"
       >
         {/* Futuristic Tab Header */}
-        <div className="flex items-center justify-between px-10 py-6 bg-neutral-950/80 border-t border-x border-white/10 rounded-t-[32px] backdrop-blur-3xl">
+        <div className="flex items-center justify-between px-10 py-6 bg-neutral-950/90 border-t border-x border-white/10 rounded-t-[32px] backdrop-blur-3xl font-display">
           <div className="flex items-center gap-3">
             <Cpu className="w-5 h-5 text-neutral-400 animate-pulse" />
-            <span className="text-xs sm:text-sm uppercase tracking-[0.3em] text-neutral-200 font-black font-display">
+            <span className="text-xs sm:text-sm uppercase tracking-[0.3em] text-neutral-200 font-black">
               SYSTEM CONTROL PANEL // ACCESS STATE
             </span>
           </div>
@@ -209,14 +213,14 @@ export default function AdminLogin() {
             <h1 className="text-4xl sm:text-5xl font-black tracking-[0.45em] uppercase font-display text-white mb-4 select-none">
               AURA<span className={theme.colorClass}>.</span>STREET
             </h1>
-            <div className="flex items-center justify-center gap-3 text-xs sm:text-sm uppercase tracking-[0.4em] font-extrabold text-neutral-400">
+            <div className="flex items-center justify-center gap-3 text-xs sm:text-sm uppercase tracking-[0.35em] font-extrabold text-neutral-400 font-display">
               <Terminal className="w-5 h-5 text-neutral-500" />
               <span>AUTHENTICATION DECRYPTION</span>
             </div>
           </div>
 
           {/* Role Toggle Selector with Smooth Sliding Indicator */}
-          <div className="flex bg-black/80 p-2.5 rounded-2xl border border-white/5 mb-12 relative">
+          <div className="flex bg-black/80 p-2.5 rounded-2xl border border-white/5 mb-12 relative font-display">
             {(["user", "admin", "superadmin"] as Role[]).map((r) => {
               const isActive = role === r;
               return (
@@ -253,7 +257,7 @@ export default function AdminLogin() {
               >
                 <AlertCircle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <h4 className="text-sm uppercase tracking-widest font-black text-red-500">Security Guard Alert</h4>
+                  <h4 className="text-sm uppercase tracking-widest font-black text-red-500 font-display">Security Guard Alert</h4>
                   <p className="text-xs sm:text-sm text-red-400 font-bold leading-relaxed uppercase tracking-wider">{error}</p>
                 </div>
               </motion.div>
@@ -265,10 +269,10 @@ export default function AdminLogin() {
             {/* Email Field */}
             <div className="space-y-4">
               <div className="flex justify-between items-baseline">
-                <label className="text-xs sm:text-sm uppercase tracking-[0.3em] font-black text-neutral-400">
+                <label className="text-xs sm:text-sm uppercase tracking-[0.3em] font-black text-neutral-400 font-display">
                   [SECURE EMAIL ADDRESS]
                 </label>
-                <span className={`text-[10px] sm:text-xs uppercase tracking-widest font-black px-4 py-1.5 border rounded-lg transition-colors duration-500 ${theme.badgeClass}`}>
+                <span className={`text-[10px] sm:text-xs uppercase tracking-widest font-black px-4 py-1.5 border rounded-lg transition-colors duration-500 font-display ${theme.badgeClass}`}>
                   {role} Mode
                 </span>
               </div>
@@ -282,7 +286,7 @@ export default function AdminLogin() {
                     : role === "admin" ? "admin@aurastreet.com"
                     : "staff@aurastreet.com"
                   }
-                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
+                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-medium focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
                   required
                 />
                 <KeyRound className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" />
@@ -292,10 +296,10 @@ export default function AdminLogin() {
             {/* Password Field */}
             <div className="space-y-4">
               <div className="flex justify-between items-baseline">
-                <label className="text-xs sm:text-sm uppercase tracking-[0.3em] font-black text-neutral-400">
+                <label className="text-xs sm:text-sm uppercase tracking-[0.3em] font-black text-neutral-400 font-display">
                   [DECRYPT PASSWORD]
                 </label>
-                <a href="#" className="text-xs text-neutral-500 hover:text-white uppercase tracking-[0.2em] font-black transition-colors">Forgot?</a>
+                <a href="#" className="text-xs text-neutral-500 hover:text-white uppercase tracking-[0.2em] font-black transition-colors font-display">Forgot?</a>
               </div>
               <div className="relative">
                 <input
@@ -303,7 +307,7 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
+                  className={`w-full bg-black/70 border border-neutral-800 rounded-2xl py-5 px-8 text-base font-medium focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
                   required
                 />
                 <Lock className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600" />
@@ -314,7 +318,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full mt-8 py-6 rounded-2xl text-xs sm:text-sm uppercase tracking-[0.35em] font-black flex items-center justify-center gap-4 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group ${theme.btnClass}`}
+              className={`w-full mt-8 py-6 rounded-2xl text-xs sm:text-sm uppercase tracking-[0.35em] font-black flex items-center justify-center gap-4 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group font-display ${theme.btnClass}`}
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -329,9 +333,9 @@ export default function AdminLogin() {
         </motion.div>
 
         {/* Footer Warning */}
-        <div className="text-center mt-10 flex items-center justify-center gap-3 text-neutral-400">
+        <div className="text-center mt-10 flex items-center justify-center gap-3 text-neutral-400 font-display">
           <ShieldAlert className="w-5 h-5 shrink-0 text-neutral-500" />
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-black font-display">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-black">
             RESTRICTED AREA // MULTI-FACTOR AUTHENTICATION ACTIVE
           </p>
         </div>

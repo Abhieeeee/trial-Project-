@@ -5,9 +5,9 @@
   --color-brand-dark: #0a0a0a;
   --color-brand-gray: #1a1a1a;
   --color-brand-sky: #7dd3fc;
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-mono: "Courier New", monospace;
-  --font-display: Arial, Helvetica, sans-serif;
+  --font-sans: var(--font-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-mono), "Courier New", monospace;
+  --font-display: var(--font-orbitron), Arial, Helvetica, sans-serif;
 }
 
 :root {
