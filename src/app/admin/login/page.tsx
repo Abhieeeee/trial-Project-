@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -16,6 +16,11 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Force sign out to clear any old cached sessions/cookies
+    supabase.auth.signOut();
+  }, [supabase]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
