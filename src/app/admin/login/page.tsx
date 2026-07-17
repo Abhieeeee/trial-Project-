@@ -6,6 +6,7 @@ import { Lock, ArrowRight, AlertCircle, ShieldAlert, Cpu, Terminal, KeyRound } f
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Orbitron, Space_Grotesk } from "next/font/google";
+import { getUserRole } from "@/app/actions/auth";
 
 // ── Google Fonts configuration ────────────────────────────────
 const orbitron = Orbitron({
@@ -57,20 +58,8 @@ export default function AdminLogin() {
         return;
       }
 
-      // Fetch role from profiles table
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError) {
-        setError(`Failed to read database profile: ${profileError.message}`);
-        setLoading(false);
-        return;
-      }
-
-      const userRole = profile?.role ?? "user";
+      // Fetch role securely from server action (bypasses RLS recursion)
+      const userRole = await getUserRole(data.user.id);
 
       if (userRole === "super_admin") {
         router.push("/super-admin/dashboard");
