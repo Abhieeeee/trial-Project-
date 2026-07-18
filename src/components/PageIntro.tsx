@@ -10,7 +10,7 @@ export default function PageIntro({
   text: string;
 }) {
   return (
-    <section className="px-6 md:px-12 max-w-7xl mx-auto pt-36 md:pt-44 pb-16">
+    <section className="px-6 md:px-12 max-w-7xl mx-auto pt-[140px] md:pt-[180px] pb-16">
       <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-6">
         <Link href="/" className="hover:text-white transition-colors">
           Home

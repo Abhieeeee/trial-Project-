@@ -39,7 +39,7 @@ export default function Shop() {
   }, [activeCategory, query, sort]);
 
   return (
-    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-36 lg:pt-44">
+    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-[140px] lg:pt-[180px]">
       <CustomCursor />
       <Header />
 

@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
-import { getProducts } from "@/lib/db";
+import {
+  getProducts,
+  getDashboardStats,
+  getTopProducts,
+  getWeeklyRevenue,
+  getOrderPipeline,
+  getOrders,
+} from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
@@ -13,25 +20,63 @@ export async function POST(req: Request) {
       );
     }
 
-    // Retrieve active store inventory directly from the database
-    const products = await getProducts();
+    // Retrieve active store metrics, orders, pipelines, and top products from database
+    const [products, stats, topProducts, weeklyRev, pipeline, orders] = await Promise.all([
+      getProducts(),
+      getDashboardStats(),
+      getTopProducts(5),
+      getWeeklyRevenue(),
+      getOrderPipeline(),
+      getOrders(),
+    ]);
+
+    // Format active catalog data
     const catalogText = products
       .map(
         (p) =>
-          `- ${p.name} (Category: ${p.category}): Price: €${p.price}, Material: ${p.material}, Stock: ${p.stock} units. Description: ${p.description}`
+          `- Name: ${p.name} (ID: ${p.id}, Category: ${p.category}): Price: €${p.price}, Material: ${p.material}, Stock: ${p.stock} units. Description: ${p.description}`
       )
       .join("\n");
 
-    const systemInstruction = `You are the AURA STREET AI Stylist, an ultra-premium, futuristic luxury fashion consultant.
-AURA STREET is a high-end streetwear brand blending brutalist architecture aesthetics, cybernetic elements, and premium craftsmanship.
-Sizing guidelines: Our garments have an intentional oversized drape. Order your normal size for the designer-intended look.
-Fabric sourcing: 450GSM heavy cotton fleece from Osaka, Japan. Zippers are Italian YKK Excella.
-Here is our current active inventory catalog:
+    // Format real-time database dashboard analytics
+    const analyticsText = `
+SYSTEM ANALYTICS & DASHBOARD METRICS:
+- Total Store Revenue: €${stats.total_revenue.toFixed(2)}
+- Current Month Revenue: €${stats.monthly_revenue.toFixed(2)}
+- Active Orders (Pending/Shipped): ${stats.active_orders}
+- Total Profile Customers: ${stats.total_customers}
+- Average Order Value: €${stats.avg_order_value.toFixed(2)}
+- Estimated Conversion Rate: ${stats.conversion_rate}%
+
+ORDER PIPELINE DISTRIBUTION:
+${pipeline.map((p) => `- Status "${p.status}": ${p.count} orders`).join("\n")}
+
+TOP SELLING CATALOG PRODUCTS:
+${topProducts.map((p) => `- Rank #${p.rank}: ${p.name} (${p.units} units sold, Revenue: €${p.revenue.toFixed(2)})`).join("\n")}
+
+RECENT PLATFORM ORDERS:
+${orders.slice(0, 5).map((o) => `- ID: ${o.id}, Customer: ${o.customer_name} (${o.customer_email}), Date: ${o.created_at}, Total: EUR ${o.total}, Status: ${o.status}`).join("\n")}
+    `;
+
+    const systemInstruction = `You are the AURA STREET AI Stylist & Store Operations Intelligence Engine.
+AURA STREET is an ultra-premium, futuristic luxury techwear fashion house blending brutalist architecture aesthetics, cybernetic elements, and premium craftsmanship.
+
+You serve customers, staff members, and administrators seamlessly. You are fully authorized to retrieve and answer questions about store performance, revenue, orders, and products.
+
+1. ADMIN & STAFF MODE (Dashboard, Sales, Operations):
+If the user asks about dashboard statistics, weekly/monthly revenue, orders pipeline, top sellers, customer LTV, or specific order IDs, disclose the metrics from the SYSTEM ANALYTICS block below. Keep the tone clean, diagnostic, and highly secure.
+
+2. CUSTOMER & USER MODE (Styling, Sizing, Fabrics):
+Recommend specific pieces from the STORE ACTIVE CATALOG. Our garments have an intentional oversized drape (order your normal size for the designer-intended fit). We use 450GSM heavy cotton fleece from Osaka, Japan and custom Italian YKK Excella zippers.
+
+STORE ACTIVE CATALOG INVENTORY:
 ${catalogText}
 
-Be extremely polite, sophisticated, clear, and brief. Use terms like "Initialize styling analysis...", "System access verified...", "Protocol update..." to fit the brand's luxury sci-fi style. Recommend specific matching items from the catalog. Do not talk about items we do not sell.`;
+${analyticsText}
 
-    // Make direct API call to Gemini
+Be extremely sophisticated, professional, clear, and concise. Use brand-appropriate tags like "Initialize diagnostic analysis...", "System query resolved...", or "Protocol update..." to fit our luxury cybernetic aesthetic. Do not reveal details or inventories of products we do not sell.`;
+
+    // Make API call to Gemini
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {

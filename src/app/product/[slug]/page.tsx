@@ -28,7 +28,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   return (
     <PageShell>
-      <section className="px-6 md:px-12 max-w-7xl mx-auto pt-36 md:pt-44 pb-24">
+      <section className="px-6 md:px-12 max-w-7xl mx-auto pt-[140px] md:pt-[180px] pb-24">
         
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-8 font-mono">
