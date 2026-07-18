@@ -65,18 +65,18 @@ export default function CartPage() {
                   <div className="flex items-center gap-3 mt-5">
                     <button
                       onClick={() => updateQuantity(product.id, -1)}
-                      className="w-8 h-8 rounded border border-neutral-800 flex items-center justify-center hover:border-brand-sky text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                      className="w-11 h-11 rounded border border-neutral-800 flex items-center justify-center hover:border-brand-sky text-neutral-400 hover:text-white transition-colors cursor-pointer"
                       aria-label="Decrease quantity"
                     >
-                      <Minus className="w-3 h-3" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="text-xs font-bold w-4 text-center">{product.quantity}</span>
+                    <span className="text-xs font-bold w-5 text-center">{product.quantity}</span>
                     <button
                       onClick={() => updateQuantity(product.id, 1)}
-                      className="w-8 h-8 rounded border border-neutral-800 flex items-center justify-center hover:border-brand-sky text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                      className="w-11 h-11 rounded border border-neutral-800 flex items-center justify-center hover:border-brand-sky text-neutral-400 hover:text-white transition-colors cursor-pointer"
                       aria-label="Increase quantity"
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -86,7 +86,7 @@ export default function CartPage() {
                   </span>
                   <button
                     onClick={() => removeItem(product.id)}
-                    className="text-neutral-600 hover:text-red-400 transition-colors p-2 cursor-pointer"
+                    className="w-11 h-11 flex items-center justify-center text-neutral-600 hover:text-red-400 border border-transparent hover:border-neutral-900 rounded-lg transition-colors cursor-pointer"
                     aria-label="Remove item"
                   >
                     <Trash2 className="w-4 h-4" />
