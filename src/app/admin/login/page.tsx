@@ -35,19 +35,14 @@ export default function AdminLogin() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [role, setRole] = useState<Role>("admin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<Role>("superadmin");
+  const [email, setEmail] = useState("super@aurastreet.com");
+  const [password, setPassword] = useState("SuperAdminSecure123!");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [envStatus, setEnvStatus] = useState<string>("Verifying connectivity...");
-  const [terminalLogs, setTerminalLogs] = useState<string[]>([
-    "SYSINIT // INITIALIZING SYSTEM DIAGNOSTICS",
-    "MATHEMATICAL ENGINE // PROJECTING 3D VECTOR GRID",
-    "DB ROUTE // SYNCHRONIZING SECURE TUNNELS",
-    "AWAITING DECRYPTION KEY HANDSHAKE..."
-  ]);
+  const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -55,6 +50,28 @@ export default function AdminLogin() {
   const targetMouse = useRef({ x: 0, y: 0 });
   const currentMouse = useRef({ x: 0, y: 0 });
 
+  // Stream live logs line-by-line using a set interval script
+  useEffect(() => {
+    const logsList = [
+      "SYSINIT // DETECTING SYSTEM TOPOLOGY...",
+      "MATHEMATICAL WAVEENGINE // COMPILING...",
+      "DATABASE PROTOCOL // SYNCHRONIZING NODE",
+      "SECURE ROUTE // GATEWAY INITIALIZED"
+    ];
+    setTerminalLogs([]);
+    let idx = 0;
+    const interval = setInterval(() => {
+      if (idx < logsList.length) {
+        setTerminalLogs((prev) => [...prev, logsList[idx]]);
+        idx++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 280);
+    return () => clearInterval(interval);
+  }, [role]);
+
+  // Track coordinates via mouse move listener
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       targetMouse.current.x = (e.clientX / window.innerWidth) - 0.5;
@@ -63,6 +80,31 @@ export default function AdminLogin() {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
+
+  // Update default test profile credentials dynamically when role changes
+  useEffect(() => {
+    if (role === "superadmin") {
+      setEmail("super@aurastreet.com");
+      setPassword("SuperAdminSecure123!");
+    } else if (role === "admin") {
+      setEmail("admin@aurastreet.com");
+      setPassword("AdminSecure123!");
+    } else {
+      setEmail("staff@aurastreet.com");
+      setPassword("StaffSecure123!");
+    }
+  }, [role]);
+
+  const addLog = (logText: string) => {
+    setTerminalLogs((prev) => [...prev, `${new Date().toLocaleTimeString()} // ${logText}`].slice(-8));
+  };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (val.length > 0 && val.length % 5 === 0) {
+      addLog("DATA TRANSIT // INPUT STRINGS ENCRYPTED");
+    }
+  };
 
   // requestAnimationFrame Canvas grid animation loop
   useEffect(() => {
@@ -100,7 +142,7 @@ export default function AdminLogin() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
       ctx.fillRect(0, 0, width, height);
 
-      // Lerp mouse coordinate values to create smooth inertia movement
+      // Lerp mouse coordinates to create smooth inertia movement
       currentMouse.current.x += (targetMouse.current.x - currentMouse.current.x) * 0.08;
       currentMouse.current.y += (targetMouse.current.y - currentMouse.current.y) * 0.08;
 
@@ -183,69 +225,54 @@ export default function AdminLogin() {
     const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !anon || url.includes("placeholder-url")) {
       setEnvStatus("BUILD ERROR: Connection variables missing!");
-      addLog("GATEWAY STATUS // ERROR: INVALID CREDENTIAL PATHS");
+      addLog("GATEWAY STATUS // ERROR: INVALID INLINE KEYS");
     } else {
       setEnvStatus(`DATALINK ONLINE: ${url.replace("https://", "").substring(0, 20)}...`);
-      addLog("GATEWAY STATUS // DATA ROUTING VERIFIED SECURE");
+      addLog("GATEWAY STATUS // SECURE DATA SHIELD ESTABLISHED");
     }
   }, []);
-
-  const addLog = (logText: string) => {
-    setTerminalLogs((prev) => [...prev, `${new Date().toLocaleTimeString()} // ${logText}`].slice(-8));
-  };
-
-  useEffect(() => {
-    addLog(`SECURITY TUNNEL COMPILING // LEVEL: [${role.toUpperCase()}]`);
-  }, [role]);
-
-  const handleEmailChange = (val: string) => {
-    setEmail(val);
-    if (val.length > 0 && val.length % 5 === 0) {
-      addLog(`DATA TRANSIT // INPUT STRINGS ENCRYPTED`);
-    }
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    addLog("DISPATCHING ENCRYPTED CREDENTIAL KEYS...");
+    addLog("DISPATCHING DECRYPT KEYS TO SECURE SERVER...");
 
     try {
       const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
       if (authError) {
         setError(authError.message);
-        addLog(`ACCESS DENIED // STATUS: ${authError.message.toUpperCase()}`);
+        addLog(`KEY DISMISS // FAILURE: ${authError.message.toUpperCase()}`);
         setLoading(false);
         return;
       }
 
       if (!data.user) {
         setError("Authentication failed. Please try again.");
-        addLog("ACCESS DENIED // STATUS: DATA BUFFER RESOLVED TO NULL");
+        addLog("KEY DISMISS // NODE FAILED TO COMPREHEND");
         setLoading(false);
         return;
       }
 
-      addLog("ACCESS KEY APPROVED // MATCHING USER ACCESS PERMISSIONS...");
+      addLog("GATEWAY ACCESS APPROVED // RESOLVING IDENTITY...");
       const userRole = await getUserRole(data.user.id);
-      addLog(`ACCESS PRIVILEGE VERIFIED // GROUP: ${userRole.toUpperCase()}`);
+      addLog(`RESOLVED ACCORDING ROLE: ${userRole.toUpperCase()}`);
 
       if (userRole === "super_admin") {
-        addLog("ROUTING PROTOCOL // DIRECTING TO SUPER ADMIN DASHBOARD...");
+        addLog("SYSTEM REDIRECT // LAUNCHING SUPER ADMIN PORTAL...");
         setTimeout(() => router.push("/super-admin/dashboard"), 800);
       } else if (userRole === "admin") {
-        addLog("ROUTING PROTOCOL // DIRECTING TO ADMIN PANEL...");
+        addLog("SYSTEM REDIRECT // LAUNCHING ADMIN CLOUD...");
         setTimeout(() => router.push("/admin/dashboard"), 800);
       } else {
-        addLog("ROUTING PROTOCOL // DIRECTING TO CLIENT ACCOUNT...");
+        addLog("USER REDIRECT // ACCESSING STYLES BOARD...");
         setTimeout(() => router.push("/user-dashboard"), 800);
       }
     } catch (err: any) {
       const errMsg = err?.message || "A network error occurred.";
       setError(errMsg);
-      addLog(`GATEWAY NETWORK FAULT // DISCONNECTING: ${errMsg.toUpperCase()}`);
+      addLog(`GATEWAY NETWORK FAULT // PROTOCOL SHUTDOWN: ${errMsg.toUpperCase()}`);
       setLoading(false);
     }
   };
@@ -256,34 +283,37 @@ export default function AdminLogin() {
         return {
           colorClass: "text-[#ef4444]",
           borderClass: "border-[#ef4444]/30",
-          hoverBorderClass: "focus:border-[#ef4444] border-[#ef4444]/60 shadow-[0_0_20px_rgba(239,68,68,0.2)]",
+          hoverBorderClass: "focus-within:border-[#ef4444] border-zinc-800 shadow-[0_0_20px_rgba(239,68,68,0.15)]",
           btnClass: "bg-[#ef4444] text-white hover:bg-red-600 shadow-[0_0_40px_rgba(239,68,68,0.45)]",
           badgeClass: "bg-[#ef4444]/10 text-red-400 border-[#ef4444]/30",
           bgGradient: "from-red-950/20 via-black to-black",
           highlightClass: "bg-[#ef4444]/15 text-red-400 border-[#ef4444]/30",
           hudColor: "rgba(239, 68, 68, 0.2)",
+          activeTabBorder: "border-[#ef4444]",
         };
       case "admin":
         return {
           colorClass: "text-[#00d2ff]",
           borderClass: "border-[#00d2ff]/30",
-          hoverBorderClass: "focus:border-[#00d2ff] border-[#00d2ff]/60 shadow-[0_0_20px_rgba(0,210,255,0.25)]",
+          hoverBorderClass: "focus-within:border-[#00d2ff] border-zinc-800 shadow-[0_0_20px_rgba(0,210,255,0.2)]",
           btnClass: "bg-[#00d2ff] text-black hover:bg-[#33dfff] shadow-[0_0_40px_rgba(0,210,255,0.55)]",
           badgeClass: "bg-[#00d2ff]/10 text-sky-300 border-[#00d2ff]/30",
           bgGradient: "from-sky-950/20 via-black to-black",
           highlightClass: "bg-[#00d2ff]/15 text-sky-300 border-[#00d2ff]/30",
           hudColor: "rgba(0, 210, 255, 0.2)",
+          activeTabBorder: "border-[#00d2ff]",
         };
       default:
         return {
           colorClass: "text-white",
           borderClass: "border-white/20",
-          hoverBorderClass: "focus:border-white border-white/50 shadow-[0_0_20px_rgba(255,255,255,0.15)]",
-          btnClass: "bg-white text-black hover:bg-neutral-200 shadow-[0_0_40px_rgba(255,255,255,0.25)]",
+          hoverBorderClass: "focus-within:border-white border-zinc-800 shadow-[0_0_20px_rgba(255,255,255,0.1)]",
+          btnClass: "bg-white text-black hover:bg-neutral-200 shadow-[0_0_40px_rgba(255,255,255,0.2)]",
           badgeClass: "bg-white/5 text-neutral-300 border-white/20",
           bgGradient: "from-neutral-900/40 via-black to-black",
           highlightClass: "bg-white/15 text-white border-white/30",
           hudColor: "rgba(255, 255, 255, 0.15)",
+          activeTabBorder: "border-white",
         };
     }
   };
@@ -301,7 +331,7 @@ export default function AdminLogin() {
             src="/hero-editorial.png"
             alt="AURA STREET Cyberpunk Outerwear"
             fill
-            className="object-cover opacity-35 mix-blend-luminosity scale-105"
+            className="object-cover grayscale opacity-70 mix-blend-luminosity scale-105"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/45 to-transparent" />
@@ -309,13 +339,10 @@ export default function AdminLogin() {
         </div>
 
         {/* Diagnostic Metadata Base Logs (Bottom Left) */}
-        <div className="absolute bottom-8 left-10 z-10 hidden sm:flex flex-col gap-2 font-mono tracking-widest text-[10px] uppercase text-zinc-400 leading-relaxed select-text">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-[1.5px] bg-[#00d2ff] animate-ping" />
-            <span className="text-white">SYS NODE // 48.8566 N, 2.3522 E</span>
-          </div>
-          <span>GRID PROTOCOL ACTIVATED // FABRIC: OSAKA JP</span>
-          <span>ESTABLISHED DESIGN STUDIO // PARIS ATELIER DECRYPT</span>
+        <div className="absolute bottom-8 left-10 z-10 hidden sm:flex flex-col gap-2 font-mono tracking-widest text-[10px] uppercase text-zinc-500 leading-relaxed select-text">
+          <span>COORDINATES // 48.8566 N, 2.3522 E</span>
+          <span>GRID PROTOCOL V4 // FABRIC SOURCE OSAKA, JP</span>
+          <span>ESTABLISHED DESIGN STUDIO // PARIS LAB DECRYPT</span>
         </div>
 
         {/* Vector HUD targeting crosshair */}
@@ -323,14 +350,14 @@ export default function AdminLogin() {
           <div className="w-20 h-20 relative flex items-center justify-center">
             <div className="w-8 h-[1px] bg-current" />
             <div className="h-8 w-[1px] bg-current absolute" />
-            <div className="w-12 h-12 rounded-full border border-current opacity-30 absolute animate-pulse" />
+            <div className="w-12 h-12 rounded-full border border-current opacity-30 absolute" />
           </div>
         </div>
 
-        {/* Symmetrical Brand Title */}
+        {/* Core Branding Title */}
         <div className="relative z-10 text-center">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[0.45em] uppercase font-display text-white select-none">
-            U R A<span className="text-[#00d2ff]">.</span>S T R E E T
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[0.4em] uppercase font-sans text-white select-none">
+            U R A <span className="inline-block w-4.5 h-4.5 rounded-full bg-[#00d2ff] mx-1 align-baseline" /> S T R E E T
           </h2>
           <span className="block text-[8px] sm:text-[9.5px] uppercase tracking-[0.4em] text-neutral-400 mt-4 font-black font-display">
             HIGH-END TECHWEAR // R&D GATEWAY
@@ -341,38 +368,32 @@ export default function AdminLogin() {
       {/* RIGHT COLUMN (40% width on desktop) */}
       <div className="relative w-full lg:w-[40%] h-[65vh] lg:h-screen flex items-center justify-center p-6 bg-black overflow-hidden border-t lg:border-t-0 border-white/5">
         
-        {/* Interactive 3D Dotted Canvas Grid underlying the layout */}
+        {/* Isolated 3D Particle Canvas Engine (z-0) */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
         />
 
-        {/* Centered flat glassmorphic control dock wrapper */}
-        <div className="w-full max-w-sm z-10 flex flex-col justify-between h-[95%] max-h-[580px]">
+        {/* Frosted Portal Card (z-10) */}
+        <div className="w-full max-w-sm z-10 flex flex-col justify-between h-[96%] max-h-[580px]">
           
-          {/* Top navigation utility header */}
-          <div className="flex items-center justify-between px-6 py-4.5 bg-neutral-950/95 border border-white/10 rounded-t-[18px] backdrop-blur-md font-display">
+          {/* Top utility row */}
+          <div className="flex items-center justify-between px-6 py-4 bg-neutral-950/95 border border-white/10 rounded-t-[18px] backdrop-blur-2xl font-display z-10">
             <Link href="/" className="text-[9.5px] uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-all font-black">
               &lt; HOME
             </Link>
             <div className="flex items-center gap-2 text-[8.5px] uppercase tracking-widest font-black text-neutral-500">
               <Cpu className={`w-3.5 h-3.5 ${theme.colorClass} animate-pulse`} />
-              <span>ACCESS PROTOCOL</span>
+              <span>[ACCESS PROTOCOL]</span>
             </div>
           </div>
 
-          {/* Secure Login Credentials Block */}
+          {/* Frosted Secure Input Blocks Container */}
           <motion.div
             animate={{ borderColor: theme.hudColor }}
-            className="border-x border-b bg-neutral-950/70 p-6 sm:p-8 backdrop-blur-md relative"
+            className="border-x border-b bg-black/50 border border-white/10 backdrop-blur-2xl p-6 sm:p-8 relative"
           >
-            {/* Symmetrical bracket design details */}
-            <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white/20" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white/20" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20" />
-
-            {/* Symmetrical Role Toggle Selector Row */}
+            {/* Tab selector row */}
             <div className="flex bg-black/80 p-1.5 rounded-lg border border-white/5 mb-6 relative font-display">
               {(["user", "admin", "superadmin"] as Role[]).map((r) => {
                 const isActive = role === r;
@@ -384,22 +405,15 @@ export default function AdminLogin() {
                       setRole(r);
                       setError(null);
                     }}
-                    className="flex-1 py-2.5 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-black rounded transition-all duration-300 relative z-10 text-neutral-500 hover:text-white"
+                    className={`flex-1 py-2.5 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-black rounded transition-all duration-300 relative z-10 text-neutral-500 hover:text-white border-b-2 ${isActive ? theme.activeTabBorder : "border-transparent"}`}
                   >
-                    {isActive && (
-                      <motion.div 
-                        layoutId="activeRoleHighlight"
-                        className={`absolute inset-0 rounded border transition-colors duration-500 ${theme.highlightClass}`}
-                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                      />
-                    )}
                     {r === "superadmin" ? "SUPER" : r === "admin" ? "ADMIN" : "STAFF"}
                   </button>
                 );
               })}
             </div>
 
-            {/* Error Message Panel */}
+            {/* Error Notification Alert */}
             <AnimatePresence>
               {error && (
                 <motion.div
@@ -417,10 +431,10 @@ export default function AdminLogin() {
               )}
             </AnimatePresence>
 
-            {/* Login Inputs Form */}
+            {/* Form */}
             <form onSubmit={handleLogin} className="space-y-5">
               
-              {/* [SECURE ID EMAIL] */}
+              {/* Email secure block */}
               <div className="space-y-2">
                 <div className="flex justify-between items-baseline">
                   <label className="text-[8px] uppercase tracking-[0.25em] font-black text-zinc-500 font-display">
@@ -430,24 +444,25 @@ export default function AdminLogin() {
                     {role} Mode
                   </span>
                 </div>
-                <div className="relative">
+                {/* Wrapped by corner brackets */}
+                <div className="relative border border-zinc-800 rounded-lg p-0.5 bg-black/40 focus-within:border-white transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-white/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-white/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-white/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-white/40" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
-                    placeholder={
-                      role === "superadmin" ? "super@aurastreet.com"
-                      : role === "admin" ? "admin@aurastreet.com"
-                      : "staff@aurastreet.com"
-                    }
-                    className={`w-full bg-black/60 border border-neutral-900 focus:border-white rounded-lg py-3.5 px-4 text-xs font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
+                    placeholder="Enter email address"
+                    className="w-full bg-transparent border-0 outline-none py-3.5 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-700"
                     required
                   />
                   <KeyRound className="absolute right-4.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-600" />
                 </div>
               </div>
 
-              {/* [DECRYPT ACCESS KEY] */}
+              {/* Password secure block */}
               <div className="space-y-2">
                 <div className="flex justify-between items-baseline">
                   <label className="text-[8px] uppercase tracking-[0.25em] font-black text-zinc-500 font-display">
@@ -455,26 +470,31 @@ export default function AdminLogin() {
                   </label>
                   <a href="#" className="text-[7.5px] text-neutral-600 hover:text-white uppercase tracking-[0.2em] font-black transition-colors font-display">Forgot?</a>
                 </div>
-                <div className="relative">
+                {/* Wrapped by corner brackets */}
+                <div className="relative border border-zinc-800 rounded-lg p-0.5 bg-black/40 focus-within:border-white transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-white/40" />
+                  <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-white/40" />
+                  <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-white/40" />
+                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-white/40" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className={`w-full bg-black/60 border border-neutral-900 focus:border-white rounded-lg py-3.5 px-4 text-xs font-semibold focus:outline-none transition-all duration-300 text-white placeholder:text-neutral-700 ${theme.hoverBorderClass}`}
+                    className="w-full bg-transparent border-0 outline-none py-3.5 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-700"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4.5 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors"
+                    className="absolute right-4.5 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors z-10"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Secure Link Status Info */}
+              {/* Dynamic Status bar */}
               <div className={`text-[7.5px] uppercase tracking-[0.15em] font-black border py-2 px-3 rounded text-center select-text transition-colors duration-500 ${
                 envStatus.includes("ERROR") 
                   ? "bg-red-500/10 border-red-500/30 text-red-400" 
@@ -483,27 +503,26 @@ export default function AdminLogin() {
                 {envStatus}
               </div>
 
-              {/* AUTHORIZE ACCESS Submit Button */}
+              {/* AUTHORIZE ACCESS trigger button */}
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full mt-3 py-4 rounded text-[9.5px] uppercase tracking-[0.3em] font-black flex items-center justify-center gap-3 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group font-display ${theme.btnClass}`}
+                className={`w-full mt-3 py-4 rounded text-[9.5px] uppercase tracking-[0.2em] font-sans font-bold flex items-center justify-center gap-3 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group ${theme.btnClass}`}
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    AUTHORIZE ACCESS
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+                    AUTHORIZE ACCESS →
                   </>
                 )}
               </button>
             </form>
           </motion.div>
 
-          {/* Terminal Decrypt Logger Panel */}
-          <div className="bg-zinc-950/90 border border-zinc-900 rounded-b-[18px] p-4.5 font-mono text-[9px] flex flex-col gap-3 shadow-xl">
-            <div className="flex items-center justify-between pb-2 border-b border-white/5">
+          {/* Decrypt Terminal Logger */}
+          <div className="h-28 w-full bg-zinc-950/90 border border-zinc-900 rounded-b-[18px] p-4 font-mono text-[9px] text-zinc-400 overflow-hidden flex flex-col gap-2 shadow-xl">
+            <div className="flex items-center justify-between pb-1.5 border-b border-white/5 shrink-0 select-none">
               <div className="flex items-center gap-2 text-[8px] uppercase tracking-widest font-black text-neutral-400">
                 <Monitor className="w-3 h-3 text-neutral-500" />
                 <span>TERMINAL DECRYPT LOG</span>
@@ -512,10 +531,10 @@ export default function AdminLogin() {
             </div>
 
             {/* log streams */}
-            <div className="space-y-1.5 text-[7.5px] uppercase tracking-widest font-semibold text-neutral-500 max-h-[70px] overflow-y-auto pr-1.5 scrollbar-none select-text">
+            <div className="flex-1 overflow-y-auto pr-1.5 scrollbar-none select-text space-y-1">
               {terminalLogs.map((log, i) => (
-                <div key={i} className="flex gap-2 items-start leading-relaxed pl-1">
-                  <span className="text-brand-sky select-none">&gt;</span>
+                <div key={i} className="flex gap-2 items-start leading-normal text-zinc-400">
+                  <span className="text-[#00d2ff] select-none">&gt;</span>
                   <span className="whitespace-normal break-all">{log}</span>
                 </div>
               ))}
@@ -526,8 +545,8 @@ export default function AdminLogin() {
 
       </div>
 
-      {/* Restricted warning footer */}
-      <div className="absolute bottom-4 right-6 text-right hidden sm:flex items-center justify-end gap-2 text-neutral-600 font-display z-10">
+      {/* Footer System Warning */}
+      <div className="absolute bottom-4 right-6 text-right hidden sm:flex items-center justify-end gap-2 text-neutral-600 font-display z-10 pointer-events-none">
         <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
         <p className="text-[7.5px] uppercase tracking-[0.25em] font-black">
           RESTRICTED PROTOCOLS ACTIVE // SECURE SYSTEM ONLY
