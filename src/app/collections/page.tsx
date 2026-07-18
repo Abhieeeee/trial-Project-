@@ -52,10 +52,10 @@ export default function Collections() {
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
           className="relative z-10 text-center px-6"
         >
-          <span className="block text-[10px] uppercase tracking-[0.3em] text-brand-sky mb-4 text-glow-sky font-bold">
+          <span className="block text-[10px] uppercase tracking-[0.35em] text-brand-sky mb-4 text-glow-sky font-bold font-mono">
             Explore the Archives
           </span>
-          <h1 className="text-5xl md:text-8xl font-extrabold uppercase tracking-[0.1em] font-display text-white drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white drop-shadow-2xl">
             THE COLLECTIONS
           </h1>
         </motion.div>

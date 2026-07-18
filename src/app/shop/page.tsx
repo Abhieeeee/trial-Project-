@@ -31,22 +31,22 @@ export default function Shop() {
   }, [activeCategory, query, sort]);
 
   return (
-    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-32">
+    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-36 lg:pt-44">
       <CustomCursor />
       <Header />
 
-      <section className="px-6 md:px-12 max-w-7xl mx-auto mb-12">
+      <section className="px-6 md:px-12 max-w-7xl mx-auto mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
         >
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-500 mb-6">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-8 font-mono">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <span className="text-white">Shop</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-extrabold uppercase tracking-[0.1em] font-display text-white mb-8">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white mb-10">
             SHOP ALL
           </h1>
           <p className="text-sm text-neutral-400 max-w-2xl leading-relaxed tracking-wide mb-12">

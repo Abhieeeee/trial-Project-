@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SmoothScroll from "@/components/SmoothScroll";
+import AiAssistant from "@/components/AiAssistant";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white">
         <SmoothScroll>{children}</SmoothScroll>
+        <AiAssistant />
       </body>
     </html>
   );
