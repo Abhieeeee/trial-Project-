@@ -4,13 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
-
 import PageIntro from "@/components/PageIntro";
 import PageShell from "@/components/PageShell";
 import { products } from "@/lib/catalog";
+import { useCurrency } from "@/lib/currency";
 
 export default function CartPage() {
-  // Simulate active cart items using state so interaction works dynamically
+  const { formatPrice } = useCurrency();
   const [cart, setCart] = useState(() => {
     return products.slice(0, 2).map((p) => ({ ...p, quantity: 1 }));
   });
@@ -82,7 +82,7 @@ export default function CartPage() {
                 </div>
                 <div className="col-span-2 md:col-span-1 flex md:flex-col items-center md:items-end justify-between gap-4">
                   <span className="text-brand-sky font-display font-bold text-glow-sky">
-                    EUR {product.numericPrice * product.quantity}
+                    {formatPrice(product.numericPrice * product.quantity)}
                   </span>
                   <button
                     onClick={() => removeItem(product.id)}
@@ -102,11 +102,11 @@ export default function CartPage() {
           <aside className="glass-panel-glow rounded-xl p-6 h-fit lg:sticky lg:top-28">
             <h2 className="text-lg font-display font-bold uppercase tracking-[0.15em] mb-6">Order Summary</h2>
             <div className="space-y-4 text-xs uppercase tracking-[0.18em] text-neutral-400">
-              <Row label="Subtotal" value={`EUR ${subtotal}`} />
+              <Row label="Subtotal" value={formatPrice(subtotal)} />
               <Row label="Estimated Duty" value="Calculated at checkout" />
-              <Row label="Shipping" value="EUR 0" />
+              <Row label="Shipping" value={formatPrice(0)} />
               <div className="border-t border-neutral-900 pt-4">
-                <Row label="Total" value={`EUR ${subtotal}`} strong />
+                <Row label="Total" value={formatPrice(subtotal)} strong />
               </div>
             </div>
             <Link

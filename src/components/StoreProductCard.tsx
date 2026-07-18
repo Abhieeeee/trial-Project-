@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, Plus } from "lucide-react";
-
 import type { Product } from "@/lib/catalog";
+import { useCurrency } from "@/lib/currency";
 
 export default function StoreProductCard({ product }: { product: Product }) {
+  const { formatPrice } = useCurrency();
+  const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
+
   return (
     <article className="group relative">
       <Link href={`/product/${product.slug}`} className="block">
@@ -38,7 +41,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
             <h3 className="text-sm font-bold uppercase tracking-wider mb-1">{product.name}</h3>
             <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500">{product.material}</p>
           </div>
-          <span className="text-sm text-brand-sky text-glow-sky font-medium whitespace-nowrap">{product.price}</span>
+          <span className="text-sm text-brand-sky text-glow-sky font-medium whitespace-nowrap">{formatPrice(rawPrice)}</span>
         </div>
         <div className="mt-3 text-[10px] uppercase tracking-[0.2em] text-neutral-600">
           {product.colorways} Colorways // {product.stock} In Stock

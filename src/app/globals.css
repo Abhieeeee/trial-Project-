@@ -7,7 +7,7 @@
   --color-brand-sky: #7dd3fc;
   --font-sans: var(--font-sans), Arial, Helvetica, sans-serif;
   --font-mono: var(--font-mono), "Courier New", monospace;
-  --font-display: var(--font-orbitron), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-display), Arial, Helvetica, sans-serif;
   --spacing-layout-padding: clamp(1.5rem, 4vw, 4rem);
   --animate-mechanical: 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }

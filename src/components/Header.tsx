@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Globe, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
+import { useCurrency, CurrencyCode } from "@/lib/currency";
 
 const navLinks = [
   { label: "Collections", href: "/collections" },
@@ -16,6 +17,8 @@ const navLinks = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { currency, setCurrency, currencies } = useCurrency();
+  const [currencyMenuOpen, setCurrencyMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -36,11 +39,51 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           
           {/* Top-Left Localization */}
-          <div className="hidden lg:flex items-center gap-5 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-500">
-            <button className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer" data-magnetic>
-              <Globe className="w-3 h-3 text-[#00D2FF]" />
-              <span>EN // EUR</span>
-            </button>
+          <div className="hidden lg:flex items-center gap-5 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-500 relative">
+            <div className="relative">
+              <button 
+                onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
+                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                data-magnetic
+              >
+                <Globe className="w-3 h-3 text-[#00D2FF]" />
+                <span>{currencies[currency].label}</span>
+              </button>
+
+              <AnimatePresence>
+                {currencyMenuOpen && (
+                  <>
+                    {/* Invisible overlay to close dropdown */}
+                    <div 
+                      className="fixed inset-0 z-10 cursor-default" 
+                      onClick={() => setCurrencyMenuOpen(false)} 
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                      className="absolute left-0 mt-2.5 w-36 bg-black/90 border border-neutral-850 rounded-lg overflow-hidden py-1.5 z-20 backdrop-blur-md"
+                    >
+                      {(Object.keys(currencies) as CurrencyCode[]).map((code) => (
+                        <button
+                          key={code}
+                          onClick={() => {
+                            setCurrency(code);
+                            setCurrencyMenuOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2 hover:bg-white/5 transition-colors text-[9px] uppercase tracking-[0.2em] font-mono block ${
+                            currency === code ? "text-[#00D2FF] font-bold" : "text-neutral-400"
+                          }`}
+                        >
+                          {currencies[code].label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
             <span className="text-neutral-800">|</span>
             <span className="text-neutral-400">Paris Edition</span>
           </div>

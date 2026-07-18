@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 
-export default function HoodieModel() {
+export default function HoodieModel({ color = "black" }: { color?: string }) {
   const groupRef = useRef<THREE.Group>(null);
 
   // 1. Procedural Cotton Weave Normal Map Generator
@@ -54,10 +54,29 @@ export default function HoodieModel() {
     return texture;
   }, []);
 
+  // Target colors for dynamic morphing
+  const targetColors = useMemo(() => {
+    let main = new THREE.Color(0x111111);
+    let ribbed = new THREE.Color(0x0f0f0f);
+
+    if (color === "white") {
+      main.setHex(0xdadada);
+      ribbed.setHex(0xcccccc);
+    } else if (color === "blue") {
+      main.setHex(0x1b2d42);
+      ribbed.setHex(0x152334);
+    } else if (color === "red") {
+      main.setHex(0x561313);
+      ribbed.setHex(0x470f0f);
+    }
+
+    return { main, ribbed };
+  }, [color]);
+
   // 2. High-Fashion Matte Fabrics and Ribbed Hem Materials
   const materials = useMemo(() => {
     const mainFabric = new THREE.MeshStandardMaterial({
-      color: 0x111111, // Ultra-lux dark grey (not raw black to reveal details in shadow)
+      color: 0x111111, // Starts black, lerped in frame loop
       roughness: 0.82,
       metalness: 0.05,
       normalMap: fabricNormalMap,
@@ -66,7 +85,7 @@ export default function HoodieModel() {
     });
 
     const ribbedFabric = new THREE.MeshStandardMaterial({
-      color: 0x0f0f0f, // Marginally darker for contrast
+      color: 0x0f0f0f, // Starts black, lerped in frame loop
       roughness: 0.9,
       metalness: 0.05,
       normalMap: fabricNormalMap,
@@ -241,6 +260,10 @@ export default function HoodieModel() {
   // 4. Smooth floating and mouse interpolation loop
   useFrame((state) => {
     if (!groupRef.current) return;
+
+    // Lerp materials colors smoothly to target colorway configurations
+    materials.mainFabric.color.lerp(targetColors.main, 0.05);
+    materials.ribbedFabric.color.lerp(targetColors.ribbed, 0.05);
 
     const time = state.clock.getElapsedTime();
 

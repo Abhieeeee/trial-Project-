@@ -18,11 +18,11 @@ function CameraRig() {
   return null;
 }
 
-export default function ProductCanvas() {
+export default function ProductCanvas({ color = "black" }: { color?: string }) {
   return (
     <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
       <Suspense
-        fallback={
+        fallback = {
           <div className="absolute inset-0 flex items-center justify-center">
             {/* Minimalist Premium Spinner */}
             <div className="relative w-16 h-16 flex items-center justify-center">
@@ -64,7 +64,7 @@ export default function ProductCanvas() {
           <spotLight position={[0, 0, 5]} intensity={0.8} distance={10} angle={0.3} penumbra={1} />
 
           {/* Procedural Hoodie Model */}
-          <HoodieModel />
+          <HoodieModel color={color} />
 
           {/* Contact Shadows: ground the model with soft floor shadows */}
           <ContactShadows

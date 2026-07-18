@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageShell from "@/components/PageShell";
 import StoreProductCard from "@/components/StoreProductCard";
 import { products } from "@/lib/catalog";
+import { useCurrency } from "@/lib/currency";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -18,6 +19,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   if (!product) {
     notFound();
   }
+
+  const { formatPrice } = useCurrency();
+  const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
 
   const [activeImage, setActiveImage] = useState(product.image);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
@@ -89,7 +93,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
               {product.name}
             </h1>
             <div className="mt-5 flex items-center gap-4">
-              <span className="text-2xl font-display font-bold text-brand-sky text-glow-sky">{product.price}</span>
+              <span className="text-2xl font-display font-bold text-brand-sky text-glow-sky">{formatPrice(rawPrice)}</span>
               <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
                 <Star className="w-3.5 h-3.5 fill-brand-sky text-brand-sky" />
                 4.9 // 128 Reviews

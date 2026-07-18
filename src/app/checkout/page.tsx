@@ -4,10 +4,10 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CreditCard, Home, PackageCheck, Truck, ShieldCheck, Mail } from "lucide-react";
 import { motion } from "framer-motion";
-
 import PageIntro from "@/components/PageIntro";
 import PageShell from "@/components/PageShell";
 import { checkoutFeatures } from "@/lib/catalog";
+import { useCurrency } from "@/lib/currency";
 
 export default function CheckoutPage() {
   return (
@@ -20,6 +20,8 @@ export default function CheckoutPage() {
 function CheckoutForm() {
   const searchParams = useSearchParams();
   const subtotal = searchParams.get("amount") || "245";
+  const { formatPrice } = useCurrency();
+  const amountNum = Number(subtotal);
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -79,12 +81,12 @@ function CheckoutForm() {
             Review
           </h2>
           <div className="space-y-4 text-xs uppercase tracking-[0.18em] text-neutral-400">
-            <div className="flex justify-between"><span>Subtotal</span><span className="text-white">EUR {subtotal}</span></div>
-            <div className="flex justify-between"><span>Shipping</span><span className="text-white">EUR 0</span></div>
+            <div className="flex justify-between"><span>Subtotal</span><span className="text-white">{formatPrice(amountNum)}</span></div>
+            <div className="flex justify-between"><span>Shipping</span><span className="text-white">{formatPrice(0)}</span></div>
             <div className="flex justify-between"><span>Taxes</span><span className="text-neutral-500">At payment</span></div>
             <div className="border-t border-neutral-900 pt-4 flex justify-between text-white font-bold">
               <span>Total</span>
-              <span className="text-brand-sky text-glow-sky">EUR {subtotal}</span>
+              <span className="text-brand-sky text-glow-sky">{formatPrice(amountNum)}</span>
             </div>
           </div>
           <button className="mt-8 w-full h-14 rounded bg-white text-black hover:bg-brand-sky hover:text-white transition-all text-[10px] uppercase tracking-[0.22em] font-extrabold cursor-pointer" data-magnetic>

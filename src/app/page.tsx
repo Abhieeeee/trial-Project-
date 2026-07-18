@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ArrowDown, ChevronRight, Compass } from "lucide-react";
@@ -14,6 +15,7 @@ import Footer from "@/components/Footer";
 import HeroWaveCanvas from "@/components/HeroWaveCanvas";
 
 export default function Home() {
+  const [activeColor, setActiveColor] = useState("black");
   // Animation Orchestration Variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -163,7 +165,32 @@ export default function Home() {
             {/* Circular background light halo behind the hoodie */}
             <div className="absolute w-[80%] h-[80%] rounded-full bg-brand-sky/3 blur-[100px] pointer-events-none select-none" />
             
-            <ProductCanvas />
+            <ProductCanvas color={activeColor} />
+
+            {/* Color Configurator floating pill panel */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/60 border border-white/5 backdrop-blur-md rounded-full px-4 py-2.5 z-20">
+              <span className="text-[8px] uppercase tracking-[0.25em] font-extrabold text-neutral-500 mr-2 font-mono">SPEC:</span>
+              {[
+                { id: "black", label: "Jet Black", color: "bg-[#111111] border-neutral-850" },
+                { id: "white", label: "Arctic White", color: "bg-[#dfdfdf] border-neutral-200" },
+                { id: "blue", label: "Shadow Blue", color: "bg-[#1b2d42] border-sky-900/60" },
+                { id: "red", label: "Crimson Core", color: "bg-[#561313] border-red-950/60" },
+              ].map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveColor(c.id)}
+                  title={c.label}
+                  className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center ${c.color} ${
+                    activeColor === c.id ? "scale-110 border-brand-sky shadow-[0_0_10px_rgba(125,211,252,0.3)]" : "opacity-60 border-transparent hover:opacity-100 hover:scale-105"
+                  }`}
+                  aria-label={`Select ${c.label} colorway`}
+                >
+                  {activeColor === c.id && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-sky animate-ping absolute" />
+                  )}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
         </div>
