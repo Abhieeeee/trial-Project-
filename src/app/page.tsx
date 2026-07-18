@@ -11,6 +11,7 @@ import ProductCanvas from "@/components/ProductCanvas";
 import ProductGrid from "@/components/ProductGrid";
 import Editorial from "@/components/Editorial";
 import Footer from "@/components/Footer";
+import HeroWaveCanvas from "@/components/HeroWaveCanvas";
 
 export default function Home() {
   // Animation Orchestration Variants
@@ -67,8 +68,9 @@ export default function Home() {
             className="object-cover opacity-30 mix-blend-luminosity"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black" />
+          <HeroWaveCanvas />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/25 to-black z-10" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">

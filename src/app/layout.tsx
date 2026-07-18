@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SmoothScroll from "@/components/SmoothScroll";
 import AiAssistant from "@/components/AiAssistant";
+import ScrollProgressBar from "@/components/ScrollProgressBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
       className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white">
+        <ScrollProgressBar />
         <SmoothScroll>{children}</SmoothScroll>
         <AiAssistant />
       </body>
