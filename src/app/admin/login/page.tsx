@@ -1,202 +1,149 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Orbitron, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { getUserRole } from "@/app/actions/auth";
-import Link from "next/link";
 
-// ── Orbitron exclusively for wordmark "AURA.STREET" ────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY — Three faces, each with a single purpose.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 const orbitron = Orbitron({
   subsets: ["latin"],
-  variable: "--font-orbitron",
+  variable: "--font-display",
   weight: ["700"],
 });
 
-// ── General Sans / Inter fallback for forms, labels, buttons ───────────────────────────
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["400", "500", "700"],
+  variable: "--font-body",
+  weight: ["400", "500"],
 });
 
-// ── JetBrains Mono for status strip ────────────────────────────────
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "700"],
+  weight: ["400"],
 });
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+const TOKENS = {
+  color: {
+    void: "#050505",
+    warmWhite: "#E8E4DF",
+    error: "#EF4444",
+    roleStaff: "#E8E4DF",
+    roleAdmin: "#00D2FF",
+    roleSuper: "#EF4444",
+  },
+  ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+  timing: {
+    darkness: 600,
+    lineReveal: 1200,
+    wordmarkDelay: 1800,
+    subtitleDelay: 2200,
+    invitationDelay: 3000,
+  },
+} as const;
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PHASES — The six emotional beats of arrival.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+type Phase = "darkness" | "line" | "identity" | "invitation" | "auth" | "threshold";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THE VESTIBULE
+   ───────────────────────────────────────────────────────────────────────────── */
 
 export default function AdminLogin() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [email, setEmail] = useState("super@aurastreet.com");
-  const [password, setPassword] = useState("SuperAdminSecure123!");
+  // ── Phase & entrance ──
+  const [phase, setPhase] = useState<Phase>("darkness");
+  const [formOpen, setFormOpen] = useState(false);
+
+  // ── Form state ──
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Status states: "SYSTEM READY" → "VERIFYING CREDENTIALS…" → "ROLE DETECTED" → "REDIRECTING…"
+
+  // ── Status & role ──
   const [statusText, setStatusText] = useState("SYSTEM READY");
-  
-  // Successful auth flash color tracker: null -> "staff" | "admin" | "super_admin"
   const [authRole, setAuthRole] = useState<string | null>(null);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // ── Reduced motion preference ──
+  const [prefersReduced, setPrefersReduced] = useState(false);
 
-  // requestAnimationFrame Canvas loop (Slow rotating 3D low-poly wireframe garment outline)
+  /* ── Entrance sequence choreography ── */
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReduced(mq.matches);
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (mq.matches) {
+      // Skip entrance, show everything immediately
+      setPhase("invitation");
+      return;
+    }
 
-    let animationId: number;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || 800);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 800);
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const handleResize = () => {
-      if (canvas && canvas.parentElement) {
-        width = canvas.width = canvas.parentElement.clientWidth;
-        height = canvas.height = canvas.parentElement.clientHeight;
-      }
-    };
-    window.addEventListener("resize", handleResize);
+    timers.push(setTimeout(() => setPhase("line"), TOKENS.timing.darkness));
+    timers.push(setTimeout(() => setPhase("identity"), TOKENS.timing.wordmarkDelay));
+    timers.push(setTimeout(() => setPhase("invitation"), TOKENS.timing.invitationDelay));
 
-    // 3D Silhouette Vertices (Minimal hoodie outline)
-    const vertices = [
-      // Torso / Shoulders
-      { x: -60, y: -50, z: -25 }, // 0: Left shoulder front
-      { x: 60, y: -50, z: -25 },  // 1: Right shoulder front
-      { x: -60, y: -50, z: 25 },   // 2: Left shoulder back
-      { x: 60, y: -50, z: 25 },    // 3: Right shoulder back
-      { x: -45, y: 70, z: -20 },  // 4: Left waist front
-      { x: 45, y: 70, z: -20 },   // 5: Right waist front
-      { x: -45, y: 70, z: 20 },   // 6: Left waist back
-      { x: 45, y: 70, z: 20 },    // 7: Right waist back
-
-      // Collar
-      { x: -22, y: -62, z: -12 }, // 8: Left collar front
-      { x: 22, y: -62, z: -12 },  // 9: Right collar front
-      { x: -22, y: -62, z: 12 },  // 10: Left collar back
-      { x: 22, y: -62, z: 12 },   // 11: Right collar back
-
-      // Hood
-      { x: -26, y: -95, z: 2 },   // 12: Left hood top
-      { x: 26, y: -95, z: 2 },    // 13: Right hood top
-      { x: 0, y: -105, z: 18 },   // 14: Hood tip back
-
-      // Left sleeve
-      { x: -105, y: 5, z: -12 },  // 15: Left elbow front
-      { x: -105, y: 5, z: 12 },   // 16: Left elbow back
-      { x: -125, y: 55, z: -8 },  // 17: Left wrist front
-      { x: -125, y: 55, z: 8 },   // 18: Left wrist back
-
-      // Right sleeve
-      { x: 105, y: 5, z: -12 },   // 19: Right elbow front
-      { x: 105, y: 5, z: 12 },    // 20: Right elbow back
-      { x: 125, y: 55, z: -8 },   // 21: Right wrist front
-      { x: 125, y: 55, z: 8 },    // 22: Right wrist back
-    ];
-
-    // Edges linking coordinates to define low-poly garment form
-    const edges = [
-      // Torso outer loops
-      [0, 1], [1, 3], [3, 2], [2, 0],
-      [4, 5], [5, 7], [7, 6], [6, 4],
-      [0, 4], [1, 5], [2, 6], [3, 7],
-
-      // Collar / Neck loops
-      [8, 9], [9, 11], [11, 10], [10, 8],
-      [8, 0], [9, 1], [10, 2], [11, 3],
-
-      // Hood architecture
-      [12, 13], [12, 8], [13, 9], [12, 14], [13, 14], [14, 10], [14, 11],
-
-      // Left arm structures
-      [0, 15], [2, 16], [15, 16],
-      [15, 17], [16, 18], [17, 18],
-
-      // Right arm structures
-      [1, 19], [3, 20], [19, 20],
-      [19, 21], [20, 22], [21, 22],
-    ];
-
-    const focalLength = 380;
-    let angle = 0;
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Rotate Y continuous logic ~40s per revolution
-      angle += 0.003; 
-
-      const cosY = Math.cos(angle);
-      const sinY = Math.sin(angle);
-
-      // Detect mobile breakpoints to lower opacity automatically
-      const isMobile = window.innerWidth < 768;
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-      ctx.lineWidth = 1.0;
-      if (isMobile) {
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-      }
-
-      const projectedPoints: { x: number; y: number }[] = [];
-
-      // Project vertices to 2D
-      for (let i = 0; i < vertices.length; i++) {
-        const v = vertices[i];
-        
-        // Y rotate transformations
-        const xRot = v.x * cosY - v.z * sinY;
-        const zRot = v.x * sinY + v.z * cosY;
-
-        // Apply depth values
-        const scale = focalLength / (zRot + 300);
-        const x2d = width / 2 + xRot * scale;
-        const y2d = height / 2 + v.y * scale;
-
-        projectedPoints.push({ x: x2d, y: y2d });
-      }
-
-      // Draw wireframe edges
-      for (let i = 0; i < edges.length; i++) {
-        const p1 = projectedPoints[edges[i][0]];
-        const p2 = projectedPoints[edges[i][1]];
-
-        if (p1 && p2) {
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
-        }
-      }
-
-      animationId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId);
-    };
+    return () => timers.forEach(clearTimeout);
   }, []);
 
+  /* ── Phase helpers ── */
+  const phaseReached = useCallback(
+    (target: Phase): boolean => {
+      const order: Phase[] = ["darkness", "line", "identity", "invitation", "auth", "threshold"];
+      return order.indexOf(phase) >= order.indexOf(target);
+    },
+    [phase]
+  );
+
+  /* ── Open auth form ── */
+  const handleIdentify = () => {
+    setFormOpen(true);
+    setPhase("auth");
+  };
+
+  /* ── Clear error on retype ── */
+  const handleEmailChange = (v: string) => {
+    setEmail(v);
+    if (error) setError(null);
+  };
+  const handlePasswordChange = (v: string) => {
+    setPassword(v);
+    if (error) setError(null);
+  };
+
+  /* ── Authentication handler ── */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
     setError(null);
-    setStatusText("VERIFYING CREDENTIALS…");
+    setStatusText("VERIFYING CREDENTIALS");
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
       if (authError) {
         setError(authError.message);
@@ -206,194 +153,494 @@ export default function AdminLogin() {
       }
 
       if (!data.user) {
-        setError("Authentication failed. Please try again.");
+        setError("Authentication failed.");
         setStatusText("SYSTEM READY");
         setLoading(false);
         return;
       }
 
-      setStatusText("ROLE DETECTED");
-      const userRole = await getUserRole(data.user.id);
-      
-      // staff -> white, admin -> sky blue, super_admin -> crimson
-      setAuthRole(userRole);
+      // Role detection
+      setStatusText("ACCESS GRANTED");
+      const role = await getUserRole(data.user.id);
+      setAuthRole(role);
+      setPhase("threshold");
 
-      setStatusText("REDIRECTING…");
-      
-      // Delay redirect slightly for 300ms color flash animation to display cleanly
+      // Brief pause for the color flash to be perceived
       setTimeout(() => {
-        if (userRole === "super_admin") {
+        setStatusText("REDIRECTING");
+      }, 200);
+
+      setTimeout(() => {
+        if (role === "super_admin") {
           router.push("/super-admin/dashboard");
-        } else if (userRole === "admin") {
+        } else if (role === "admin") {
           router.push("/admin/dashboard");
         } else {
           router.push("/user-dashboard");
         }
-      }, 500);
-    } catch (err: any) {
-      setError(err?.message || "A network error occurred.");
+      }, 800);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "A network error occurred.";
+      setError(message);
       setStatusText("SYSTEM READY");
       setLoading(false);
     }
   };
 
-  const getSuccessBorderColor = () => {
-    if (authRole === "super_admin") return "border-[#ef4444] shadow-[0_0_25px_rgba(239,68,68,0.25)]";
-    if (authRole === "admin") return "border-[#00d2ff] shadow-[0_0_25px_rgba(0,210,255,0.25)]";
-    if (authRole === "staff" || authRole === "user") return "border-white shadow-[0_0_25px_rgba(255,255,255,0.25)]";
-    return "border-white/10";
+  /* ── Role color mapping ── */
+  const getRoleColor = (): string => {
+    if (!authRole) return TOKENS.color.warmWhite;
+    if (authRole === "super_admin") return TOKENS.color.roleSuper;
+    if (authRole === "admin") return TOKENS.color.roleAdmin;
+    return TOKENS.color.roleStaff;
   };
 
-  const getSuccessBtnColor = () => {
-    if (authRole === "super_admin") return "bg-[#ef4444] text-white border-[#ef4444]";
-    if (authRole === "admin") return "bg-[#00d2ff] text-black border-[#00d2ff]";
-    if (authRole === "staff" || authRole === "user") return "bg-white text-black border-white";
-    return "bg-white text-black hover:bg-transparent hover:border-white hover:text-white border-transparent";
-  };
+  /* ── Wordmark character stagger ── */
+  const wordmark = "AURA.STREET";
+  const charDelay = prefersReduced ? 0 : 0.05;
+
+  /* ── Shared motion config ── */
+  const gravityEase = TOKENS.ease;
 
   return (
-    <div className={`min-h-screen w-full relative flex items-center justify-center bg-[#0a0a0a] text-white overflow-hidden select-none ${orbitron.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans`}>
-      
-      {/* Repeating Animated scanlines drift overlay (CSS漂移动画) */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.04] scanline-overlay" />
-
-      {/* Y-axis rotating wireframe silhouette canvas background */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 scale-90 sm:scale-100"
+    <main
+      className={`
+        min-h-screen w-full relative flex flex-col items-center justify-start
+        overflow-hidden select-none
+        ${orbitron.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}
+      `}
+      style={{ backgroundColor: TOKENS.color.void }}
+    >
+      {/* ── Atmospheric photograph layer ── */}
+      <motion.div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/hero-editorial.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center 30%",
+          filter: "grayscale(1) brightness(0.4)",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: phase === "threshold" ? 0.08 : 0,
+        }}
+        transition={{ duration: 0.6, ease: gravityEase }}
       />
 
-      {/* Centered glass access module */}
+      {/* ── Composition container — optically centered ── */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className={`w-full max-w-[420px] bg-black/40 border backdrop-blur-2xl rounded-lg px-8 sm:px-10 py-12 z-10 transition-all duration-300 mx-4 ${getSuccessBorderColor()}`}
+        className="vestibule-composition relative z-10 flex flex-col items-center w-full px-8 sm:px-6"
+        style={{ paddingTop: "38vh" }}
+        animate={
+          phase === "threshold"
+            ? { scale: 1.02 }
+            : { scale: 1 }
+        }
+        transition={{ duration: 0.6, ease: gravityEase }}
       >
-        {/* Core Wordmark "AURA.STREET" */}
-        <div className="text-center mb-10 select-none">
-          <h1 className="font-orbitron text-2xl sm:text-3xl font-bold tracking-[0.4em] uppercase text-white">
-            AURA.STREET
-          </h1>
+        {/* ── PHASE 3: Wordmark ── */}
+        <div
+          className="overflow-hidden mb-3"
+          style={{ minHeight: "2.5rem" }}
+          aria-label="AURA.STREET"
+        >
+          {phaseReached("identity") && (
+            <motion.h1
+              className="font-display font-bold tracking-[0.4em] uppercase text-center flex justify-center"
+              style={{
+                color: TOKENS.color.warmWhite,
+                fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
+                lineHeight: 1.2,
+              }}
+            >
+              {wordmark.split("").map((char, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: i * charDelay,
+                    duration: 0.8,
+                    ease: gravityEase,
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </motion.h1>
+          )}
         </div>
 
-        {/* Error alert row */}
+        {/* ── PHASE 3: Subtitle ── */}
         <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              className="mb-5 bg-red-500/10 border border-red-500/20 text-red-400 p-3 text-xs tracking-wider uppercase font-mono flex items-center gap-2"
-              role="alert"
+          {phaseReached("identity") && (
+            <motion.p
+              className="font-body uppercase text-center mb-8 sm:mb-10"
+              style={{
+                fontSize: "9px",
+                letterSpacing: "0.35em",
+                color: `${TOKENS.color.warmWhite}59`, // 35% opacity
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                delay: prefersReduced ? 0 : 0.4,
+                duration: 0.6,
+                ease: gravityEase,
+              }}
             >
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </motion.div>
+              PRIVATE ACCESS
+            </motion.p>
           )}
         </AnimatePresence>
 
-        {/* Access Form */}
-        <form onSubmit={handleLogin} className="space-y-7">
-          
-          {/* Email input - Underline-only */}
-          <div className="space-y-1.5">
-            <label className="block text-[8px] uppercase tracking-[0.2em] text-white/50 font-mono">
-              [SECURE ID EMAIL]
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@domain.com"
-              className="w-full bg-transparent border-b border-white/20 focus:border-white transition-colors duration-200 py-2.5 text-xs text-white placeholder:text-white/20 outline-none focus:outline-none font-mono"
-              aria-label="Email address"
-              required
+        {/* ── PHASE 2: The architectural line ── */}
+        <div className="flex justify-center mb-8 sm:mb-10" style={{ minHeight: "1px" }}>
+          {phaseReached("line") && (
+            <motion.div
+              style={{
+                height: "1px",
+                backgroundColor:
+                  phase === "threshold"
+                    ? getRoleColor()
+                    : `${TOKENS.color.warmWhite}4D`, // 30% opacity
+                width: "280px",
+                boxShadow:
+                  phase === "threshold"
+                    ? `0 0 20px ${getRoleColor()}40`
+                    : "none",
+              }}
+              initial={{ scaleX: 0 }}
+              animate={{
+                scaleX: 1,
+                backgroundColor:
+                  phase === "threshold"
+                    ? getRoleColor()
+                    : `${TOKENS.color.warmWhite}4D`,
+              }}
+              transition={{
+                scaleX: {
+                  duration: prefersReduced ? 0 : 1.2,
+                  ease: gravityEase,
+                },
+                backgroundColor: {
+                  duration: 0.4,
+                  ease: gravityEase,
+                },
+              }}
             />
-          </div>
+          )}
+        </div>
 
-          {/* Password input - Underline-only */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-baseline">
-              <label className="block text-[8px] uppercase tracking-[0.2em] text-white/50 font-mono">
-                [DECRYPT ACCESS KEY]
-              </label>
-              <Link 
-                href="#"
-                className="text-[7.5px] text-white/30 hover:text-white uppercase tracking-[0.15em] transition-colors font-mono"
-                aria-label="Reset access keys Link"
+        {/* ── PHASE 4: Invitation / PHASE 5: Authentication form ── */}
+        <div className="w-full flex flex-col items-center" style={{ maxWidth: "340px" }}>
+          <AnimatePresence mode="wait">
+            {/* ── The invitation word: IDENTIFY ── */}
+            {phaseReached("invitation") && !formOpen && (
+              <motion.button
+                key="identify"
+                onClick={handleIdentify}
+                className="font-body uppercase cursor-pointer bg-transparent border-none outline-none focus-visible:outline-1 focus-visible:outline-offset-4"
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 500,
+                  letterSpacing: "0.3em",
+                  color: `${TOKENS.color.warmWhite}80`, // 50% opacity
+                  padding: "12px 24px",
+                  transition: "color 300ms, letter-spacing 300ms",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = TOKENS.color.warmWhite;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = `${TOKENS.color.warmWhite}80`;
+                }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.6, ease: gravityEase }}
+                aria-label="Open authentication form"
               >
-                FORGOT?
-              </Link>
-            </div>
-            <div className="relative border-b border-white/20 focus-within:border-white transition-colors duration-200">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-transparent border-none py-2.5 pr-8 text-xs text-white placeholder:text-white/20 outline-none focus:outline-none font-mono"
-                aria-label="Decrypt Access Key"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-1 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-10 focus:outline-none"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                IDENTIFY
+              </motion.button>
+            )}
+
+            {/* ── The authentication form ── */}
+            {formOpen && (
+              <motion.form
+                key="auth-form"
+                onSubmit={handleLogin}
+                className="w-full flex flex-col items-center"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: gravityEase }}
+                noValidate
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
+                {/* ── Email ── */}
+                <div className="w-full mb-6">
+                  <label
+                    htmlFor="vestibule-email"
+                    className="block font-body uppercase mb-2"
+                    style={{
+                      fontSize: "8px",
+                      letterSpacing: "0.25em",
+                      color: `${TOKENS.color.warmWhite}4D`, // 30%
+                    }}
+                  >
+                    ID
+                  </label>
+                  <input
+                    id="vestibule-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value)}
+                    placeholder="name@domain.com"
+                    required
+                    autoComplete="email"
+                    className="
+                      w-full bg-transparent border-none outline-none
+                      font-body
+                      focus-visible:outline-none
+                    "
+                    style={{
+                      fontSize: "13px",
+                      color: TOKENS.color.warmWhite,
+                      padding: "8px 0",
+                      borderBottom: `1px solid ${TOKENS.color.warmWhite}33`, // 20%
+                      transition: "border-color 200ms",
+                      caretColor: TOKENS.color.warmWhite,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderBottomColor = `${TOKENS.color.warmWhite}99`; // 60%
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderBottomColor = `${TOKENS.color.warmWhite}33`; // 20%
+                    }}
+                    aria-label="Email address"
+                  />
+                </div>
 
-          {/* Action Trigger Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-4 text-[10px] uppercase font-sans font-bold tracking-wider transition-all duration-300 border select-none cursor-pointer ${getSuccessBtnColor()}`}
-            aria-label="Enter drop portal"
-          >
-            {loading ? "INITIALIZING..." : "ENTER"}
-          </button>
+                {/* ── Password ── */}
+                <div className="w-full mb-8">
+                  <label
+                    htmlFor="vestibule-key"
+                    className="block font-body uppercase mb-2"
+                    style={{
+                      fontSize: "8px",
+                      letterSpacing: "0.25em",
+                      color: `${TOKENS.color.warmWhite}4D`, // 30%
+                    }}
+                  >
+                    KEY
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="vestibule-key"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => handlePasswordChange(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      autoComplete="current-password"
+                      className="
+                        w-full bg-transparent border-none outline-none
+                        font-body
+                        focus-visible:outline-none
+                      "
+                      style={{
+                        fontSize: "13px",
+                        color: TOKENS.color.warmWhite,
+                        padding: "8px 0",
+                        paddingRight: "32px",
+                        borderBottom: `1px solid ${TOKENS.color.warmWhite}33`,
+                        transition: "border-color 200ms",
+                        caretColor: TOKENS.color.warmWhite,
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderBottomColor = `${TOKENS.color.warmWhite}99`;
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderBottomColor = `${TOKENS.color.warmWhite}33`;
+                      }}
+                      aria-label="Password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="
+                        absolute right-0 top-1/2 -translate-y-1/2
+                        bg-transparent border-none cursor-pointer outline-none
+                        focus-visible:outline-1 focus-visible:outline-offset-2
+                      "
+                      style={{
+                        color: `${TOKENS.color.warmWhite}4D`, // 30%
+                        transition: "color 200ms",
+                        padding: "8px",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = `${TOKENS.color.warmWhite}99`; // 60%
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = `${TOKENS.color.warmWhite}4D`; // 30%
+                      }}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <EyeOff style={{ width: 14, height: 14 }} />
+                      ) : (
+                        <Eye style={{ width: 14, height: 14 }} />
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-          {/* Collapsed single-line status strip */}
-          <div className="text-center pt-2 select-none">
-            <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-white/40">
-              {statusText}
-            </span>
-          </div>
+                {/* ── Error ── */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.p
+                      className="w-full font-body text-center mb-6"
+                      style={{
+                        fontSize: "10px",
+                        color: `${TOKENS.color.error}B3`, // 70%
+                      }}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.3, ease: gravityEase }}
+                      role="alert"
+                      aria-live="assertive"
+                    >
+                      {error}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
 
-        </form>
+                {/* ── ENTER — the action word ── */}
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  className="
+                    bg-transparent border-none cursor-pointer outline-none
+                    font-body uppercase
+                    focus-visible:outline-1 focus-visible:outline-offset-4
+                    disabled:cursor-wait
+                  "
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 500,
+                    letterSpacing: "0.3em",
+                    color: TOKENS.color.warmWhite,
+                    padding: "12px 24px",
+                    transition: "letter-spacing 300ms, opacity 200ms",
+                  }}
+                  whileHover={
+                    !loading
+                      ? { letterSpacing: "0.45em" }
+                      : undefined
+                  }
+                  whileTap={
+                    !loading
+                      ? { opacity: 0.7 }
+                      : undefined
+                  }
+                  aria-label={loading ? "Verifying credentials" : "Enter"}
+                >
+                  {loading ? "VERIFYING" : "ENTER"}
+                </motion.button>
+
+                {/* ── Status line ── */}
+                <motion.p
+                  className="font-mono uppercase text-center mt-8"
+                  style={{
+                    fontSize: "9px",
+                    letterSpacing: "0.2em",
+                    color: `${TOKENS.color.warmWhite}40`, // 25%
+                  }}
+                  aria-live="polite"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4, ease: gravityEase }}
+                >
+                  {statusText}
+                </motion.p>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
 
-      {/* Global CSS Styles for repeating animated scanlines drift */}
-      <style jsx global>{`
-        @keyframes scanline-drift {
-          from {
-            background-position: 0 0;
-          }
-          to {
-            background-position: 0 -100px;
-          }
-        }
-        .scanline-overlay {
-          background: repeating-linear-gradient(
-            to bottom,
-            transparent,
-            transparent 3px,
-            rgba(255, 255, 255, 0.04) 3px,
-            rgba(255, 255, 255, 0.04) 6px
-          );
-          background-size: 100% 100px;
-          animation: scanline-drift 20s linear infinite;
-        }
-      `}</style>
-
-      {/* Compact Alert Icon wrapper import helper */}
-      <div className="hidden">
-        <AlertCircle className="w-1 h-1" />
-      </div>
-    </div>
+      {/* ── Injected global styles via useEffect to avoid Turbopack styled-jsx CSS parse errors ── */}
+      <GlobalStyles />
+    </main>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL STYLES — Injected as a plain <style> element to bypass Turbopack's
+   CSS parser limitations with template literal interpolation in styled-jsx.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+function GlobalStyles() {
+  useEffect(() => {
+    const id = "vestibule-global-styles";
+    if (document.getElementById(id)) return;
+
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+      input::placeholder {
+        color: #E8E4DF26 !important;
+        opacity: 1;
+      }
+
+      .font-display {
+        font-family: var(--font-display), monospace;
+      }
+      .font-body {
+        font-family: var(--font-body), 'Inter', sans-serif;
+      }
+      .font-mono {
+        font-family: var(--font-mono), monospace;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      *:focus-visible {
+        outline-color: #E8E4DF33;
+      }
+
+      @media (max-width: 767px) {
+        .vestibule-composition {
+          padding-top: 28vh !important;
+        }
+      }
+
+      @media (max-width: 767px) and (orientation: landscape) {
+        .vestibule-composition {
+          padding-top: 15vh !important;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .vestibule-composition {
+          padding-top: 35vh !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    };
+  }, []);
+
+  return null;
+}
+
