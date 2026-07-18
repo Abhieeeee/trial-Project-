@@ -44,7 +44,7 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const [envStatus, setEnvStatus] = useState<string>("Verifying connectivity...");
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
-  const [timestamp, setTimestamp] = useState<string>("2026.07.18 // 14:30:36");
+  const [timestamp, setTimestamp] = useState<string>("");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const targetMouse = useRef({ x: 0, y: 0 });
@@ -81,7 +81,7 @@ export default function AdminLogin() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Update timezone timestamp on mount
+  // Update timezone timestamp on mount to prevent Next.js hydration mismatches
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -113,7 +113,7 @@ export default function AdminLogin() {
     }
   }, [role]);
 
-  // requestAnimationFrame Canvas grid animation loop
+  // requestAnimationFrame Canvas grid animation loop (subtle micro-particle terrain)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -134,30 +134,30 @@ export default function AdminLogin() {
     window.addEventListener("resize", handleResize);
 
     const getParticleColor = () => {
-      if (role === "superadmin") return "#ef4444"; // Crimson Red
-      if (role === "admin") return "#00d2ff"; // Sky Blue
+      if (role === "superadmin") return "#d90429"; // Crimson Red
+      if (role === "admin") return "#00a8e8"; // Technical Muted Blue
       return "#ffffff"; // White
     };
 
-    const cols = 22;
-    const rows = 22;
-    const spacing = 42;
+    const cols = 18;
+    const rows = 18;
+    const spacing = 46;
     const focalLength = 320;
     let time = 0;
 
     const render = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
       ctx.fillRect(0, 0, width, height);
 
       // Lerp mouse coordinates to create smooth inertia movement
-      currentMouse.current.x += (targetMouse.current.x - currentMouse.current.x) * 0.06;
-      currentMouse.current.y += (targetMouse.current.y - currentMouse.current.y) * 0.06;
+      currentMouse.current.x += (targetMouse.current.x - currentMouse.current.x) * 0.05;
+      currentMouse.current.y += (targetMouse.current.y - currentMouse.current.y) * 0.05;
 
-      time += 0.025;
+      time += 0.022;
 
       const pColor = getParticleColor();
-      const rotY = currentMouse.current.x * 0.4;
-      const rotX = currentMouse.current.y * 0.4;
+      const rotY = currentMouse.current.x * 0.35;
+      const rotX = currentMouse.current.y * 0.35;
 
       const cosY = Math.cos(rotY);
       const sinY = Math.sin(rotY);
@@ -174,17 +174,17 @@ export default function AdminLogin() {
           let z3d = (r - rows / 2) * spacing;
 
           // Rolling subtle mathematical wave plane
-          let y3d = Math.sin(x3d * 0.015 + time) * 12 + Math.cos(z3d * 0.015 + time) * 12;
+          let y3d = Math.sin(x3d * 0.015 + time) * 10 + Math.cos(z3d * 0.015 + time) * 10;
 
           // Proximity mouse elevation warp
           const dx = x3d - mouseGridX;
           const dz = z3d - mouseGridZ;
           const dist = Math.sqrt(dx * dx + dz * dz);
-          const warpRadius = 120;
+          const warpRadius = 110;
 
           if (dist < warpRadius) {
             const factor = (1 - dist / warpRadius);
-            y3d -= factor * 35;
+            y3d -= factor * 30;
           }
 
           // Rotation matrix
@@ -199,8 +199,8 @@ export default function AdminLogin() {
           const y2d = height / 2 + yRotX * perspectiveFactor;
 
           if (x2d >= 0 && x2d <= width && y2d >= 0 && y2d <= height) {
-            const size = Math.max(0.5, perspectiveFactor * 1.1);
-            const alpha = Math.min(0.25, Math.max(0.08, (480 - zRotX) / 800));
+            const size = Math.max(0.4, perspectiveFactor * 0.8);
+            const alpha = Math.min(0.15, Math.max(0.05, (480 - zRotX) / 800));
 
             ctx.beginPath();
             ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
@@ -295,42 +295,42 @@ export default function AdminLogin() {
     switch (role) {
       case "superadmin":
         return {
-          colorClass: "text-[#ef4444]",
-          borderClass: "border-[#ef4444]/30",
-          hoverBorderClass: "focus-within:border-[#ef4444] focus-within:ring-1 focus-within:ring-[#ef4444]/15 border-zinc-800 shadow-[0_0_15px_rgba(239,68,68,0.1)]",
-          btnClass: "bg-[#ef4444] text-white hover:bg-red-600 focus:ring-1 focus:ring-red-400 focus:outline-none shadow-[0_0_20px_rgba(239,68,68,0.3)]",
-          badgeClass: "bg-[#ef4444]/10 text-red-400 border-[#ef4444]/30",
+          colorClass: "text-[#d90429]",
+          borderClass: "border-[#d90429]/30",
+          hoverBorderClass: "border-b-[#d90429]",
+          btnClass: "bg-[#d90429] text-white hover:bg-[#ef1c3f] shadow-lg",
+          badgeClass: "bg-[#d90429]/10 text-red-400 border-[#d90429]/30",
           bgGradient: "from-red-950/20 via-black to-black",
-          highlightClass: "bg-[#ef4444]/15 text-red-400 border-[#ef4444]/30",
-          hudColor: "rgba(239, 68, 68, 0.2)",
-          activeTabBorder: "border-[#ef4444]",
-          tabIndicator: "bg-[#ef4444]",
-          checkboxAccent: "checked:bg-[#ef4444] checked:border-[#ef4444]",
+          highlightClass: "bg-[#d90429]/10 text-red-400 border-zinc-800",
+          hudColor: "rgba(217, 4, 41, 0.15)",
+          activeTabBorder: "border-[#d90429]",
+          tabIndicator: "bg-[#d90429]",
+          checkboxAccent: "checked:bg-[#d90429] checked:border-[#d90429]",
         };
       case "admin":
         return {
-          colorClass: "text-[#00d2ff]",
-          borderClass: "border-[#00d2ff]/30",
-          hoverBorderClass: "focus-within:border-[#00d2ff] focus-within:ring-1 focus-within:ring-[#00d2ff]/15 border-zinc-800 shadow-[0_0_15px_rgba(0,210,255,0.12)]",
-          btnClass: "bg-[#00d2ff] text-black hover:bg-[#33dfff] focus:ring-1 focus:ring-[#00d2ff] focus:outline-none shadow-[0_0_20px_rgba(0,210,255,0.35)]",
-          badgeClass: "bg-[#00d2ff]/10 text-sky-300 border-[#00d2ff]/30",
+          colorClass: "text-[#00a8e8]",
+          borderClass: "border-[#00a8e8]/30",
+          hoverBorderClass: "border-b-[#00a8e8]",
+          btnClass: "bg-[#00a8e8] text-black hover:bg-[#33b8eb] shadow-lg",
+          badgeClass: "bg-[#00a8e8]/10 text-sky-300 border-[#00a8e8]/30",
           bgGradient: "from-sky-950/20 via-black to-black",
-          highlightClass: "bg-[#00d2ff]/15 text-sky-300 border-[#00d2ff]/30",
-          hudColor: "rgba(0, 210, 255, 0.2)",
-          activeTabBorder: "border-[#00d2ff]",
-          tabIndicator: "bg-[#00d2ff]",
-          checkboxAccent: "checked:bg-[#00d2ff] checked:border-[#00d2ff]",
+          highlightClass: "bg-[#00a8e8]/10 text-sky-300 border-zinc-800",
+          hudColor: "rgba(0, 168, 232, 0.15)",
+          activeTabBorder: "border-[#00a8e8]",
+          tabIndicator: "bg-[#00a8e8]",
+          checkboxAccent: "checked:bg-[#00a8e8] checked:border-[#00a8e8]",
         };
       default:
         return {
           colorClass: "text-white",
           borderClass: "border-white/20",
-          hoverBorderClass: "focus-within:border-white focus-within:ring-1 focus-within:ring-white/10 border-zinc-800 shadow-[0_0_15px_rgba(255,255,255,0.08)]",
-          btnClass: "bg-white text-black hover:bg-neutral-200 focus:ring-1 focus:ring-white focus:outline-none shadow-[0_0_20px_rgba(255,255,255,0.15)]",
+          hoverBorderClass: "border-b-white",
+          btnClass: "bg-white text-black hover:bg-neutral-200 shadow-lg",
           badgeClass: "bg-white/5 text-neutral-300 border-white/20",
           bgGradient: "from-neutral-900/40 via-black to-black",
-          highlightClass: "bg-white/15 text-white border-white/30",
-          hudColor: "rgba(255, 255, 255, 0.15)",
+          highlightClass: "bg-white/10 text-white border-zinc-800",
+          hudColor: "rgba(255, 255, 255, 0.1)",
           activeTabBorder: "border-white",
           tabIndicator: "bg-white",
           checkboxAccent: "checked:bg-white checked:border-white",
@@ -359,10 +359,10 @@ export default function AdminLogin() {
         </div>
 
         {/* Diagnostic Metadata Base Logs (Bottom Left) */}
-        <div className="absolute bottom-8 left-10 z-10 hidden sm:flex flex-col gap-2 font-mono tracking-widest text-[9.5px] uppercase text-zinc-500 leading-relaxed select-text" aria-label="Diagnostic Metadata">
+        <div className="absolute bottom-10 left-10 z-10 hidden sm:flex flex-col gap-2 font-mono tracking-widest text-[8.5px] uppercase text-zinc-500 leading-relaxed select-text" aria-label="Diagnostic Metadata">
           <span>COORDINATES // 48.8566 N, 2.3522 E</span>
           <span>NODE // EUR-PAR-NODE-01</span>
-          <span>TIMESTAMP // {timestamp}</span>
+          <span>TIMESTAMP // {timestamp || "2026.07.18 // 14:43:16"}</span>
           <span>BUILD VERSION // ALPHA-V16.2.10</span>
         </div>
 
@@ -377,8 +377,8 @@ export default function AdminLogin() {
 
         {/* Core Branding Title */}
         <div className="relative z-10 text-center">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[0.45em] uppercase font-sans text-white select-none">
-            U R A <span className="inline-block w-4 h-4 rounded-full bg-[#00d2ff] mx-1 align-baseline" /> S T R E E T
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[0.55em] uppercase font-sans text-white select-none">
+            U R A <span className="inline-block w-4 h-4 rounded-full bg-[#00a8e8] mx-2 align-baseline" /> S T R E E T
           </h2>
           <span className="block text-[8px] sm:text-[9.5px] uppercase tracking-[0.4em] text-neutral-400 mt-4 font-black font-display">
             HIGH-END TECHWEAR // R&D GATEWAY
@@ -416,7 +416,7 @@ export default function AdminLogin() {
           >
             {/* ACCESS TERMINAL TITLE HEADER */}
             <div className="mb-6 space-y-1">
-              <h3 className="font-display text-base uppercase tracking-[0.18em] font-extrabold text-white">
+              <h3 className="font-display text-base uppercase tracking-[0.2em] font-extrabold text-white">
                 ACCESS TERMINAL
               </h3>
               <p className="text-[8.5px] uppercase tracking-wider text-zinc-500 font-mono">
@@ -477,14 +477,14 @@ export default function AdminLogin() {
                     {role} Mode
                   </span>
                 </div>
-                {/* Thin, Minimal Full Border with Custom Transition */}
-                <div className={`relative border rounded bg-black/40 transition-all duration-300 ${theme.hoverBorderClass}`}>
+                {/* Clean Bottom Border Input (Saint Laurent Style) */}
+                <div className={`relative border-b border-zinc-800 transition-all duration-300 ${theme.hoverBorderClass}`}>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
                     placeholder="Enter email address"
-                    className="w-full bg-transparent border-0 outline-none py-3.5 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-700 focus:ring-0 focus:outline-none"
+                    className="w-full bg-transparent border-0 outline-none py-3 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-800 focus:ring-0 focus:outline-none"
                     aria-label="Secure ID Email"
                     required
                   />
@@ -498,21 +498,21 @@ export default function AdminLogin() {
                     [DECRYPT ACCESS KEY]
                   </label>
                 </div>
-                {/* Thin, Minimal Full Border with Custom Transition */}
-                <div className={`relative border rounded bg-black/40 transition-all duration-300 ${theme.hoverBorderClass}`}>
+                {/* Clean Bottom Border Input (Saint Laurent Style) */}
+                <div className={`relative border-b border-zinc-800 transition-all duration-300 ${theme.hoverBorderClass}`}>
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-transparent border-0 outline-none py-3.5 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-700 focus:ring-0 focus:outline-none"
+                    className="w-full bg-transparent border-0 outline-none py-3 px-4 text-xs font-semibold font-mono text-white placeholder:text-neutral-800 focus:ring-0 focus:outline-none pr-10"
                     aria-label="Decrypt Access Key"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4.5 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors z-10 focus:outline-none"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors z-10 focus:outline-none"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
@@ -527,7 +527,7 @@ export default function AdminLogin() {
                     type="checkbox"
                     checked={rememberDevice}
                     onChange={(e) => setRememberDevice(e.target.checked)}
-                    className={`w-3.5 h-3.5 rounded bg-black border border-zinc-800 transition-colors focus:ring-0 cursor-pointer ${theme.checkboxAccent}`}
+                    className={`w-3.5 h-3.5 rounded-none bg-black border border-zinc-800 transition-colors focus:ring-0 cursor-pointer ${theme.checkboxAccent}`}
                     aria-label="Remember Device checkbox"
                   />
                   <span>REMEMBER DEVICE</span>
@@ -537,7 +537,7 @@ export default function AdminLogin() {
                   className="hover:text-white transition-colors font-mono"
                   aria-label="Forgot access credentials query link"
                 >
-                  FORGOT ACCESS KEY?
+                  RESET SECURE ACCESS?
                 </a>
               </div>
 
@@ -573,14 +573,14 @@ export default function AdminLogin() {
                 <Monitor className="w-3 h-3 text-neutral-500" />
                 <span>TERMINAL DECRYPT LOG</span>
               </div>
-              <Wifi className="w-2.5 h-2.5 text-[#00d2ff] animate-pulse" />
+              <Wifi className="w-2.5 h-2.5 text-[#00a8e8] animate-pulse" />
             </div>
 
             {/* log streams */}
             <div className="flex-1 overflow-y-auto pr-1.5 scrollbar-none select-text space-y-1 font-mono">
               {terminalLogs.map((log, i) => (
                 <div key={i} className="flex gap-2 items-start leading-normal text-zinc-400">
-                  <span className="text-[#00d2ff] select-none">&gt;</span>
+                  <span className="text-[#00a8e8] select-none">&gt;</span>
                   <span className="whitespace-normal break-all">{log}</span>
                 </div>
               ))}
