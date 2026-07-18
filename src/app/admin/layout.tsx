@@ -1,24 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, LogOut, Menu, X, ArrowLeft } from "lucide-react";
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  LogOut,
+  Menu,
+  X,
+  ArrowLeft,
+  Warehouse,
+  PackageSearch,
+  UsersRound,
+  Settings,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profile, setProfile] = useState<{ name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function loadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("name, role")
+          .eq("id", user.id)
+          .single();
+        if (data) {
+          setProfile({ name: data.name, role: data.role });
+        }
+      }
+    }
+    loadProfile();
+  }, []);
 
   // If we are on the login page, don't show the sidebar/navbar shell
   if (pathname === "/admin/login") {
     return <div className="min-h-screen bg-black">{children}</div>;
   }
 
-  const navItems = [
+  // Set all nav items
+  const allNavItems = [
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
-    { name: "Products", href: "#", icon: ShoppingBag },
+    { name: "Inventory", href: "/admin/inventory", icon: Warehouse },
+    { name: "Products", href: "/admin/products", icon: PackageSearch },
+    { name: "Customers", href: "/admin/customers", icon: UsersRound },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
+
+  // Filter items if role is staff
+  const navItems = profile?.role === "staff"
+    ? allNavItems.filter(item => ["Orders", "Inventory"].includes(item.name))
+    : allNavItems;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex overflow-hidden relative">
@@ -72,11 +112,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-4 border-t border-neutral-900/60 bg-neutral-950/40">
           <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/[0.01] border border-white/5">
             <div className="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center border border-sky-500/20">
-              <span className="text-sky-400 font-extrabold text-xs">YT</span>
+              <span className="text-sky-400 font-extrabold text-xs">
+                {profile
+                  ? profile.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()
+                  : ".."}
+              </span>
             </div>
             <div>
-              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">Yuki T.</div>
-              <div className="text-[8px] uppercase tracking-widest text-neutral-500 font-bold">Store Admin</div>
+              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">
+                {profile ? profile.name : "System Loading..."}
+              </div>
+              <div className="text-[8px] uppercase tracking-widest text-neutral-500 font-bold">
+                {profile ? profile.role.replace("_", " ") : "Store operations"}
+              </div>
             </div>
           </div>
           <div className="flex gap-2">

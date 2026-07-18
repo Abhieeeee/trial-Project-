@@ -66,14 +66,26 @@ export async function proxy(request: NextRequest) {
 
     const role = profile?.role ?? "user";
 
-    // Super admin guard
-    if (pathname.startsWith("/super-admin") && role !== "super_admin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-    }
+    // 3. Role-based guards
+    // Staff role constraints: can only access orders and inventory in the admin suite
+    if (role === "staff") {
+      if (pathname.startsWith("/super-admin") || pathname.startsWith("/admin")) {
+        const allowedStaffPaths = ["/admin/orders", "/admin/inventory"];
+        const isAllowed = allowedStaffPaths.some(path => pathname.startsWith(path));
+        if (!isAllowed) {
+          return NextResponse.redirect(new URL("/admin/orders", request.url));
+        }
+      }
+    } else {
+      // Super admin guard for non-staff roles
+      if (pathname.startsWith("/super-admin") && role !== "super_admin") {
+        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      }
 
-    // Admin guard — super_admin also allowed
-    if (pathname.startsWith("/admin") && !["admin", "super_admin"].includes(role)) {
-      return NextResponse.redirect(new URL("/user-dashboard", request.url));
+      // Admin guard for non-staff roles — super_admin also allowed
+      if (pathname.startsWith("/admin") && !["admin", "super_admin"].includes(role)) {
+        return NextResponse.redirect(new URL("/user-dashboard", request.url));
+      }
     }
   }
 

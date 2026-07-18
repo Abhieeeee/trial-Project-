@@ -645,6 +645,7 @@ export default function AdminLogin() {
       setTimeout(() => {
         if (role === "super_admin") router.push("/super-admin/dashboard");
         else if (role === "admin") router.push("/admin/dashboard");
+        else if (role === "staff") router.push("/admin/orders");
         else router.push("/user-dashboard");
       }, 1000);
     } catch (err: unknown) {
