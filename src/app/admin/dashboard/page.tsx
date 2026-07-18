@@ -108,14 +108,14 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Metrics Grid */}
-      <section className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mb-8 border border-neutral-800 rounded-xl overflow-hidden bg-black/60 backdrop-blur-md grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y xl:divide-y-0 xl:divide-x divide-neutral-800">
         {metrics.map((metric) => (
-          <div key={metric.title} className="rounded-lg border border-neutral-800 bg-neutral-900 p-5">
-            <div className="mb-5 flex items-center justify-between">
-              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-neutral-500">{metric.title}</p>
-              <metric.icon className="h-4 w-4 text-brand-sky" />
+          <div key={metric.title} className="p-6 hover:bg-neutral-900/10 transition-colors duration-200 group">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-neutral-500 group-hover:text-neutral-400 transition-colors">{metric.title}</p>
+              <metric.icon className="h-4 w-4 text-neutral-600 group-hover:text-brand-sky transition-colors" />
             </div>
-            <p className="text-2xl font-bold text-white">{metric.value}</p>
+            <p className="text-2xl font-bold tracking-tight text-white">{metric.value}</p>
             <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em] text-neutral-400">{metric.change}</p>
           </div>
         ))}

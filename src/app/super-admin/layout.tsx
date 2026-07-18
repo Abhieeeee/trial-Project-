@@ -3,7 +3,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Users, Settings, LogOut, Menu, X, ShieldAlert, ArrowLeft } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  ShoppingBag, 
+  Users, 
+  Settings, 
+  LogOut, 
+  Menu, 
+  X, 
+  ShieldAlert, 
+  ArrowLeft,
+  Banknote,
+  Activity
+} from "lucide-react";
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -11,8 +23,10 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
 
   const navItems = [
     { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
-    { name: "Orders", href: "#", icon: ShoppingBag },
-    { name: "Staff & Users", href: "#", icon: Users },
+    { name: "Orders", href: "/super-admin/orders", icon: ShoppingBag },
+    { name: "Finance / Sales", href: "/super-admin/sales", icon: Banknote },
+    { name: "Staff / Admins", href: "/super-admin/admins", icon: Users },
+    { name: "Audit Trail", href: "/super-admin/audit", icon: Activity },
     { name: "System Settings", href: "/super-admin/settings", icon: Settings },
   ];
 

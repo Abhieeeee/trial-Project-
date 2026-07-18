@@ -26,7 +26,7 @@ export default function Header() {
   return (
     <>
       <header 
-        className="fixed top-0 left-0 w-full z-40 transition-all duration-300 py-5"
+        className="fixed top-0 left-0 w-full z-40 transition-all duration-220 py-5"
         style={{
           backgroundColor: isScrolled ? "rgba(5, 5, 5, 0.85)" : "transparent",
           backdropFilter: isScrolled ? "blur(20px)" : "none",
@@ -44,22 +44,22 @@ export default function Header() {
             <span className="text-neutral-800">|</span>
             <span className="text-neutral-400">Paris Edition</span>
           </div>
-
+ 
           {/* Wordmark AURA.STREET */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center"
           >
             <Link
               href="/"
-              className="text-base md:text-lg font-bold tracking-[0.4em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-300 text-white"
+              className="text-base md:text-lg font-bold tracking-[0.4em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-220 text-white"
             >
               AURA<span className="text-[#00D2FF]">.</span>STREET
             </Link>
           </motion.div>
-
+ 
           {/* Dynamic Laser Nav Links */}
           <nav className="hidden md:flex items-center">
             <div className="flex items-center gap-8 py-2 px-8 rounded-full border border-transparent">
@@ -67,12 +67,12 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative text-[9px] uppercase tracking-[0.3em] font-medium text-neutral-400 hover:text-white transition-colors duration-300 group py-1"
+                  className="relative text-[9px] uppercase tracking-[0.3em] font-medium text-neutral-400 hover:text-white transition-colors duration-220 group py-1"
                 >
                   {link.label}
                   {/* Glowing Laser Underline effect */}
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] blur-[4px] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left opacity-60" />
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-220 origin-left" />
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] blur-[4px] scale-x-0 group-hover:scale-x-100 transition-transform duration-220 origin-left opacity-60" />
                 </Link>
               ))}
             </div>

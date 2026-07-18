@@ -8,11 +8,23 @@
   --font-sans: var(--font-sans), Arial, Helvetica, sans-serif;
   --font-mono: var(--font-mono), "Courier New", monospace;
   --font-display: var(--font-orbitron), Arial, Helvetica, sans-serif;
+  --spacing-layout-padding: clamp(1.5rem, 4vw, 4rem);
+  --animate-mechanical: 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root {
   --background: #000000;
   --foreground: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * {

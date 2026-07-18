@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Cpu, Sparkles, Terminal } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -16,6 +18,8 @@ const suggestedPrompts = [
 ];
 
 export default function AiAssistant() {
+  const pathname = usePathname();
+  const [profile, setProfile] = useState<{ name: string; role: string } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -27,6 +31,24 @@ export default function AiAssistant() {
   const [loading, setLoading] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function loadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("name, role")
+          .eq("id", user.id)
+          .single();
+        if (data) {
+          setProfile({ name: data.name, role: data.role });
+        }
+      }
+    }
+    loadProfile();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,6 +72,8 @@ export default function AiAssistant() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [...messages.slice(1), userMessage], // skip the initial greeting
+          pathname,
+          profile,
         }),
       });
 

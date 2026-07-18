@@ -15,14 +15,14 @@ export default function StoreProductCard({ product }: { product: Product }) {
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            className="object-cover group-hover:scale-105 transition-transform duration-220"
           />
           {product.badge && (
             <span className="absolute top-4 left-4 z-20 rounded-full border border-brand-sky/30 bg-black/70 px-3 py-1 text-[8px] uppercase tracking-[0.2em] text-brand-sky">
               {product.badge}
             </span>
           )}
-          <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 z-10">
+          <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-220 flex flex-col items-center justify-center gap-4 z-10">
             <span className="px-6 py-3 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-bold rounded hover:bg-brand-sky transition-colors min-w-[150px] flex items-center justify-center gap-2">
               <Eye className="w-3.5 h-3.5" />
               Quick View
