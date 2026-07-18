@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, ArrowRight, AlertCircle, ShieldAlert, Cpu, Terminal, KeyRound, Monitor, HardDrive, Wifi, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Orbitron, Space_Grotesk } from "next/font/google";
+import { Orbitron, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { getUserRole } from "@/app/actions/auth";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +23,12 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "700"],
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "700"],
+});
+
 type Role = "superadmin" | "admin" | "user";
 
 export default function AdminLogin() {
@@ -37,15 +43,15 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const [envStatus, setEnvStatus] = useState<string>("Verifying connectivity...");
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
-    "SYSINIT // DETECTING SYSTEM TOPOLOGY",
-    "MATHEMATICAL WAVEENGINE // COMPILING...",
-    "DATABASE PROTOCOL // SYNCHRONIZING NODE",
-    "SECURE ROUTE // GATEWAY INITIALIZED"
+    "SYSINIT // INITIALIZING SYSTEM DIAGNOSTICS",
+    "MATHEMATICAL ENGINE // PROJECTING 3D VECTOR GRID",
+    "DB ROUTE // SYNCHRONIZING SECURE TUNNELS",
+    "AWAITING DECRYPTION KEY HANDSHAKE..."
   ]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Normalized mouse coordinates: target values mapping window center to (-0.5, 0.5)
+  // Normalized mouse coordinates relative to screen center
   const targetMouse = useRef({ x: 0, y: 0 });
   const currentMouse = useRef({ x: 0, y: 0 });
 
@@ -58,7 +64,7 @@ export default function AdminLogin() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // 3D Dotted Canvas Particle System driven by vanilla requestAnimationFrame
+  // requestAnimationFrame Canvas grid animation loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -78,84 +84,78 @@ export default function AdminLogin() {
     };
     window.addEventListener("resize", handleResize);
 
-    // Color definitions corresponding to the active role
     const getParticleColor = () => {
       if (role === "superadmin") return "#ef4444"; // Crimson Red
       if (role === "admin") return "#00d2ff"; // Sky Blue
       return "#ffffff"; // White
     };
 
-    // Strict 3D Coordinate Grid configuration
-    const cols = 28;
-    const rows = 28;
-    const spacing = 38;
-    const focalLength = 320;
+    const cols = 26;
+    const rows = 26;
+    const spacing = 36;
+    const focalLength = 300;
     let time = 0;
 
     const render = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
       ctx.fillRect(0, 0, width, height);
 
-      // Lerp mouse coordinates for ultra-smooth inertia tracking
+      // Lerp mouse coordinate values to create smooth inertia movement
       currentMouse.current.x += (targetMouse.current.x - currentMouse.current.x) * 0.08;
       currentMouse.current.y += (targetMouse.current.y - currentMouse.current.y) * 0.08;
 
       time += 0.035;
 
       const pColor = getParticleColor();
-      const rotY = currentMouse.current.x * 0.6; 
-      const rotX = currentMouse.current.y * 0.6; 
+      const rotY = currentMouse.current.x * 0.55;
+      const rotX = currentMouse.current.y * 0.55;
 
-      // Rotation matrix helpers
       const cosY = Math.cos(rotY);
       const sinY = Math.sin(rotY);
       const cosX = Math.cos(rotX);
       const sinX = Math.sin(rotX);
 
-      // Interactive cursor projection variables in grid coordinate scale
-      const mouseGridX = currentMouse.current.x * cols * spacing * 1.5;
-      const mouseGridZ = currentMouse.current.y * rows * spacing * 1.5;
+      // Coordinate offset for mouse projection
+      const mouseGridX = currentMouse.current.x * cols * spacing * 1.4;
+      const mouseGridZ = currentMouse.current.y * rows * spacing * 1.4;
 
       for (let c = 0; c < cols; c++) {
         for (let r = 0; r < rows; r++) {
-          // Calculate raw grid coordinates centered around (0,0)
           let x3d = (c - cols / 2) * spacing;
           let z3d = (r - rows / 2) * spacing;
 
-          // Rolling sine wave dynamics
-          let y3d = Math.sin(x3d * 0.015 + time) * 22 + Math.cos(z3d * 0.015 + time) * 22;
+          // Rolling sine/cos waves
+          let y3d = Math.sin(x3d * 0.018 + time) * 20 + Math.cos(z3d * 0.018 + time) * 20;
 
-          // Interactive ripple repulsion distortion logic
+          // Mouse warp distortion calculations
           const dx = x3d - mouseGridX;
           const dz = z3d - mouseGridZ;
           const dist = Math.sqrt(dx * dx + dz * dz);
-          const warpRadius = 140;
+          const warpRadius = 130;
 
           if (dist < warpRadius) {
             const factor = (1 - dist / warpRadius);
-            // Push elevation and displace coordinates slightly away from cursor
-            y3d -= factor * 50; 
-            x3d += (dx / (dist || 1)) * factor * 25;
-            z3d += (dz / (dist || 1)) * factor * 25;
+            y3d -= factor * 45;
+            x3d += (dx / (dist || 1)) * factor * 20;
+            z3d += (dz / (dist || 1)) * factor * 20;
           }
 
-          // Apply 3D Y-Axis Rotation
+          // Y rotation matrix
           let xRotY = x3d * cosY - z3d * sinY;
           let zRotY = x3d * sinY + z3d * cosY;
 
-          // Apply 3D X-Axis Rotation
+          // X rotation matrix
           let yRotX = y3d * cosX - zRotY * sinX;
           let zRotX = y3d * sinX + zRotY * cosX;
 
-          // Project to 2D screen coordinates via perspective projection
-          const perspectiveFactor = focalLength / (zRotX + 500);
+          // 3D perspective projection
+          const perspectiveFactor = focalLength / (zRotX + 450);
           const x2d = width / 2 + xRotY * perspectiveFactor;
           const y2d = height / 2 + yRotX * perspectiveFactor;
 
-          // Render coordinate dot
           if (x2d >= 0 && x2d <= width && y2d >= 0 && y2d <= height) {
-            const size = Math.max(0.6, perspectiveFactor * 1.8);
-            const alpha = Math.min(1.0, Math.max(0.15, (500 - zRotX) / 800));
+            const size = Math.max(0.7, perspectiveFactor * 1.6);
+            const alpha = Math.min(1.0, Math.max(0.18, (450 - zRotX) / 750));
 
             ctx.beginPath();
             ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
@@ -182,11 +182,11 @@ export default function AdminLogin() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!url || !anon || url.includes("placeholder-url")) {
-      setEnvStatus("BUILD ERROR: Gateway credentials missing!");
-      addLog("GATEWAY STATUS // ERROR: INVALID INLINE KEYS");
+      setEnvStatus("BUILD ERROR: Connection variables missing!");
+      addLog("GATEWAY STATUS // ERROR: INVALID CREDENTIAL PATHS");
     } else {
       setEnvStatus(`DATALINK ONLINE: ${url.replace("https://", "").substring(0, 20)}...`);
-      addLog("GATEWAY STATUS // SECURE DATA SHIELD ESTABLISHED");
+      addLog("GATEWAY STATUS // DATA ROUTING VERIFIED SECURE");
     }
   }, []);
 
@@ -195,13 +195,13 @@ export default function AdminLogin() {
   };
 
   useEffect(() => {
-    addLog(`DOTTED WAVE RELOAD // ENCRYPT MODE: [${role.toUpperCase()}]`);
+    addLog(`SECURITY TUNNEL COMPILING // LEVEL: [${role.toUpperCase()}]`);
   }, [role]);
 
   const handleEmailChange = (val: string) => {
     setEmail(val);
     if (val.length > 0 && val.length % 5 === 0) {
-      addLog(`INPUT ENCRYPTION // DATA STREAM BUFFERED`);
+      addLog(`DATA TRANSIT // INPUT STRINGS ENCRYPTED`);
     }
   };
 
@@ -209,43 +209,43 @@ export default function AdminLogin() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    addLog("DISPATCHING DECRYPT KEYS TO SECURE SERVER...");
+    addLog("DISPATCHING ENCRYPTED CREDENTIAL KEYS...");
 
     try {
       const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
       if (authError) {
         setError(authError.message);
-        addLog(`KEY DISMISS // FAILURE: ${authError.message.toUpperCase()}`);
+        addLog(`ACCESS DENIED // STATUS: ${authError.message.toUpperCase()}`);
         setLoading(false);
         return;
       }
 
       if (!data.user) {
         setError("Authentication failed. Please try again.");
-        addLog("KEY DISMISS // NODE FAILED TO COMPREHEND");
+        addLog("ACCESS DENIED // STATUS: DATA BUFFER RESOLVED TO NULL");
         setLoading(false);
         return;
       }
 
-      addLog("GATEWAY ACCESS APPROVED // RESOLVING IDENTITY...");
+      addLog("ACCESS KEY APPROVED // MATCHING USER ACCESS PERMISSIONS...");
       const userRole = await getUserRole(data.user.id);
-      addLog(`RESOLVED ACCORDING ROLE: ${userRole.toUpperCase()}`);
+      addLog(`ACCESS PRIVILEGE VERIFIED // GROUP: ${userRole.toUpperCase()}`);
 
       if (userRole === "super_admin") {
-        addLog("SYSTEM REDIRECT // LAUNCHING SUPER ADMIN PORTAL...");
+        addLog("ROUTING PROTOCOL // DIRECTING TO SUPER ADMIN DASHBOARD...");
         setTimeout(() => router.push("/super-admin/dashboard"), 800);
       } else if (userRole === "admin") {
-        addLog("SYSTEM REDIRECT // LAUNCHING ADMIN CLOUD...");
+        addLog("ROUTING PROTOCOL // DIRECTING TO ADMIN PANEL...");
         setTimeout(() => router.push("/admin/dashboard"), 800);
       } else {
-        addLog("USER REDIRECT // ACCESSING STYLES BOARD...");
+        addLog("ROUTING PROTOCOL // DIRECTING TO CLIENT ACCOUNT...");
         setTimeout(() => router.push("/user-dashboard"), 800);
       }
     } catch (err: any) {
       const errMsg = err?.message || "A network error occurred.";
       setError(errMsg);
-      addLog(`GATEWAY NETWORK FAULT // PROTOCOL SHUTDOWN: ${errMsg.toUpperCase()}`);
+      addLog(`GATEWAY NETWORK FAULT // DISCONNECTING: ${errMsg.toUpperCase()}`);
       setLoading(false);
     }
   };
@@ -254,42 +254,36 @@ export default function AdminLogin() {
     switch (role) {
       case "superadmin":
         return {
-          colorClass: "text-red-500",
-          glowClass: "bg-red-500/10",
-          borderClass: "border-red-500/30",
-          hoverBorderClass: "focus:border-red-500 border-red-500/60 shadow-[0_0_25px_rgba(239,68,68,0.25)]",
-          btnClass: "bg-red-500 text-white hover:bg-red-600 shadow-[0_0_40px_rgba(239,68,68,0.45)]",
-          badgeClass: "bg-red-500/10 text-red-400 border-red-500/30",
+          colorClass: "text-[#ef4444]",
+          borderClass: "border-[#ef4444]/30",
+          hoverBorderClass: "focus:border-[#ef4444] border-[#ef4444]/60 shadow-[0_0_20px_rgba(239,68,68,0.2)]",
+          btnClass: "bg-[#ef4444] text-white hover:bg-red-600 shadow-[0_0_40px_rgba(239,68,68,0.45)]",
+          badgeClass: "bg-[#ef4444]/10 text-red-400 border-[#ef4444]/30",
           bgGradient: "from-red-950/20 via-black to-black",
-          highlightClass: "bg-red-500/15 text-red-400 border-red-500/30",
+          highlightClass: "bg-[#ef4444]/15 text-red-400 border-[#ef4444]/30",
           hudColor: "rgba(239, 68, 68, 0.2)",
-          modelAccent: "rgba(239, 68, 68, 0.3)",
         };
       case "admin":
         return {
-          colorClass: "text-sky-400",
-          glowClass: "bg-sky-500/10",
-          borderClass: "border-sky-500/30",
-          hoverBorderClass: "focus:border-sky-500 border-sky-500/60 shadow-[0_0_25px_rgba(0,210,255,0.3)]",
-          btnClass: "bg-sky-500 text-black hover:bg-sky-400 shadow-[0_0_40px_rgba(0,210,255,0.55)]",
-          badgeClass: "bg-sky-500/10 text-sky-300 border-sky-500/30",
+          colorClass: "text-[#00d2ff]",
+          borderClass: "border-[#00d2ff]/30",
+          hoverBorderClass: "focus:border-[#00d2ff] border-[#00d2ff]/60 shadow-[0_0_20px_rgba(0,210,255,0.25)]",
+          btnClass: "bg-[#00d2ff] text-black hover:bg-[#33dfff] shadow-[0_0_40px_rgba(0,210,255,0.55)]",
+          badgeClass: "bg-[#00d2ff]/10 text-sky-300 border-[#00d2ff]/30",
           bgGradient: "from-sky-950/20 via-black to-black",
-          highlightClass: "bg-sky-500/15 text-sky-300 border-sky-500/30",
+          highlightClass: "bg-[#00d2ff]/15 text-sky-300 border-[#00d2ff]/30",
           hudColor: "rgba(0, 210, 255, 0.2)",
-          modelAccent: "rgba(0, 210, 255, 0.3)",
         };
       default:
         return {
           colorClass: "text-white",
-          glowClass: "bg-white/10",
           borderClass: "border-white/20",
-          hoverBorderClass: "focus:border-white border-white/50 shadow-[0_0_25px_rgba(255,255,255,0.2)]",
+          hoverBorderClass: "focus:border-white border-white/50 shadow-[0_0_20px_rgba(255,255,255,0.15)]",
           btnClass: "bg-white text-black hover:bg-neutral-200 shadow-[0_0_40px_rgba(255,255,255,0.25)]",
           badgeClass: "bg-white/5 text-neutral-300 border-white/20",
           bgGradient: "from-neutral-900/40 via-black to-black",
           highlightClass: "bg-white/15 text-white border-white/30",
           hudColor: "rgba(255, 255, 255, 0.15)",
-          modelAccent: "rgba(255, 255, 255, 0.2)",
         };
     }
   };
@@ -297,9 +291,9 @@ export default function AdminLogin() {
   const theme = getRoleTheme();
 
   return (
-    <div className={`min-h-screen w-full bg-black text-white flex flex-col lg:flex-row relative overflow-hidden select-none ${orbitron.variable} ${spaceGrotesk.variable} font-sans`}>
+    <div className={`min-h-screen w-full flex flex-col lg:flex-row bg-black text-white select-none overflow-hidden ${orbitron.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans`}>
       
-      {/* LEFT COLUMN: Luxury Streetwear Lookbook Branding Panel */}
+      {/* LEFT COLUMN (60% width on desktop) */}
       <div className="relative w-full lg:w-[60%] h-[35vh] lg:h-screen flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10 bg-black">
         {/* Immersive Brand Artwork background */}
         <div className="absolute inset-0 z-0">
@@ -314,71 +308,71 @@ export default function AdminLogin() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         </div>
 
-        {/* Low opacity digital metadata HUD parameters */}
-        <div className="absolute bottom-6 left-8 z-10 hidden sm:flex flex-col gap-1.5 text-[9px] uppercase tracking-[0.3em] text-neutral-500 font-bold font-mono">
+        {/* Diagnostic Metadata Base Logs (Bottom Left) */}
+        <div className="absolute bottom-8 left-10 z-10 hidden sm:flex flex-col gap-2 font-mono tracking-widest text-[10px] uppercase text-zinc-400 leading-relaxed select-text">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-[1.5px] bg-brand-sky animate-ping" />
-            <span className="text-white">COORDINATES // 48.8566 N, 2.3522 E</span>
+            <span className="w-2.5 h-[1.5px] bg-[#00d2ff] animate-ping" />
+            <span className="text-white">SYS NODE // 48.8566 N, 2.3522 E</span>
           </div>
-          <span>GRID PROTOCOL V4 // FABRIC SOURCE OSAKA, JP</span>
-          <span>ESTABLISHED DESIGN STUDIO // PARIS LAB DECRYPT</span>
+          <span>GRID PROTOCOL ACTIVATED // FABRIC: OSAKA JP</span>
+          <span>ESTABLISHED DESIGN STUDIO // PARIS ATELIER DECRYPT</span>
         </div>
 
-        {/* Techwear vector Crosshair */}
-        <div className="absolute z-10 pointer-events-none text-neutral-600 opacity-60">
-          <div className="w-16 h-16 relative flex items-center justify-center">
-            <div className="w-6 h-[1px] bg-current" />
-            <div className="h-6 w-[1px] bg-current absolute" />
-            <div className="w-10 h-10 rounded-full border border-current opacity-30 absolute" />
+        {/* Vector HUD targeting crosshair */}
+        <div className="absolute z-10 pointer-events-none text-neutral-700 opacity-60">
+          <div className="w-20 h-20 relative flex items-center justify-center">
+            <div className="w-8 h-[1px] bg-current" />
+            <div className="h-8 w-[1px] bg-current absolute" />
+            <div className="w-12 h-12 rounded-full border border-current opacity-30 absolute animate-pulse" />
           </div>
         </div>
 
-        {/* Giant Outlined Logo Header */}
+        {/* Symmetrical Brand Title */}
         <div className="relative z-10 text-center">
-          <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-[0.55em] uppercase font-display text-white select-none drop-shadow-3xl">
-            AURA<span className="text-brand-sky">.</span>STREET
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-[0.45em] uppercase font-display text-white select-none">
+            U R A<span className="text-[#00d2ff]">.</span>S T R E E T
           </h2>
-          <span className="block text-[8px] sm:text-[9.5px] uppercase tracking-[0.45em] text-neutral-400 mt-4 font-black">
+          <span className="block text-[8px] sm:text-[9.5px] uppercase tracking-[0.4em] text-neutral-400 mt-4 font-black font-display">
             HIGH-END TECHWEAR // R&D GATEWAY
           </span>
         </div>
       </div>
 
-      {/* RIGHT COLUMN: Interactive Login Container (With Embedded Wave Canvas) */}
-      <div className="relative w-full lg:w-[40%] h-[65vh] lg:h-screen flex items-center justify-center p-6 bg-black relative overflow-hidden">
+      {/* RIGHT COLUMN (40% width on desktop) */}
+      <div className="relative w-full lg:w-[40%] h-[65vh] lg:h-screen flex items-center justify-center p-6 bg-black overflow-hidden border-t lg:border-t-0 border-white/5">
         
-        {/* Dotted 3D perspective Canvas Particle system */}
+        {/* Interactive 3D Dotted Canvas Grid underlying the layout */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
         />
 
-        {/* Centered flat glassmorphic interface block */}
-        <div className="w-full max-w-sm z-10 flex flex-col justify-between h-[90%] max-h-[580px]">
+        {/* Centered flat glassmorphic control dock wrapper */}
+        <div className="w-full max-w-sm z-10 flex flex-col justify-between h-[95%] max-h-[580px]">
           
-          {/* Header Bar */}
-          <div className="flex items-center justify-between px-6 py-4 bg-neutral-950/95 border border-white/10 rounded-t-[18px] backdrop-blur-md font-display">
-            <Link href="/" className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-all font-black">
+          {/* Top navigation utility header */}
+          <div className="flex items-center justify-between px-6 py-4.5 bg-neutral-950/95 border border-white/10 rounded-t-[18px] backdrop-blur-md font-display">
+            <Link href="/" className="text-[9.5px] uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-all font-black">
               &lt; HOME
             </Link>
-            <div className="flex items-center gap-2 text-[8px] sm:text-[9px] uppercase tracking-widest font-black text-neutral-500">
+            <div className="flex items-center gap-2 text-[8.5px] uppercase tracking-widest font-black text-neutral-500">
               <Cpu className={`w-3.5 h-3.5 ${theme.colorClass} animate-pulse`} />
               <span>ACCESS PROTOCOL</span>
             </div>
           </div>
 
-          {/* Secure Form Body Container */}
+          {/* Secure Login Credentials Block */}
           <motion.div
             animate={{ borderColor: theme.hudColor }}
             className="border-x border-b bg-neutral-950/70 p-6 sm:p-8 backdrop-blur-md relative"
           >
-            {/* L-bracket details */}
+            {/* Symmetrical bracket design details */}
             <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20" />
             <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-white/20" />
             <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white/20" />
             <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20" />
 
-            {/* Toggle Selector tabs */}
+            {/* Symmetrical Role Toggle Selector Row */}
             <div className="flex bg-black/80 p-1.5 rounded-lg border border-white/5 mb-6 relative font-display">
               {(["user", "admin", "superadmin"] as Role[]).map((r) => {
                 const isActive = role === r;
@@ -390,7 +384,7 @@ export default function AdminLogin() {
                       setRole(r);
                       setError(null);
                     }}
-                    className="flex-1 py-2 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-black rounded transition-all duration-300 relative z-10 text-neutral-500 hover:text-white"
+                    className="flex-1 py-2.5 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-black rounded transition-all duration-300 relative z-10 text-neutral-500 hover:text-white"
                   >
                     {isActive && (
                       <motion.div 
@@ -405,14 +399,14 @@ export default function AdminLogin() {
               })}
             </div>
 
-            {/* Error Notification Alert */}
+            {/* Error Message Panel */}
             <AnimatePresence>
               {error && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded px-4 py-3 mb-5 overflow-hidden font-display"
+                  className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded px-4 py-3.5 mb-5 overflow-hidden font-display"
                 >
                   <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
@@ -423,13 +417,13 @@ export default function AdminLogin() {
               )}
             </AnimatePresence>
 
-            {/* Credential Inputs Form */}
+            {/* Login Inputs Form */}
             <form onSubmit={handleLogin} className="space-y-5">
               
-              {/* Secure ID Email */}
+              {/* [SECURE ID EMAIL] */}
               <div className="space-y-2">
                 <div className="flex justify-between items-baseline">
-                  <label className="text-[8px] uppercase tracking-[0.25em] font-black text-neutral-500 font-display">
+                  <label className="text-[8px] uppercase tracking-[0.25em] font-black text-zinc-500 font-display">
                     [SECURE ID EMAIL]
                   </label>
                   <span className={`text-[7px] uppercase tracking-widest font-black px-2 py-0.5 border rounded font-display transition-colors duration-500 ${theme.badgeClass}`}>
@@ -453,10 +447,10 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              {/* Password Secure ID */}
+              {/* [DECRYPT ACCESS KEY] */}
               <div className="space-y-2">
                 <div className="flex justify-between items-baseline">
-                  <label className="text-[8px] uppercase tracking-[0.25em] font-black text-neutral-500 font-display">
+                  <label className="text-[8px] uppercase tracking-[0.25em] font-black text-zinc-500 font-display">
                     [DECRYPT ACCESS KEY]
                   </label>
                   <a href="#" className="text-[7.5px] text-neutral-600 hover:text-white uppercase tracking-[0.2em] font-black transition-colors font-display">Forgot?</a>
@@ -480,7 +474,7 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              {/* Gateway link connection diagnostics */}
+              {/* Secure Link Status Info */}
               <div className={`text-[7.5px] uppercase tracking-[0.15em] font-black border py-2 px-3 rounded text-center select-text transition-colors duration-500 ${
                 envStatus.includes("ERROR") 
                   ? "bg-red-500/10 border-red-500/30 text-red-400" 
@@ -489,7 +483,7 @@ export default function AdminLogin() {
                 {envStatus}
               </div>
 
-              {/* Authorize Submit Button */}
+              {/* AUTHORIZE ACCESS Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -507,22 +501,22 @@ export default function AdminLogin() {
             </form>
           </motion.div>
 
-          {/* Connected Live Decrypt Logs Panel */}
-          <div className="border-x border-b border-white/10 rounded-b-[18px] bg-neutral-950/80 p-4.5 font-mono flex flex-col gap-3 shadow-xl">
+          {/* Terminal Decrypt Logger Panel */}
+          <div className="bg-zinc-950/90 border border-zinc-900 rounded-b-[18px] p-4.5 font-mono text-[9px] flex flex-col gap-3 shadow-xl">
             <div className="flex items-center justify-between pb-2 border-b border-white/5">
               <div className="flex items-center gap-2 text-[8px] uppercase tracking-widest font-black text-neutral-400">
                 <Monitor className="w-3 h-3 text-neutral-500" />
-                <span>DECRYPT LOGGER</span>
+                <span>TERMINAL DECRYPT LOG</span>
               </div>
-              <Wifi className="w-2.5 h-2.5 text-brand-sky animate-pulse" />
+              <Wifi className="w-2.5 h-2.5 text-[#00d2ff] animate-pulse" />
             </div>
 
-            {/* log thread */}
-            <div className="space-y-1.5 text-[7.5px] uppercase tracking-widest font-semibold text-neutral-500 max-h-[70px] overflow-y-auto pr-1.5 scrollbar-none">
+            {/* log streams */}
+            <div className="space-y-1.5 text-[7.5px] uppercase tracking-widest font-semibold text-neutral-500 max-h-[70px] overflow-y-auto pr-1.5 scrollbar-none select-text">
               {terminalLogs.map((log, i) => (
                 <div key={i} className="flex gap-2 items-start leading-relaxed pl-1">
                   <span className="text-brand-sky select-none">&gt;</span>
-                  <span className="whitespace-normal break-all select-text">{log}</span>
+                  <span className="whitespace-normal break-all">{log}</span>
                 </div>
               ))}
             </div>
@@ -532,11 +526,11 @@ export default function AdminLogin() {
 
       </div>
 
-      {/* Multi-Factor Warning overlay footer */}
+      {/* Restricted warning footer */}
       <div className="absolute bottom-4 right-6 text-right hidden sm:flex items-center justify-end gap-2 text-neutral-600 font-display z-10">
         <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
         <p className="text-[7.5px] uppercase tracking-[0.25em] font-black">
-          RESTRICTED PORTAL SYSTEM ACTIVE
+          RESTRICTED PROTOCOLS ACTIVE // SECURE SYSTEM ONLY
         </p>
       </div>
     </div>
