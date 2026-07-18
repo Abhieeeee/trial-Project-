@@ -25,65 +25,79 @@ export default function Header() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full z-40 transition-all duration-500 ${isScrolled ? "py-4" : "py-6"}`}>
+      <header 
+        className="fixed top-0 left-0 w-full z-40 transition-all duration-300 py-5"
+        style={{
+          backgroundColor: isScrolled ? "rgba(5, 5, 5, 0.85)" : "transparent",
+          backdropFilter: isScrolled ? "blur(20px)" : "none",
+          borderBottom: isScrolled ? "1px solid rgba(232, 228, 223, 0.05)" : "1px solid transparent",
+        }}
+      >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          <div className="hidden lg:flex items-center gap-6 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-400">
-            <button className="flex items-center gap-2 hover:text-white transition-colors" data-magnetic>
-              <Globe className="w-3.5 h-3.5" />
+          
+          {/* Top-Left Localization */}
+          <div className="hidden lg:flex items-center gap-5 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-500">
+            <button className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer" data-magnetic>
+              <Globe className="w-3 h-3 text-[#00D2FF]" />
               <span>EN // EUR</span>
             </button>
-            <span className="text-neutral-700">|</span>
-            <span className="text-brand-sky text-glow-sky">Paris Edition</span>
+            <span className="text-neutral-800">|</span>
+            <span className="text-neutral-400">Paris Edition</span>
           </div>
 
+          {/* Wordmark AURA.STREET */}
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center"
           >
             <Link
               href="/"
-              className="text-lg md:text-xl font-bold tracking-[0.35em] uppercase font-display select-none hover:text-brand-sky transition-colors duration-300"
+              className="text-base md:text-lg font-bold tracking-[0.4em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-300 text-white"
             >
-              AURA<span className="text-brand-sky">.</span>STREET
+              AURA<span className="text-[#00D2FF]">.</span>STREET
             </Link>
           </motion.div>
 
-          <nav className="hidden md:flex items-center gap-1">
-            <div className={`flex items-center gap-7 px-6 py-2.5 rounded-full transition-all duration-500 ${isScrolled ? "glass-panel-glow border-neutral-900 px-8" : "border border-transparent"}`}>
+          {/* Dynamic Laser Nav Links */}
+          <nav className="hidden md:flex items-center">
+            <div className="flex items-center gap-8 py-2 px-8 rounded-full border border-transparent">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative text-[10px] uppercase tracking-[0.25em] font-medium text-neutral-400 hover:text-white transition-colors duration-300 group py-1"
+                  className="relative text-[9px] uppercase tracking-[0.3em] font-medium text-neutral-400 hover:text-white transition-colors duration-300 group py-1"
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-brand-sky scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                  {/* Glowing Laser Underline effect */}
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] blur-[4px] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left opacity-60" />
                 </Link>
               ))}
             </div>
           </nav>
 
-          <div className="flex items-center gap-3 md:gap-5">
-            <Link className="p-2 text-neutral-400 hover:text-white transition-colors" aria-label="Search products" href="/shop" data-magnetic>
-              <Search className="w-4 h-4 md:w-4.5 md:h-4.5" />
+          {/* Action Icons */}
+          <div className="flex items-center gap-2 md:gap-4">
+            <Link className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Search products" href="/shop" data-magnetic>
+              <Search className="w-4 h-4" />
             </Link>
-            <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors" aria-label="Account" href="/account" data-magnetic>
-              <UserRound className="w-4 h-4 md:w-4.5 md:h-4.5" />
+            <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
+              <UserRound className="w-4 h-4" />
             </Link>
             <Link
-              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-2"
+              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1.5 cursor-pointer"
               aria-label="Shopping bag"
               href="/cart"
               data-magnetic
             >
-              <ShoppingBag className="w-4 h-4 md:w-4.5 md:h-4.5" />
-              <span className="absolute -top-0.5 -right-0.5 md:top-1 md:right-1 w-1.5 h-1.5 bg-brand-sky rounded-full text-glow-sky" />
-              <span className="hidden lg:inline text-[9px] uppercase tracking-[0.2em] font-semibold text-neutral-400">(0)</span>
+              <ShoppingBag className="w-4 h-4" />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#00D2FF] rounded-full shadow-[0_0_8px_#00D2FF]" />
+              <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em] font-semibold text-neutral-400">(0)</span>
             </Link>
             <button
-              className="md:hidden p-2 text-neutral-400 hover:text-white transition-colors"
+              className="md:hidden p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
             >
@@ -93,6 +107,7 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -100,13 +115,13 @@ export default function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-50 bg-black/98 flex flex-col justify-between p-8"
+            className="fixed inset-0 z-50 bg-[#050505]/98 flex flex-col justify-between p-8"
           >
             <div className="flex items-center justify-between">
-              <span className="text-base font-bold tracking-[0.3em] uppercase font-display">
-                AURA<span className="text-brand-sky">.</span>STREET
+              <span className="text-base font-bold tracking-[0.4em] uppercase font-display text-white">
+                AURA<span className="text-[#00D2FF]">.</span>STREET
               </span>
-              <button className="p-2 text-neutral-400 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
+              <button className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -116,13 +131,13 @@ export default function Header() {
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ delay: idx * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   key={link.href}
                 >
                   <Link
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-3xl font-bold uppercase tracking-[0.15em] font-display hover:text-brand-sky transition-colors text-white block"
+                    className="text-2xl font-bold uppercase tracking-[0.2em] font-display hover:text-[#00D2FF] transition-colors text-white block"
                   >
                     {link.label}
                   </Link>
@@ -133,7 +148,7 @@ export default function Header() {
             <div className="flex flex-col gap-4 text-xs tracking-wider text-neutral-500 border-t border-neutral-900 pt-6">
               <div className="flex justify-between">
                 <span>EN // EUR</span>
-                <span className="text-brand-sky">Paris Edition</span>
+                <span className="text-[#00D2FF]">Paris Edition</span>
               </div>
               <p className="text-[10px] text-neutral-600">
                 © {new Date().getFullYear()} AURA STREET Ltd. All rights reserved.

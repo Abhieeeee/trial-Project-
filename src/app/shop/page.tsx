@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { RotateCcw, Search, ShieldCheck, SlidersHorizontal, Truck } from "lucide-react";
+import { RotateCcw, Search, ShieldCheck, SlidersHorizontal, Truck, ChevronDown } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CustomCursor from "@/components/CustomCursor";
@@ -14,6 +14,14 @@ export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const sortLabels: Record<string, string> = {
+    featured: "Featured",
+    low: "Price low to high",
+    high: "Price high to low",
+    stock: "Low stock first",
+  };
 
   const filteredProducts = useMemo(() => {
     return products
@@ -49,32 +57,63 @@ export default function Shop() {
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white mb-10">
             SHOP ALL
           </h1>
-          <p className="text-sm text-neutral-400 max-w-2xl leading-relaxed tracking-wide mb-12">
-            Filter premium hoodies, jackets, pants, sneakers, and accessories. Product detail pages, cart, checkout, sizing,
-            shipping, returns, and account flows are wired across the full storefront.
+          <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed tracking-widest mb-12">
+            FILTER PREMIUM HOODIES, JACKETS, PANTS, SNEAKERS, AND ACCESSORIES. EACH PIECE INCORPORATES OUR SIGNATURE FASHION GEOMETRY AND CYBER-LUXURY COMPOSITION.
           </p>
 
-          <div className="glass-panel-glow rounded-xl p-4 mb-10 grid gap-4 lg:grid-cols-[1fr_auto_auto]">
+          <div className="glass-panel-glow rounded-xl p-4 mb-10 grid gap-4 lg:grid-cols-[1fr_auto_auto] items-center">
+            {/* Search Input Underline-Trace Accent */}
             <label className="relative block">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="SEARCH PRODUCT, MATERIAL, CATEGORY"
-                className="w-full bg-black border border-neutral-800 rounded-lg py-3 pl-11 pr-4 text-[10px] uppercase tracking-[0.2em] focus:outline-none focus:border-brand-sky transition-colors text-white placeholder:text-neutral-700"
+                placeholder="SEARCH SPECIFICATIONS"
+                className="w-full bg-black border border-neutral-800 rounded-lg py-3.5 pl-12 pr-4 text-[10px] uppercase tracking-[0.2em] focus:outline-none focus:border-brand-sky focus:shadow-[0_0_12px_rgba(125,211,252,0.15)] transition-all text-white placeholder:text-neutral-700 font-mono"
               />
             </label>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              className="bg-black border border-neutral-800 rounded-lg py-3 px-4 text-[10px] uppercase tracking-[0.2em] text-neutral-400 focus:outline-none focus:border-brand-sky"
-              aria-label="Sort products"
-            >
-              <option value="featured">Featured</option>
-              <option value="low">Price low to high</option>
-              <option value="high">Price high to low</option>
-              <option value="stock">Low stock first</option>
-            </select>
+
+            {/* Custom Interactive Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="w-full lg:w-56 bg-black border border-neutral-800 rounded-lg py-3.5 px-4 text-[10px] uppercase tracking-[0.2em] text-neutral-400 focus:outline-none focus:border-brand-sky focus:text-white transition-all flex items-center justify-between cursor-pointer"
+                aria-label="Sort products dropdown"
+              >
+                <span>SORT: {sortLabels[sort]}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-neutral-500" />
+              </button>
+
+              <AnimatePresence>
+                {dropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-0 w-full mt-2 bg-neutral-950 border border-neutral-900 rounded-lg overflow-hidden z-20 shadow-2xl"
+                  >
+                    {Object.entries(sortLabels).map(([key, value]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => {
+                          setSort(key);
+                          setDropdownOpen(false);
+                        }}
+                        className={`w-full text-left py-3 px-4 text-[10px] uppercase tracking-[0.2em] hover:bg-neutral-900 transition-colors cursor-pointer ${
+                          sort === key ? "text-brand-sky font-bold bg-brand-sky/5" : "text-neutral-400"
+                        }`}
+                      >
+                        {value}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-500 px-2">
               <SlidersHorizontal className="w-4 h-4 text-brand-sky" />
               {filteredProducts.length} Items
