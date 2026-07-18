@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Orbitron, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { getUserRole } from "@/app/actions/auth";
 
-/* ═══════════════════════════════════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────────────────────────────────
    TYPOGRAPHY
-   ═══════════════════════════════════════════════════════════════════════════════ */
+   ───────────────────────────────────────────────────────────────────────────── */
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -30,9 +30,9 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["300", "400"],
 });
 
-/* ═══════════════════════════════════════════════════════════════════════════════
+/* ─────────────────────────────────────────────────────────────────────────────
    DESIGN TOKENS
-   ═══════════════════════════════════════════════════════════════════════════════ */
+   ───────────────────────────────────────────────────────────────────────────── */
 
 const T = {
   void: "#050505",
@@ -46,17 +46,30 @@ const T = {
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   PHASES
-   ═══════════════════════════════════════════════════════════════════════════════ */
-
 type Phase = "void" | "wave" | "beam" | "brand" | "ready" | "auth" | "success";
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   3D WAVE MESH — Mathematical silk fabric
-   ═══════════════════════════════════════════════════════════════════════════════ */
+interface Spark {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  vx: number;
+  vy: number;
+  color: string;
+  life: number;
+}
 
-function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
+/* ─────────────────────────────────────────────────────────────────────────────
+   INTERACTIVE 3D WAVE CANVAS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+function useInteractiveWaveMesh(
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  sparks: Spark[],
+  setSparks: React.Dispatch<React.SetStateAction<Spark[]>>
+) {
+  const mouseRef = useRef({ x: -1000, y: -1000, active: false });
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -77,53 +90,80 @@ function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
     resize();
     window.addEventListener("resize", resize);
 
-    // Mesh configuration
-    const cols = 60;
-    const rows = 30;
-    const spacing = 28;
-    const focalLength = 600;
-    const cameraZ = 300;
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current.x = e.clientX - rect.left;
+      mouseRef.current.y = e.clientY - rect.top;
+      mouseRef.current.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouseRef.current.active = false;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    const cols = 64;
+    const rows = 32;
+    const spacing = 26;
+    const focalLength = 500;
+    const cameraZ = 280;
 
     const render = () => {
       const w = canvas.getBoundingClientRect().width;
       const h = canvas.getBoundingClientRect().height;
       ctx.clearRect(0, 0, w, h);
 
-      time += 0.008;
+      time += 0.009;
 
       const points: { x: number; y: number; z: number; sx: number; sy: number; opacity: number }[] = [];
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
 
-      // Generate 3D wave surface
+      // 1. Generate grid vertices with mouse displacement
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const x = (col - cols / 2) * spacing;
-          const z = (row - rows / 2) * spacing + 100;
+          const z = (row - rows / 2) * spacing + 80;
 
-          // Multi-layered wave function — organic flowing silk
-          const wave1 = Math.sin(col * 0.12 + time * 1.2) * 25;
-          const wave2 = Math.cos(row * 0.15 + time * 0.8) * 18;
-          const wave3 = Math.sin((col + row) * 0.08 + time * 0.6) * 12;
-          const y = wave1 + wave2 + wave3 - 40;
+          // Natural undulating wave formula
+          const w1 = Math.sin(col * 0.1 + time * 1.3) * 22;
+          const w2 = Math.cos(row * 0.12 + time * 0.9) * 16;
+          const w3 = Math.sin((col + row) * 0.06 + time * 0.5) * 10;
+          let y = w1 + w2 + w3 - 50;
 
-          // Perspective projection
+          // Projected baseline center coordinate
           const depth = z + cameraZ;
-          if (depth <= 0) continue;
-          const scale = focalLength / depth;
+          const scale = focalLength / Math.max(1, depth);
           const sx = w / 2 + x * scale;
           const sy = h / 2 + y * scale;
 
-          // Distance-based opacity falloff
+          // Interactive cursor ripple displacement
+          if (mouseRef.current.active) {
+            const dx = sx - mx;
+            const dy = sy - my;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 180) {
+              const force = (1 - dist / 180) * 48;
+              y += Math.sin(dist * 0.06 - time * 6) * force;
+            }
+          }
+
+          // Recalculate projecting points with displacement
+          const finalSy = h / 2 + y * scale;
+
           const distFromCenter = Math.sqrt(
             Math.pow((col - cols / 2) / (cols / 2), 2) +
             Math.pow((row - rows / 2) / (rows / 2), 2)
           );
-          const opacity = Math.max(0, 0.12 * (1 - distFromCenter * 0.7) * Math.min(1, scale));
+          const opacity = Math.max(0, 0.15 * (1 - distFromCenter * 0.8) * Math.min(1, scale));
 
-          points.push({ x, y, z, sx, sy, opacity });
+          points.push({ x, y, z, sx, sy: finalSy, opacity });
         }
       }
 
-      // Draw mesh lines — horizontal
+      // 2. Draw connections — horizontal links
       ctx.lineWidth = 0.5;
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols - 1; col++) {
@@ -144,7 +184,7 @@ function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
         }
       }
 
-      // Draw mesh lines — vertical
+      // 3. Draw connections — vertical links
       for (let row = 0; row < rows - 1; row++) {
         for (let col = 0; col < cols; col++) {
           const i = row * cols + col;
@@ -156,7 +196,7 @@ function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
           const avgOpacity = (p1.opacity + p2.opacity) / 2;
           if (avgOpacity < 0.01) continue;
 
-          ctx.strokeStyle = `rgba(232, 228, 223, ${avgOpacity * 0.6})`;
+          ctx.strokeStyle = `rgba(232, 228, 223, ${avgOpacity * 0.55})`;
           ctx.beginPath();
           ctx.moveTo(p1.sx, p1.sy);
           ctx.lineTo(p2.sx, p2.sy);
@@ -164,16 +204,30 @@ function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
         }
       }
 
-      // Draw node points — subtle glowing vertices
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-        if (p.opacity < 0.03) continue;
-        if (i % 3 !== 0) continue; // Only every 3rd point
+      // 4. Update and Draw active spark particles from typing
+      if (sparks.length > 0) {
+        setSparks((prevSparks) =>
+          prevSparks
+            .map((s) => {
+              const nextLife = s.life - 0.02;
+              return {
+                ...s,
+                x: s.x + s.vx,
+                y: s.y + s.vy,
+                life: nextLife,
+              };
+            })
+            .filter((s) => s.life > 0)
+        );
 
-        ctx.fillStyle = `rgba(232, 228, 223, ${p.opacity * 1.5})`;
-        ctx.beginPath();
-        ctx.arc(p.sx, p.sy, 1, 0, Math.PI * 2);
-        ctx.fill();
+        sparks.forEach((s) => {
+          ctx.fillStyle = s.color;
+          ctx.globalAlpha = s.life;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1.0;
       }
 
       animId = requestAnimationFrame(render);
@@ -183,20 +237,22 @@ function useWaveMesh(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
 
     return () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(animId);
     };
-  }, [canvasRef]);
+  }, [canvasRef, sparks, setSparks]);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   MAGNETIC BUTTON — Follows cursor with subtle pull
-   ═══════════════════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────────────────────
+   MAGNETIC SPRING PHYSICS EFFECT
+   ───────────────────────────────────────────────────────────────────────────── */
 
 function useMagnetic(ref: React.RefObject<HTMLButtonElement | null>, strength = 0.3) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 150, damping: 15 });
-  const springY = useSpring(y, { stiffness: 150, damping: 15 });
+  const springX = useSpring(x, { stiffness: 140, damping: 14 });
+  const springY = useSpring(y, { stiffness: 140, damping: 14 });
 
   useEffect(() => {
     const el = ref.current;
@@ -229,11 +285,11 @@ function useMagnetic(ref: React.RefObject<HTMLButtonElement | null>, strength = 
   return { x: springX, y: springY };
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   LIGHT TRACE INPUT — Luminous trace along underline on focus
-   ═══════════════════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────────────────────
+   LUMINOUS TRACE INPUT FIELD
+   ───────────────────────────────────────────────────────────────────────────── */
 
-function TraceInput({
+function LuminousInput({
   id,
   type,
   value,
@@ -243,6 +299,7 @@ function TraceInput({
   autoComplete,
   ariaLabel,
   endAdornment,
+  onTypeAction,
 }: {
   id: string;
   type: string;
@@ -253,28 +310,29 @@ function TraceInput({
   autoComplete: string;
   ariaLabel: string;
   endAdornment?: React.ReactNode;
+  onTypeAction?: (e: React.KeyboardEvent) => void;
 }) {
   const [focused, setFocused] = useState(false);
   const hasValue = value.length > 0;
 
   return (
-    <div className="relative w-full" style={{ marginBottom: "32px" }}>
-      {/* Floating label */}
+    <div className="relative w-full mb-8 font-sans">
+      {/* Dynamic Floating Label */}
       <motion.label
         htmlFor={id}
         className="absolute pointer-events-none font-body uppercase select-none"
         style={{
           left: 0,
           letterSpacing: "0.25em",
-          color: focused ? `${T.white}80` : `${T.white}33`,
+          color: focused ? `${T.white}A6` : `${T.white}4D`,
           transformOrigin: "left center",
         }}
         animate={{
-          top: focused || hasValue ? "-6px" : "10px",
-          fontSize: focused || hasValue ? "7px" : "11px",
+          top: focused || hasValue ? "-10px" : "8px",
+          fontSize: focused || hasValue ? "8px" : "12px",
           letterSpacing: focused || hasValue ? "0.3em" : "0.15em",
         }}
-        transition={{ duration: 0.3, ease: EASE }}
+        transition={{ duration: 0.35, ease: EASE }}
       >
         {label}
       </motion.label>
@@ -286,10 +344,11 @@ function TraceInput({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        onKeyDown={onTypeAction}
         placeholder={focused ? placeholder : ""}
         required
         autoComplete={autoComplete}
-        className="w-full bg-transparent border-none outline-none focus-visible:outline-none font-body"
+        className="w-full bg-transparent border-none outline-none focus-visible:outline-none font-body tracking-wider"
         style={{
           fontSize: "14px",
           fontWeight: 300,
@@ -307,61 +366,126 @@ function TraceInput({
         </div>
       )}
 
-      {/* Base line */}
+      {/* Underline base structure */}
       <div
         className="absolute bottom-0 left-0 w-full"
         style={{ height: "1px", backgroundColor: `${T.white}1A` }}
       />
 
-      {/* Active trace line */}
+      {/* Luminous laser animation path */}
       <motion.div
         className="absolute bottom-0 left-0 w-full"
-        style={{ height: "1px", transformOrigin: "center" }}
+        style={{ height: "1px", transformOrigin: "center", backgroundColor: T.accent }}
         initial={{ scaleX: 0 }}
-        animate={{
-          scaleX: focused ? 1 : 0,
-          backgroundColor: focused ? T.accent : `${T.white}40`,
-        }}
-        transition={{ duration: 0.4, ease: EASE }}
+        animate={{ scaleX: focused ? 1 : 0 }}
+        transition={{ duration: 0.45, ease: EASE }}
       />
 
-      {/* Focus glow */}
+      {/* Light glow reflection */}
       <motion.div
         className="absolute bottom-0 left-0 w-full pointer-events-none"
         style={{ height: "1px" }}
         animate={{
-          boxShadow: focused ? `0 0 15px 2px ${T.accent}30` : "0 0 0 0 transparent",
+          boxShadow: focused ? `0 0 16px 2.5px ${T.accent}40` : "0 0 0 0 transparent",
         }}
-        transition={{ duration: 0.4, ease: EASE }}
+        transition={{ duration: 0.45, ease: EASE }}
       />
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   LOADING PULSE — Geometric morphing indicator
-   ═══════════════════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────────────────────
+   HOLOGRAPHIC SYSTEM BOOT SEQUENCE LOADER
+   ───────────────────────────────────────────────────────────────────────────── */
 
-function LoadingPulse() {
+function BootLoader({ onComplete }: { onComplete: () => void }) {
+  const [percent, setPercent] = useState(0);
+  const [bootStep, setBootStep] = useState("LOCATING ENCRYPTED GATEWAY...");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPercent((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(onComplete, 500);
+          return 100;
+        }
+        
+        // Random incremental hops
+        const increment = Math.floor(Math.random() * 8) + 4;
+        const next = Math.min(100, prev + increment);
+
+        // Update technical loader logging labels
+        if (next > 80) setBootStep("ESTABLISHING HANDSHAKE LINK...");
+        else if (next > 55) setBootStep("ALLOCATING SYSTEM CORE ADDRESS...");
+        else if (next > 30) setBootStep("DECRYPTING INTERFACE GEOMETRY...");
+        
+        return next;
+      });
+    }, 90);
+
+    return () => clearInterval(interval);
+  }, [onComplete]);
+
   return (
-    <div className="flex items-center gap-1.5" style={{ height: "14px" }}>
+    <div className="absolute inset-0 bg-[#050505] flex flex-col items-center justify-center z-50 p-6 font-mono">
+      <div className="w-full max-w-[340px] flex flex-col items-start gap-4">
+        
+        {/* Core wordmark flash */}
+        <h2 className="text-[10px] tracking-[0.45em] text-white/40 uppercase mb-2 select-none">
+          AURA.STREET // R&D DIVISION
+        </h2>
+
+        {/* Binary code simulator streams */}
+        <div className="w-full bg-white/[0.02] border border-white/5 p-4 rounded text-[9px] text-[#00D2FF]/60 flex flex-col gap-1 select-none">
+          <div>&gt; SECURE ACCESS AUTHENTICATION INITIATING</div>
+          <div>&gt; CORE.ADDR: 0x5F39A1C // COORDS: 48.8566 N, 2.3522 E</div>
+          <div>&gt; SHIELD_LOCK: SHA-256 ACTIVE</div>
+          <div className="text-white/30">&gt; STATUS: {bootStep}</div>
+        </div>
+
+        {/* Progress bar details */}
+        <div className="w-full flex justify-between items-center text-[10px] tracking-wider text-white/50">
+          <span>INITIALIZING</span>
+          <span>{percent}%</span>
+        </div>
+
+        <div className="w-full h-[1px] bg-white/10 relative overflow-hidden">
+          <motion.div
+            className="absolute top-0 left-0 h-full bg-[#00D2FF]"
+            style={{ width: `${percent}%` }}
+            transition={{ ease: "easeInOut" }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GEOMETRIC AUDIO-VISUAL AUDIO WAVE INDICATOR
+   ───────────────────────────────────────────────────────────────────────────── */
+
+function VisualizerPulse() {
+  return (
+    <div className="flex items-center gap-1" style={{ height: "12px" }}>
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.div
           key={i}
           style={{
             width: "2px",
             backgroundColor: T.accent,
-            borderRadius: "1px",
+            borderRadius: "0.5px",
           }}
           animate={{
-            height: ["4px", "14px", "4px"],
+            height: ["3px", "12px", "3px"],
             opacity: [0.3, 1, 0.3],
           }}
           transition={{
-            duration: 0.8,
+            duration: 0.7,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: i * 0.1,
+            delay: i * 0.08,
           }}
         />
       ))}
@@ -369,42 +493,82 @@ function LoadingPulse() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   THE VESTIBULE — MAIN COMPONENT
-   ═══════════════════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────────────────────
+   THE VESTIBULE
+   ───────────────────────────────────────────────────────────────────────────── */
 
 export default function AdminLogin() {
   const router = useRouter();
   const supabase = createClient();
 
-  // Phase & entrance
+  // Loader & Page state
+  const [booting, setBooting] = useState(true);
   const [phase, setPhase] = useState<Phase>("void");
   const [formOpen, setFormOpen] = useState(false);
 
-  // Form state
+  // Form parameters
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Status & role
+  // System states
   const [statusText, setStatusText] = useState("SYSTEM READY");
   const [authRole, setAuthRole] = useState<string | null>(null);
 
-  // Refs
+  // Sparks and particle interaction states
+  const [sparks, setSparks] = useState<Spark[]>([]);
+
+  // DOM references
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const enterBtnRef = useRef<HTMLButtonElement>(null);
-  const magnetic = useMagnetic(enterBtnRef, 0.25);
+  const magnetic = useMagnetic(enterBtnRef, 0.28);
 
-  // Reduced motion
   const [prefersReduced, setPrefersReduced] = useState(false);
 
-  // 3D Wave Mesh
-  useWaveMesh(canvasRef);
+  // Wireframe canvas initialization
+  useInteractiveWaveMesh(canvasRef, sparks, setSparks);
 
-  /* ── Entrance choreography ── */
-  useEffect(() => {
+  /* ── Typing feedback spark generator ── */
+  const generateSparks = (e: React.KeyboardEvent) => {
+    // Avoid generating sparks on system keys
+    if (["Shift", "Control", "Alt", "Tab", "Meta", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+      return;
+    }
+
+    const count = Math.floor(Math.random() * 3) + 2;
+    const newSparks: Spark[] = [];
+
+    // Get focused input coordinates to eject sparks
+    const activeEl = document.activeElement;
+    if (activeEl) {
+      const rect = activeEl.getBoundingClientRect();
+      const originX = rect.left + rect.width / 2 + (Math.random() - 0.5) * 40;
+      const originY = rect.bottom;
+
+      for (let i = 0; i < count; i++) {
+        newSparks.push({
+          id: Date.now() + Math.random(),
+          x: originX,
+          y: originY,
+          size: Math.random() * 1.5 + 0.8,
+          vx: (Math.random() - 0.5) * 3,
+          vy: -(Math.random() * 2 + 1), // floating upwards
+          color: `rgba(0, 210, 255, ${Math.random() * 0.8 + 0.2})`, // Sky-blue sparks
+          life: 1.0,
+        });
+      }
+    }
+
+    setSparks((prev) => [...prev, ...newSparks]);
+  };
+
+  /* ── Boot completed sequence ── */
+  const handleBootComplete = () => {
+    setBooting(false);
+    setPhase("wave");
+
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReduced(mq.matches);
 
@@ -413,14 +577,11 @@ export default function AdminLogin() {
       return;
     }
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(setTimeout(() => setPhase("wave"), 300));
-    timers.push(setTimeout(() => setPhase("beam"), 1200));
-    timers.push(setTimeout(() => setPhase("brand"), 2000));
-    timers.push(setTimeout(() => setPhase("ready"), 3200));
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
+    // Choreographed entrance timing
+    setTimeout(() => setPhase("beam"), 400);
+    setTimeout(() => setPhase("brand"), 1200);
+    setTimeout(() => setPhase("ready"), 2400);
+  };
 
   const phaseReached = useCallback(
     (target: Phase): boolean => {
@@ -445,14 +606,14 @@ export default function AdminLogin() {
     if (error) setError(null);
   };
 
-  /* ── Authentication ── */
+  /* ── Credentials submission ── */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
 
     setLoading(true);
     setError(null);
-    setStatusText("AUTHENTICATING");
+    setStatusText("DECRYPTING ACCESS KEY");
 
     try {
       const { data, error: authError } = await supabase.auth.signInWithPassword({
@@ -468,18 +629,18 @@ export default function AdminLogin() {
       }
 
       if (!data.user) {
-        setError("Authentication failed.");
+        setError("Invalid secure payload credentials.");
         setStatusText("SYSTEM READY");
         setLoading(false);
         return;
       }
 
-      setStatusText("ACCESS GRANTED");
+      setStatusText("ACCESS APPROVED");
       const role = await getUserRole(data.user.id);
       setAuthRole(role);
       setPhase("success");
 
-      setTimeout(() => setStatusText("REDIRECTING"), 300);
+      setTimeout(() => setStatusText("LAUNCHING ENVIRONMENT"), 250);
 
       setTimeout(() => {
         if (role === "super_admin") router.push("/super-admin/dashboard");
@@ -487,7 +648,7 @@ export default function AdminLogin() {
         else router.push("/user-dashboard");
       }, 1000);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Network error.";
+      const message = err instanceof Error ? err.message : "Handshake exception.";
       setError(message);
       setStatusText("SYSTEM READY");
       setLoading(false);
@@ -500,7 +661,6 @@ export default function AdminLogin() {
     return T.roleStaff;
   };
 
-  /* ── Wordmark ── */
   const wordmark = "AURA.STREET";
 
   return (
@@ -508,148 +668,159 @@ export default function AdminLogin() {
       className={`min-h-screen w-full relative flex items-center justify-center overflow-hidden select-none ${orbitron.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       style={{ backgroundColor: T.void }}
     >
-      {/* ── 3D Wave Mesh Canvas ── */}
+      {/* 1. Cinematic Holographic Boot Loader */}
+      <AnimatePresence>
+        {booting && (
+          <motion.div
+            className="absolute inset-0 z-50"
+            exit={{ opacity: 0, scale: 1.05, filter: "blur(12px)" }}
+            transition={{ duration: 0.6, ease: EASE }}
+          >
+            <BootLoader onComplete={handleBootComplete} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. Interactive 3D Wave Mesh Canvas background */}
       <motion.canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ zIndex: 0 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: phaseReached("wave") ? 1 : 0 }}
-        transition={{ duration: 2, ease: EASE }}
+        transition={{ duration: 1.5, ease: EASE }}
       />
 
-      {/* ── Atmospheric vignette overlay ── */}
+      {/* 3. Deep studio vignette shadow backplate */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 1,
-          background: `radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, ${T.void} 100%)`,
+          background: `radial-gradient(ellipse 70% 65% at 50% 50%, transparent 10%, ${T.void} 100%)`,
         }}
       />
 
-      {/* ── Vertical beam of light (entrance) ── */}
+      {/* 4. Vertical volumetric scanner light beam */}
       <AnimatePresence>
         {phase === "beam" && (
           <motion.div
             className="absolute pointer-events-none"
             style={{
               left: "50%",
-              top: "20%",
-              width: "1px",
-              height: "60%",
+              top: "15%",
+              width: "1.5px",
+              height: "70%",
               transform: "translateX(-50%)",
-              background: `linear-gradient(to bottom, transparent, ${T.white}40, ${T.accent}20, ${T.white}40, transparent)`,
+              background: `linear-gradient(to bottom, transparent, ${T.white}50, ${T.accent}30, ${T.white}50, transparent)`,
               zIndex: 2,
             }}
             initial={{ opacity: 0, scaleY: 0 }}
             animate={{ opacity: 1, scaleY: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, filter: "blur(8px)" }}
             transition={{ duration: 0.8, ease: EASE }}
           />
         )}
       </AnimatePresence>
 
-      {/* ── Corner frame marks ── */}
+      {/* 5. Structural Corner Alignment Frame indicators */}
       {phaseReached("brand") && (
-        <>
-          {/* Top-left */}
-          <motion.div
-            className="absolute pointer-events-none"
-            style={{ top: "6%", left: "5%", zIndex: 5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            transition={{ duration: 1, delay: 0.3 }}
-          >
-            <div style={{ width: "30px", height: "1px", backgroundColor: T.white }} />
-            <div style={{ width: "1px", height: "30px", backgroundColor: T.white }} />
-          </motion.div>
-          {/* Top-right */}
-          <motion.div
-            className="absolute pointer-events-none flex flex-col items-end"
-            style={{ top: "6%", right: "5%", zIndex: 5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            transition={{ duration: 1, delay: 0.4 }}
-          >
-            <div style={{ width: "30px", height: "1px", backgroundColor: T.white }} />
-            <div style={{ width: "1px", height: "30px", backgroundColor: T.white, alignSelf: "flex-end" }} />
-          </motion.div>
-          {/* Bottom-left */}
-          <motion.div
-            className="absolute pointer-events-none"
-            style={{ bottom: "6%", left: "5%", zIndex: 5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            <div style={{ width: "1px", height: "30px", backgroundColor: T.white }} />
-            <div style={{ width: "30px", height: "1px", backgroundColor: T.white }} />
-          </motion.div>
-          {/* Bottom-right */}
-          <motion.div
-            className="absolute pointer-events-none flex flex-col items-end"
-            style={{ bottom: "6%", right: "5%", zIndex: 5 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            transition={{ duration: 1, delay: 0.6 }}
-          >
-            <div style={{ width: "1px", height: "30px", backgroundColor: T.white, alignSelf: "flex-end" }} />
-            <div style={{ width: "30px", height: "1px", backgroundColor: T.white }} />
-          </motion.div>
-        </>
+        <div className="absolute inset-0 pointer-events-none p-[5%] z-5 select-none opacity-20">
+          <div className="w-full h-full relative">
+            {/* Top-left */}
+            <motion.div
+              className="absolute top-0 left-0"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <div style={{ width: "24px", height: "1px", backgroundColor: T.white }} />
+              <div style={{ width: "1px", height: "24px", backgroundColor: T.white }} />
+            </motion.div>
+            {/* Top-right */}
+            <motion.div
+              className="absolute top-0 right-0 flex flex-col items-end"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
+              <div style={{ width: "24px", height: "1px", backgroundColor: T.white }} />
+              <div style={{ width: "1px", height: "24px", backgroundColor: T.white }} />
+            </motion.div>
+            {/* Bottom-left */}
+            <motion.div
+              className="absolute bottom-0 left-0"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <div style={{ width: "1px", height: "24px", backgroundColor: T.white }} />
+              <div style={{ width: "24px", height: "1px", backgroundColor: T.white }} />
+            </motion.div>
+            {/* Bottom-right */}
+            <motion.div
+              className="absolute bottom-0 right-0 flex flex-col items-end"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              <div style={{ width: "1px", height: "24px", backgroundColor: T.white }} />
+              <div style={{ width: "24px", height: "1px", backgroundColor: T.white }} />
+            </motion.div>
+          </div>
+        </div>
       )}
 
-      {/* ── Bottom metadata strip ── */}
+      {/* 6. Base metadata diagnostic rows */}
       {phaseReached("ready") && (
         <motion.div
           className="absolute flex justify-between items-end font-mono"
           style={{
-            bottom: "3%",
-            left: "5%",
-            right: "5%",
+            bottom: "4%",
+            left: "6%",
+            right: "6%",
             zIndex: 5,
             fontSize: "8px",
-            letterSpacing: "0.2em",
-            color: `${T.white}26`,
+            letterSpacing: "0.25em",
+            color: `${T.white}20`,
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 0.8 }}
         >
-          <span>AURA.STREET // PRIVATE GATEWAY</span>
-          <span>v4.2.0</span>
+          <span>SYSTEM GATEWAY // PRIVATE R&D CONNECT</span>
+          <span>BUILD // V4.2.0</span>
         </motion.div>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════
-         COMPOSITION — The central experience
+         COMPOSITION — Optical placement center
          ═══════════════════════════════════════════════════════════════════════ */}
       <motion.div
-        className="vestibule-composition relative flex flex-col items-center w-full px-8 sm:px-6"
-        style={{ zIndex: 10, maxWidth: "440px" }}
+        className="vestibule-composition relative flex flex-col items-center w-full px-8 sm:px-6 z-10"
+        style={{ maxWidth: "440px" }}
         animate={phase === "success" ? { scale: 1.03 } : { scale: 1 }}
-        transition={{ duration: 0.8, ease: EASE }}
+        transition={{ duration: 0.7, ease: EASE }}
       >
-        {/* ── Wordmark ── */}
+        {/* wordmark branding title */}
         {phaseReached("brand") && (
           <motion.div className="text-center mb-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <h1
               className="font-display font-bold uppercase flex justify-center items-center"
               style={{
-                fontSize: "clamp(1.5rem, 4vw, 2rem)",
-                letterSpacing: "0.4em",
+                fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)",
+                letterSpacing: "0.45em",
                 color: T.white,
-                lineHeight: 1.2,
+                lineHeight: 1.25,
               }}
             >
               {wordmark.split("").map((char, i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                  initial={{ opacity: 0, y: 15, filter: "blur(6px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   transition={{
-                    delay: prefersReduced ? 0 : 0.05 * i,
-                    duration: 0.8,
+                    delay: prefersReduced ? 0 : 0.04 * i,
+                    duration: 0.7,
                     ease: EASE,
                   }}
                 >
@@ -660,27 +831,27 @@ export default function AdminLogin() {
           </motion.div>
         )}
 
-        {/* ── Subtitle ── */}
+        {/* Subtitle tag */}
         {phaseReached("brand") && (
           <motion.p
             className="font-body uppercase text-center"
             style={{
-              fontSize: "8px",
+              fontSize: "8.5px",
               letterSpacing: "0.4em",
-              color: `${T.white}40`,
-              marginBottom: "40px",
+              color: `${T.white}33`,
+              marginBottom: "36px",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: prefersReduced ? 0 : 0.6, duration: 0.8, ease: EASE }}
+            transition={{ delay: prefersReduced ? 0 : 0.5, duration: 0.7, ease: EASE }}
           >
-            PRIVATE ACCESS TERMINAL
+            SECURE ACCESS SYSTEM
           </motion.p>
         )}
 
-        {/* ── Architectural line ── */}
+        {/* Centered architectural line aperture */}
         {phaseReached("brand") && (
-          <div className="flex justify-center w-full" style={{ marginBottom: "40px" }}>
+          <div className="flex justify-center w-full" style={{ marginBottom: "36px" }}>
             <motion.div
               style={{
                 height: "1px",
@@ -688,70 +859,71 @@ export default function AdminLogin() {
                 maxWidth: "280px",
                 background: phase === "success"
                   ? `linear-gradient(90deg, transparent, ${getRoleColor()}, transparent)`
-                  : `linear-gradient(90deg, transparent, ${T.white}30, transparent)`,
-                boxShadow: phase === "success" ? `0 0 30px ${getRoleColor()}50` : "none",
+                  : `linear-gradient(90deg, transparent, ${T.white}20, transparent)`,
+                boxShadow: phase === "success" ? `0 0 25px ${getRoleColor()}40` : "none",
               }}
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ duration: prefersReduced ? 0 : 1.2, ease: EASE }}
+              transition={{ duration: prefersReduced ? 0 : 1, ease: EASE }}
             />
           </div>
         )}
 
-        {/* ── Invitation / Auth Form ── */}
+        {/* Invitation form block container */}
         <div className="w-full flex flex-col items-center" style={{ maxWidth: "320px" }}>
           <AnimatePresence mode="wait">
-            {/* ── IDENTIFY button ── */}
+            
+            {/* IDENTIFY Invitation state */}
             {phaseReached("ready") && !formOpen && phase !== "success" && (
               <motion.button
                 key="identify-btn"
                 onClick={handleIdentify}
-                className="font-body uppercase cursor-pointer bg-transparent border-none outline-none focus-visible:outline-1 focus-visible:outline-offset-4 relative overflow-hidden"
+                className="font-body uppercase cursor-pointer bg-transparent outline-none focus-visible:outline-1 focus-visible:outline-offset-4 relative overflow-hidden"
                 style={{
                   fontSize: "10px",
                   fontWeight: 500,
-                  letterSpacing: "0.35em",
-                  color: `${T.white}60`,
-                  padding: "16px 40px",
-                  border: `1px solid ${T.white}15`,
+                  letterSpacing: "0.3em",
+                  color: `${T.white}50`,
+                  padding: "16px 36px",
+                  border: `1px solid ${T.white}10`,
                 }}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.6, ease: EASE }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.5, ease: EASE }}
                 whileHover={{
                   color: T.white,
-                  borderColor: `${T.white}40`,
-                  letterSpacing: "0.45em",
+                  borderColor: `${T.white}30`,
+                  letterSpacing: "0.4em",
                 }}
               >
-                {/* Hover light sweep */}
+                {/* Visual light trace sweep overlay */}
                 <motion.div
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: `linear-gradient(90deg, transparent 0%, ${T.white}08 50%, transparent 100%)`,
+                    background: `linear-gradient(90deg, transparent 0%, ${T.white}05 50%, transparent 100%)`,
                     transform: "translateX(-100%)",
                   }}
                   whileHover={{ transform: "translateX(100%)" }}
-                  transition={{ duration: 0.6, ease: EASE }}
+                  transition={{ duration: 0.5, ease: EASE }}
                 />
                 IDENTIFY
               </motion.button>
             )}
 
-            {/* ── Authentication Form ── */}
+            {/* Input field entry system */}
             {formOpen && (
               <motion.form
                 key="auth-form"
                 onSubmit={handleLogin}
                 className="w-full flex flex-col items-center"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
+                transition={{ duration: 0.45, ease: EASE }}
                 noValidate
               >
-                {/* Email */}
-                <TraceInput
+                {/* Email entry */}
+                <LuminousInput
                   id="vestibule-email"
                   type="email"
                   value={email}
@@ -760,64 +932,67 @@ export default function AdminLogin() {
                   label="SECURE ID"
                   autoComplete="email"
                   ariaLabel="Email address"
+                  onTypeAction={generateSparks}
                 />
 
-                {/* Password */}
-                <TraceInput
+                {/* Password entry */}
+                <LuminousInput
                   id="vestibule-key"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={handlePasswordChange}
-                  placeholder="••••••••••"
+                  placeholder="••••••••"
                   label="ACCESS KEY"
                   autoComplete="current-password"
                   ariaLabel="Password"
+                  onTypeAction={generateSparks}
                   endAdornment={
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="bg-transparent border-none cursor-pointer outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
                       style={{
-                        color: `${T.white}30`,
+                        color: `${T.white}20`,
                         transition: "color 200ms",
                         padding: "8px",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.color = `${T.white}80`;
+                        e.currentTarget.style.color = `${T.white}60`;
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.color = `${T.white}30`;
+                        e.currentTarget.style.color = `${T.white}20`;
                       }}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? (
-                        <EyeOff style={{ width: 14, height: 14 }} />
+                        <EyeOff style={{ width: 13, height: 13 }} />
                       ) : (
-                        <Eye style={{ width: 14, height: 14 }} />
+                        <Eye style={{ width: 13, height: 13 }} />
                       )}
                     </button>
                   }
                 />
 
-                {/* Error */}
+                {/* Alert message displays */}
                 <AnimatePresence>
                   {error && (
-                    <motion.p
-                      className="w-full font-body text-center"
-                      style={{ fontSize: "10px", color: `${T.error}B3`, marginBottom: "24px" }}
+                    <motion.div
+                      className="w-full flex items-center justify-center gap-2 mb-6"
+                      style={{ color: `${T.error}B3` }}
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.3, ease: EASE }}
+                      transition={{ duration: 0.25, ease: EASE }}
                       role="alert"
                       aria-live="assertive"
                     >
-                      {error}
-                    </motion.p>
+                      <AlertCircle className="w-3 h-3 shrink-0" />
+                      <p className="font-body text-[10px] tracking-wide">{error}</p>
+                    </motion.div>
                   )}
                 </AnimatePresence>
 
-                {/* ── ENTER — magnetic action button ── */}
+                {/* Action Trigger Button */}
                 <motion.button
                   ref={enterBtnRef}
                   type="submit"
@@ -826,12 +1001,12 @@ export default function AdminLogin() {
                   style={{
                     fontSize: "10px",
                     fontWeight: 500,
-                    letterSpacing: "0.35em",
-                    color: loading ? T.void : T.void,
-                    backgroundColor: loading ? `${T.white}80` : T.white,
-                    padding: "16px 64px",
+                    letterSpacing: "0.3em",
+                    color: T.void,
+                    backgroundColor: T.white,
+                    padding: "15px 56px",
                     border: "none",
-                    marginTop: "8px",
+                    marginTop: "4px",
                     x: magnetic.x,
                     y: magnetic.y,
                   }}
@@ -841,27 +1016,26 @@ export default function AdminLogin() {
                           backgroundColor: "transparent",
                           color: T.white,
                           boxShadow: `inset 0 0 0 1px ${T.white}`,
-                          letterSpacing: "0.5em",
+                          letterSpacing: "0.45em",
                         }
                       : undefined
                   }
-                  whileTap={!loading ? { scale: 0.97 } : undefined}
-                  transition={{ duration: 0.3, ease: EASE }}
-                  aria-label={loading ? "Verifying" : "Enter"}
+                  whileTap={!loading ? { scale: 0.98 } : undefined}
+                  transition={{ duration: 0.25, ease: EASE }}
+                  aria-label={loading ? "Verifying payload" : "Enter"}
                 >
-                  {/* Sweep light on hover */}
                   <motion.div
                     className="absolute inset-0 pointer-events-none"
                     style={{
-                      background: `linear-gradient(90deg, transparent 0%, ${T.white}20 50%, transparent 100%)`,
+                      background: `linear-gradient(90deg, transparent 0%, ${T.white}15 50%, transparent 100%)`,
                     }}
                     animate={{ x: ["-100%", "200%"] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
                   />
-                  <span className="relative z-10 flex items-center justify-center gap-3">
+                  <span className="relative z-10 flex items-center justify-center gap-2.5">
                     {loading ? (
                       <>
-                        <LoadingPulse />
+                        <VisualizerPulse />
                         <span>VERIFYING</span>
                       </>
                     ) : (
@@ -870,12 +1044,12 @@ export default function AdminLogin() {
                   </span>
                 </motion.button>
 
-                {/* ── Status line ── */}
+                {/* Status indicator row */}
                 <motion.div
                   className="flex items-center gap-2 mt-8"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5, ease: EASE }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
                 >
                   <motion.div
                     style={{
@@ -884,19 +1058,19 @@ export default function AdminLogin() {
                       borderRadius: "50%",
                       backgroundColor:
                         statusText === "SYSTEM READY"
-                          ? `${T.white}30`
-                          : statusText === "ACCESS GRANTED"
+                          ? `${T.white}20`
+                          : statusText === "ACCESS APPROVED"
                           ? "#22c55e"
                           : T.accent,
                     }}
                     animate={
                       statusText !== "SYSTEM READY"
-                        ? { opacity: [1, 0.3, 1] }
+                        ? { opacity: [1, 0.2, 1] }
                         : { opacity: 1 }
                     }
                     transition={
                       statusText !== "SYSTEM READY"
-                        ? { duration: 1, repeat: Infinity }
+                        ? { duration: 0.9, repeat: Infinity }
                         : {}
                     }
                   />
@@ -904,33 +1078,34 @@ export default function AdminLogin() {
                     className="font-mono uppercase"
                     style={{
                       fontSize: "8px",
-                      letterSpacing: "0.25em",
-                      color: `${T.white}35`,
+                      letterSpacing: "0.2em",
+                      color: `${T.white}30`,
                     }}
                     aria-live="polite"
                   >
                     {statusText}
                   </p>
                 </motion.div>
+
               </motion.form>
             )}
           </AnimatePresence>
         </div>
       </motion.div>
 
-      {/* ── Injected global styles ── */}
+      {/* Global CSS settings */}
       <GlobalStyles />
     </main>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   GLOBAL STYLES
-   ═══════════════════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL STYLES — Plain CSS Injection to bypass Turbopack interpolation limits
+   ───────────────────────────────────────────────────────────────────────────── */
 
 function GlobalStyles() {
   useEffect(() => {
-    const id = "vestibule-styles";
+    const id = "vestibule-enhanced-styles";
     if (document.getElementById(id)) return;
 
     const style = document.createElement("style");
@@ -957,7 +1132,22 @@ function GlobalStyles() {
         }
       }
       *:focus-visible {
-        outline-color: #E8E4DF33;
+        outline-color: #E8E4DF20;
+      }
+      @media (max-width: 767px) {
+        .vestibule-composition {
+          padding-top: 24vh !important;
+        }
+      }
+      @media (max-width: 767px) and (orientation: landscape) {
+        .vestibule-composition {
+          padding-top: 12vh !important;
+        }
+      }
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .vestibule-composition {
+          padding-top: 32vh !important;
+        }
       }
     `;
     document.head.appendChild(style);
