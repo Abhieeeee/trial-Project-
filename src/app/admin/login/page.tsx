@@ -870,23 +870,27 @@ export default function AdminLogin() {
           </div>
         )}
 
-        {/* Invitation form block container */}
-        <div className="w-full flex flex-col items-center" style={{ maxWidth: "320px" }}>
+        {/* ═══════════════════════════════════════════════════════════════════
+           FUTURISTIC LOGIN FORM CONTAINER
+           ═══════════════════════════════════════════════════════════════════ */}
+        <div className="w-full flex flex-col items-center" style={{ maxWidth: "380px" }}>
           <AnimatePresence mode="wait">
-            
-            {/* IDENTIFY Invitation state */}
+
+            {/* IDENTIFY Invitation state — Geometric pulse button */}
             {phaseReached("ready") && !formOpen && phase !== "success" && (
               <motion.button
                 key="identify-btn"
                 onClick={handleIdentify}
-                className="font-body uppercase cursor-pointer bg-transparent outline-none focus-visible:outline-1 focus-visible:outline-offset-4 relative overflow-hidden"
+                className="font-body uppercase cursor-pointer bg-transparent outline-none focus-visible:outline-1 focus-visible:outline-offset-4 relative overflow-hidden group"
                 style={{
                   fontSize: "10px",
                   fontWeight: 500,
-                  letterSpacing: "0.3em",
-                  color: `${T.white}50`,
-                  padding: "16px 36px",
-                  border: `1px solid ${T.white}10`,
+                  letterSpacing: "0.35em",
+                  color: `${T.white}60`,
+                  padding: "18px 48px",
+                  border: `1px solid ${T.white}08`,
+                  background: `linear-gradient(135deg, ${T.white}03, transparent)`,
+                  backdropFilter: "blur(8px)",
                 }}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -894,199 +898,348 @@ export default function AdminLogin() {
                 transition={{ duration: 0.5, ease: EASE }}
                 whileHover={{
                   color: T.white,
-                  borderColor: `${T.white}30`,
-                  letterSpacing: "0.4em",
+                  borderColor: `${T.accent}40`,
+                  boxShadow: `0 0 30px ${T.accent}10, inset 0 0 30px ${T.accent}05`,
                 }}
               >
-                {/* Visual light trace sweep overlay */}
+                {/* Sweeping light trace */}
                 <motion.div
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: `linear-gradient(90deg, transparent 0%, ${T.white}05 50%, transparent 100%)`,
-                    transform: "translateX(-100%)",
+                    background: `linear-gradient(90deg, transparent 0%, ${T.accent}08 50%, transparent 100%)`,
                   }}
-                  whileHover={{ transform: "translateX(100%)" }}
-                  transition={{ duration: 0.5, ease: EASE }}
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 4 }}
                 />
-                IDENTIFY
+                {/* Corner tick marks */}
+                <div className="absolute top-0 left-0 w-3 h-[1px] opacity-20" style={{ backgroundColor: T.accent }} />
+                <div className="absolute top-0 left-0 w-[1px] h-3 opacity-20" style={{ backgroundColor: T.accent }} />
+                <div className="absolute bottom-0 right-0 w-3 h-[1px] opacity-20" style={{ backgroundColor: T.accent }} />
+                <div className="absolute bottom-0 right-0 w-[1px] h-3 opacity-20" style={{ backgroundColor: T.accent }} />
+                <span className="relative z-10">IDENTIFY</span>
               </motion.button>
             )}
 
-            {/* Input field entry system */}
+            {/* ─── The Authentication Console ─── */}
             {formOpen && (
               <motion.form
                 key="auth-form"
                 onSubmit={handleLogin}
-                className="w-full flex flex-col items-center"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, ease: EASE }}
+                className="w-full relative"
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.55, ease: EASE }}
                 noValidate
               >
-                {/* Email entry */}
-                <LuminousInput
-                  id="vestibule-email"
-                  type="email"
-                  value={email}
-                  onChange={handleEmailChange}
-                  placeholder="name@domain.com"
-                  label="SECURE ID"
-                  autoComplete="email"
-                  ariaLabel="Email address"
-                  onTypeAction={generateSparks}
-                />
-
-                {/* Password entry */}
-                <LuminousInput
-                  id="vestibule-key"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={handlePasswordChange}
-                  placeholder="••••••••"
-                  label="ACCESS KEY"
-                  autoComplete="current-password"
-                  ariaLabel="Password"
-                  onTypeAction={generateSparks}
-                  endAdornment={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="bg-transparent border-none cursor-pointer outline-none focus-visible:outline-1 focus-visible:outline-offset-2"
-                      style={{
-                        color: `${T.white}20`,
-                        transition: "color 200ms",
-                        padding: "8px",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = `${T.white}60`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = `${T.white}20`;
-                      }}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        <EyeOff style={{ width: 13, height: 13 }} />
-                      ) : (
-                        <Eye style={{ width: 13, height: 13 }} />
-                      )}
-                    </button>
-                  }
-                />
-
-                {/* Alert message displays */}
-                <AnimatePresence>
-                  {error && (
-                    <motion.div
-                      className="w-full flex items-center justify-center gap-2 mb-6"
-                      style={{ color: `${T.error}B3` }}
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.25, ease: EASE }}
-                      role="alert"
-                      aria-live="assertive"
-                    >
-                      <AlertCircle className="w-3 h-3 shrink-0" />
-                      <p className="font-body text-[10px] tracking-wide">{error}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Action Trigger Button */}
-                <motion.button
-                  ref={enterBtnRef}
-                  type="submit"
-                  disabled={loading}
-                  className="relative font-body uppercase cursor-pointer outline-none focus-visible:outline-1 focus-visible:outline-offset-4 disabled:cursor-wait overflow-hidden"
+                {/* ── Glassmorphic Panel Shell ── */}
+                <div
+                  className="relative overflow-hidden"
                   style={{
-                    fontSize: "10px",
-                    fontWeight: 500,
-                    letterSpacing: "0.3em",
-                    color: T.void,
-                    backgroundColor: T.white,
-                    padding: "15px 56px",
-                    border: "none",
-                    marginTop: "4px",
-                    x: magnetic.x,
-                    y: magnetic.y,
+                    padding: "1px",
+                    background: `linear-gradient(160deg, ${T.accent}25, ${T.white}08, ${T.accent}12, transparent, ${T.white}05)`,
+                    borderRadius: "2px",
                   }}
-                  whileHover={
-                    !loading
-                      ? {
-                          backgroundColor: "transparent",
-                          color: T.white,
-                          boxShadow: `inset 0 0 0 1px ${T.white}`,
-                          letterSpacing: "0.45em",
-                        }
-                      : undefined
-                  }
-                  whileTap={!loading ? { scale: 0.98 } : undefined}
-                  transition={{ duration: 0.25, ease: EASE }}
-                  aria-label={loading ? "Verifying payload" : "Enter"}
                 >
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
+                  <div
                     style={{
-                      background: `linear-gradient(90deg, transparent 0%, ${T.white}15 50%, transparent 100%)`,
+                      backgroundColor: `${T.void}F2`,
+                      backdropFilter: "blur(40px) saturate(1.5)",
+                      borderRadius: "1px",
+                      padding: "36px 32px 32px",
                     }}
-                    animate={{ x: ["-100%", "200%"] }}
-                    transition={{ duration: 2.2, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
-                  />
-                  <span className="relative z-10 flex items-center justify-center gap-2.5">
-                    {loading ? (
-                      <>
-                        <VisualizerPulse />
-                        <span>VERIFYING</span>
-                      </>
-                    ) : (
-                      "ENTER"
-                    )}
-                  </span>
-                </motion.button>
-
-                {/* Status indicator row */}
-                <motion.div
-                  className="flex items-center gap-2 mt-8"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.4 }}
-                >
-                  <motion.div
-                    style={{
-                      width: "4px",
-                      height: "4px",
-                      borderRadius: "50%",
-                      backgroundColor:
-                        statusText === "SYSTEM READY"
-                          ? `${T.white}20`
-                          : statusText === "ACCESS APPROVED"
-                          ? "#22c55e"
-                          : T.accent,
-                    }}
-                    animate={
-                      statusText !== "SYSTEM READY"
-                        ? { opacity: [1, 0.2, 1] }
-                        : { opacity: 1 }
-                    }
-                    transition={
-                      statusText !== "SYSTEM READY"
-                        ? { duration: 0.9, repeat: Infinity }
-                        : {}
-                    }
-                  />
-                  <p
-                    className="font-mono uppercase"
-                    style={{
-                      fontSize: "8px",
-                      letterSpacing: "0.2em",
-                      color: `${T.white}30`,
-                    }}
-                    aria-live="polite"
                   >
-                    {statusText}
-                  </p>
-                </motion.div>
+                    {/* Horizontal scanner line sweep */}
+                    <motion.div
+                      className="absolute left-0 right-0 pointer-events-none"
+                      style={{
+                        height: "1px",
+                        background: `linear-gradient(90deg, transparent 5%, ${T.accent}30 40%, ${T.accent}60 50%, ${T.accent}30 60%, transparent 95%)`,
+                        zIndex: 2,
+                      }}
+                      animate={{ top: ["0%", "100%", "0%"] }}
+                      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                    />
+
+                    {/* ── Form header row ── */}
+                    <div className="flex items-center justify-between mb-8">
+                      <div>
+                        <p
+                          className="font-mono uppercase select-none"
+                          style={{ fontSize: "7px", letterSpacing: "0.35em", color: `${T.accent}80` }}
+                        >
+                          ENCRYPTED CHANNEL
+                        </p>
+                        <p
+                          className="font-display uppercase select-none mt-1"
+                          style={{ fontSize: "13px", letterSpacing: "0.35em", color: `${T.white}90`, fontWeight: 700 }}
+                        >
+                          AUTHENTICATE
+                        </p>
+                      </div>
+
+                      {/* Live connection dot */}
+                      <div className="flex items-center gap-2">
+                        <motion.div
+                          style={{
+                            width: "5px",
+                            height: "5px",
+                            borderRadius: "50%",
+                            backgroundColor:
+                              statusText === "SYSTEM READY"
+                                ? `${T.accent}50`
+                                : statusText === "ACCESS APPROVED"
+                                ? "#22c55e"
+                                : T.accent,
+                            boxShadow:
+                              statusText === "SYSTEM READY"
+                                ? `0 0 6px ${T.accent}30`
+                                : statusText === "ACCESS APPROVED"
+                                ? "0 0 8px #22c55e60"
+                                : `0 0 8px ${T.accent}50`,
+                          }}
+                          animate={
+                            statusText !== "SYSTEM READY"
+                              ? { opacity: [1, 0.3, 1], scale: [1, 1.3, 1] }
+                              : { opacity: [0.5, 1, 0.5] }
+                          }
+                          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                        <p
+                          className="font-mono uppercase"
+                          style={{ fontSize: "7px", letterSpacing: "0.2em", color: `${T.white}25` }}
+                          aria-live="polite"
+                        >
+                          {statusText}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* ── Accent border strip ── */}
+                    <div
+                      className="w-full mb-8"
+                      style={{
+                        height: "1px",
+                        background: `linear-gradient(90deg, ${T.accent}30, ${T.white}08, transparent)`,
+                      }}
+                    />
+
+                    {/* ── Email field ── */}
+                    <div className="relative mb-7">
+                      <div
+                        className="absolute left-0 top-0 bottom-0"
+                        style={{
+                          width: "2px",
+                          background: email.length > 0 ? T.accent : `${T.white}10`,
+                          boxShadow: email.length > 0 ? `0 0 8px ${T.accent}40` : "none",
+                          transition: "all 0.3s ease",
+                        }}
+                      />
+                      <div className="pl-4">
+                        <label
+                          htmlFor="vestibule-email"
+                          className="font-mono uppercase block select-none"
+                          style={{ fontSize: "7px", letterSpacing: "0.35em", color: `${T.white}35`, marginBottom: "6px" }}
+                        >
+                          SECURE IDENTITY
+                        </label>
+                        <input
+                          id="vestibule-email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => handleEmailChange(e.target.value)}
+                          onKeyDown={generateSparks}
+                          placeholder="operator@aurastreet.com"
+                          required
+                          autoComplete="email"
+                          aria-label="Email address"
+                          className="w-full bg-transparent border-none outline-none font-body tracking-wider"
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 300,
+                            color: T.white,
+                            padding: "4px 0",
+                            caretColor: T.accent,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* ── Password field ── */}
+                    <div className="relative mb-7">
+                      <div
+                        className="absolute left-0 top-0 bottom-0"
+                        style={{
+                          width: "2px",
+                          background: password.length > 0 ? T.accent : `${T.white}10`,
+                          boxShadow: password.length > 0 ? `0 0 8px ${T.accent}40` : "none",
+                          transition: "all 0.3s ease",
+                        }}
+                      />
+                      <div className="pl-4 relative">
+                        <label
+                          htmlFor="vestibule-key"
+                          className="font-mono uppercase block select-none"
+                          style={{ fontSize: "7px", letterSpacing: "0.35em", color: `${T.white}35`, marginBottom: "6px" }}
+                        >
+                          ACCESS KEY
+                        </label>
+                        <input
+                          id="vestibule-key"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => handlePasswordChange(e.target.value)}
+                          onKeyDown={generateSparks}
+                          placeholder="••••••••••"
+                          required
+                          autoComplete="current-password"
+                          aria-label="Password"
+                          className="w-full bg-transparent border-none outline-none font-body tracking-wider pr-10"
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 300,
+                            color: T.white,
+                            padding: "4px 0",
+                            caretColor: T.accent,
+                          }}
+                        />
+                        {/* Eye toggle */}
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer outline-none"
+                          style={{ color: `${T.white}20`, transition: "color 200ms", padding: "6px" }}
+                          onMouseEnter={(e) => { e.currentTarget.style.color = `${T.accent}90`; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.color = `${T.white}20`; }}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff style={{ width: 13, height: 13 }} /> : <Eye style={{ width: 13, height: 13 }} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* ── Error display ── */}
+                    <AnimatePresence>
+                      {error && (
+                        <motion.div
+                          className="flex items-center gap-2 mb-5 pl-4"
+                          style={{
+                            color: `${T.error}CC`,
+                            borderLeft: `2px solid ${T.error}60`,
+                            padding: "8px 0 8px 12px",
+                          }}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -8 }}
+                          transition={{ duration: 0.25, ease: EASE }}
+                          role="alert"
+                          aria-live="assertive"
+                        >
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          <p className="font-body text-[10px] tracking-wide">{error}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* ── Biometric Submit Trigger ── */}
+                    <motion.button
+                      ref={enterBtnRef}
+                      type="submit"
+                      disabled={loading}
+                      className="relative w-full font-body uppercase cursor-pointer outline-none focus-visible:outline-1 focus-visible:outline-offset-4 disabled:cursor-wait overflow-hidden group"
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        letterSpacing: "0.35em",
+                        color: loading ? T.accent : T.void,
+                        backgroundColor: loading ? "transparent" : T.white,
+                        padding: "16px 0",
+                        border: loading ? `1px solid ${T.accent}40` : "1px solid transparent",
+                        borderRadius: "1px",
+                        x: magnetic.x,
+                        y: magnetic.y,
+                        transition: "background-color 0.3s, color 0.3s, border-color 0.3s",
+                      }}
+                      whileHover={
+                        !loading
+                          ? {
+                              boxShadow: `0 0 30px ${T.accent}15, inset 0 0 20px ${T.accent}05`,
+                            }
+                          : undefined
+                      }
+                      whileTap={!loading ? { scale: 0.985 } : undefined}
+                      transition={{ duration: 0.2, ease: EASE }}
+                      aria-label={loading ? "Verifying payload" : "Enter"}
+                    >
+                      {/* Sweeping highlight */}
+                      <motion.div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          background: loading
+                            ? `linear-gradient(90deg, transparent 0%, ${T.accent}10 50%, transparent 100%)`
+                            : `linear-gradient(90deg, transparent 0%, ${T.white}10 50%, transparent 100%)`,
+                        }}
+                        animate={{ x: ["-100%", "200%"] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 3 }}
+                      />
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        {loading ? (
+                          <>
+                            <VisualizerPulse />
+                            <span>DECRYPTING</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>AUTHORIZE</span>
+                            <motion.span
+                              style={{ display: "inline-block" }}
+                              animate={{ x: [0, 3, 0] }}
+                              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                            >
+                              →
+                            </motion.span>
+                          </>
+                        )}
+                      </span>
+                    </motion.button>
+
+                    {/* ── Bottom metadata row ── */}
+                    <div
+                      className="flex items-center justify-between mt-6 pt-5 select-none"
+                      style={{ borderTop: `1px solid ${T.white}06` }}
+                    >
+                      <p
+                        className="font-mono uppercase"
+                        style={{ fontSize: "7px", letterSpacing: "0.25em", color: `${T.white}18` }}
+                      >
+                        SHA-256 // TLS 1.3
+                      </p>
+                      <p
+                        className="font-mono uppercase"
+                        style={{ fontSize: "7px", letterSpacing: "0.25em", color: `${T.white}18` }}
+                      >
+                        SESSION ENCRYPTED
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── External decorative corner brackets ── */}
+                <div className="absolute -top-1 -left-1 pointer-events-none opacity-25">
+                  <div style={{ width: "8px", height: "1px", backgroundColor: T.accent }} />
+                  <div style={{ width: "1px", height: "8px", backgroundColor: T.accent }} />
+                </div>
+                <div className="absolute -top-1 -right-1 pointer-events-none opacity-25 flex flex-col items-end">
+                  <div style={{ width: "8px", height: "1px", backgroundColor: T.accent }} />
+                  <div style={{ width: "1px", height: "8px", backgroundColor: T.accent }} />
+                </div>
+                <div className="absolute -bottom-1 -left-1 pointer-events-none opacity-25">
+                  <div style={{ width: "1px", height: "8px", backgroundColor: T.accent }} />
+                  <div style={{ width: "8px", height: "1px", backgroundColor: T.accent }} />
+                </div>
+                <div className="absolute -bottom-1 -right-1 pointer-events-none opacity-25 flex flex-col items-end">
+                  <div style={{ width: "1px", height: "8px", backgroundColor: T.accent }} />
+                  <div style={{ width: "8px", height: "1px", backgroundColor: T.accent }} />
+                </div>
 
               </motion.form>
             )}

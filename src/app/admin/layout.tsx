@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -19,6 +19,12 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  const handleLogout = useCallback(async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/admin/login";
+  }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState<{ name: string; role: string } | null>(null);
 
@@ -52,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Inventory", href: "/admin/inventory", icon: Warehouse },
     { name: "Products", href: "/admin/products", icon: PackageSearch },
     { name: "Customers", href: "/admin/customers", icon: UsersRound },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Settings", href: "/admin/access", icon: Settings },
   ];
 
   // Filter items if role is staff
@@ -139,12 +145,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <ArrowLeft className="w-3 h-3" /> Store
             </Link>
-            <Link
-              href="/admin/login"
+            <button
+              onClick={handleLogout}
               className="flex-1 flex items-center justify-center gap-2 px-3 py-3 border border-red-950/30 rounded-xl text-[8px] uppercase tracking-wider font-extrabold text-red-500/80 hover:text-red-400 hover:bg-red-950/20 transition-all duration-300"
             >
               <LogOut className="w-3 h-3" /> Log Out
-            </Link>
+            </button>
           </div>
         </div>
       </aside>

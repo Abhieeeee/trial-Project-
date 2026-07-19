@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -14,19 +14,54 @@ import {
   ShieldAlert, 
   ArrowLeft,
   Banknote,
-  Activity
+  Activity,
+  Boxes,
+  PackageCheck,
+  KeyRound,
+  ClipboardList,
+  ShieldCheck
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profile, setProfile] = useState<{ name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function loadProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("name, role")
+          .eq("id", user.id)
+          .single();
+        if (data) {
+          setProfile({ name: data.name, role: data.role });
+        }
+      }
+    }
+    loadProfile();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/admin/login";
+  };
 
   const navItems = [
-    { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
-    { name: "Orders", href: "/super-admin/orders", icon: ShoppingBag },
-    { name: "Finance / Sales", href: "/super-admin/sales", icon: Banknote },
-    { name: "Staff / Admins", href: "/super-admin/admins", icon: Users },
-    { name: "Audit Trail", href: "/super-admin/audit", icon: Activity },
+    { name: "Command Center", href: "/super-admin/dashboard", icon: ShieldCheck },
+    { name: "Sales & Finance", href: "/super-admin/sales", icon: Banknote },
+    { name: "All Orders", href: "/super-admin/orders", icon: ShoppingBag },
+    { name: "Products", href: "/super-admin/products", icon: Boxes },
+    { name: "Customers", href: "/super-admin/customers", icon: Users },
+    { name: "Inventory", href: "/super-admin/inventory", icon: PackageCheck },
+    { name: "Staff", href: "/super-admin/admins", icon: Users },
+    { name: "Permissions", href: "/super-admin/permissions", icon: KeyRound },
+    { name: "Audit Trail", href: "/super-admin/audit", icon: ClipboardList },
     { name: "System Settings", href: "/super-admin/settings", icon: Settings },
   ];
 
@@ -65,7 +100,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border ${
                   isActive 
                     ? "bg-red-500/5 text-red-400 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.03)]" 
                     : "text-neutral-500 border-transparent hover:bg-white/[0.02] hover:text-white"
@@ -85,8 +120,12 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">Émile L.</div>
-              <div className="text-[8px] uppercase tracking-widest text-red-500 font-bold">Super Admin</div>
+              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">
+                {profile ? profile.name : "System Loading..."}
+              </div>
+              <div className="text-[8px] uppercase tracking-widest text-red-500 font-bold">
+                {profile ? profile.role.replace("_", " ") : "Super Admin"}
+              </div>
             </div>
           </div>
           <div className="flex gap-2">
@@ -96,12 +135,12 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
             >
               <ArrowLeft className="w-3 h-3" /> Store
             </Link>
-            <Link
-              href="/admin/login"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-3 border border-neutral-900 rounded-xl text-[8px] uppercase tracking-wider font-extrabold text-red-500/80 hover:text-red-400 hover:bg-red-950/20 transition-all duration-300"
+            <button
+              onClick={handleLogout}
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-3 border border-neutral-900 rounded-xl text-[8px] uppercase tracking-wider font-extrabold text-red-500/80 hover:text-red-400 hover:bg-red-950/20 transition-all duration-300 cursor-pointer"
             >
               <LogOut className="w-3 h-3" /> Log Out
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
