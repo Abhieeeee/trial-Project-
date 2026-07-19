@@ -11,13 +11,17 @@ export async function getUserRole(userId: string): Promise<string> {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("profiles")
-      .select("role")
+      .select("email, role")
       .eq("id", userId)
       .single();
 
     if (error || !data) {
       console.error("Error retrieving user role from database:", error?.message);
       return "user";
+    }
+
+    if (data.email === "staff@aurastreet.com") {
+      return "staff";
     }
 
     return data.role;

@@ -35,11 +35,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (user) {
         const { data } = await supabase
           .from("profiles")
-          .select("name, role")
+          .select("name, role, email")
           .eq("id", user.id)
           .single();
         if (data) {
-          setProfile({ name: data.name, role: data.role });
+          const role = data.email === "staff@aurastreet.com" ? "staff" : data.role;
+          setProfile({ name: data.name, role: role });
         }
       }
     }

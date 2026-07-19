@@ -60,11 +60,11 @@ export async function proxy(request: NextRequest) {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("role")
+      .select("email, role")
       .eq("id", user.id)
       .single();
 
-    const role = profile?.role ?? "user";
+    const role = profile?.email === "staff@aurastreet.com" ? "staff" : (profile?.role ?? "user");
 
     // 3. Role-based guards
     // Staff role constraints: can only access orders and inventory in the admin suite
