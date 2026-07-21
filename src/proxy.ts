@@ -4,22 +4,16 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Allow public login page always
-  if (pathname === "/admin/login") {
-    return NextResponse.next({ request });
-  }
-
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
+    if (pathname === "/admin/login") return NextResponse.next({ request });
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
   let supabaseResponse = NextResponse.next({ request });
-
-  // 1. Create client-side cookie client to retrieve the logged-in user session
   const supabaseAuth = createServerClient(
     supabaseUrl,
     supabaseAnonKey,
@@ -38,6 +32,34 @@ export async function proxy(request: NextRequest) {
   );
 
   const { data: { user } } = await supabaseAuth.auth.getUser();
+
+  // If already logged in and visiting login page, automatically redirect to appropriate portal
+  if (pathname === "/admin/login") {
+    if (user) {
+      const supabaseAdmin = createServerClient(
+        supabaseUrl,
+        supabaseServiceKey,
+        {
+          cookies: {
+            getAll() { return request.cookies.getAll(); },
+            setAll() {},
+          },
+        }
+      );
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("email, role")
+        .eq("id", user.id)
+        .single();
+      const role = profile?.email === "staff@aurastreet.com" ? "staff" : (profile?.role ?? "user");
+
+      if (role === "super_admin") return NextResponse.redirect(new URL("/super-admin/dashboard", request.url));
+      if (role === "admin") return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      if (role === "staff") return NextResponse.redirect(new URL("/admin/orders", request.url));
+      return NextResponse.redirect(new URL("/user-dashboard", request.url));
+    }
+    return NextResponse.next({ request });
+  }
 
   // Protect admin, super-admin, user-dashboard, and dashboard routes
   if (pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/user-dashboard") || pathname.startsWith("/dashboard")) {

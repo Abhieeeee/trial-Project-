@@ -111,6 +111,16 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               </Link>
             );
           })}
+
+          <div className="mt-4 pt-4 border-t border-red-900/20">
+            <Link
+              href="/admin/dashboard"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border bg-sky-500/10 text-sky-400 border-sky-500/30 hover:bg-sky-500/20 shadow-[0_0_15px_rgba(0,210,255,0.1)]"
+            >
+              <LayoutDashboard className="w-4 h-4 text-sky-400" />
+              Standard Admin Suite
+            </Link>
+          </div>
         </div>
 
         {/* Sidebar Footer / User Profile */}

@@ -530,6 +530,28 @@ export default function AdminLogin() {
   // Wireframe canvas initialization
   useInteractiveWaveMesh(canvasRef, sparks, setSparks);
 
+  // Automatic login redirect if user is already authenticated
+  useEffect(() => {
+    async function checkActiveSession() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setStatusText("ACTIVE SESSION DETECTED");
+          const role = await getUserRole(user.id);
+          setAuthRole(role);
+          setPhase("success");
+          if (role === "super_admin") router.push("/super-admin/dashboard");
+          else if (role === "admin") router.push("/admin/dashboard");
+          else if (role === "staff") router.push("/admin/orders");
+          else router.push("/user-dashboard");
+        }
+      } catch (e) {
+        console.error("Session check error:", e);
+      }
+    }
+    checkActiveSession();
+  }, [supabase, router]);
+
   /* ── Typing feedback spark generator ── */
   const generateSparks = (e: React.KeyboardEvent) => {
     // Avoid generating sparks on system keys

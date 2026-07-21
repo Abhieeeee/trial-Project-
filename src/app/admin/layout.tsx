@@ -14,6 +14,7 @@ import {
   PackageSearch,
   UsersRound,
   Settings,
+  ShieldAlert,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -67,6 +68,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ? allNavItems.filter(item => ["Orders", "Inventory"].includes(item.name))
     : allNavItems;
 
+  const isSuperAdmin = profile?.role === "super_admin";
+  const isStaff = profile?.role === "staff";
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex overflow-hidden relative">
       
@@ -113,13 +117,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             );
           })}
+
+          {isSuperAdmin && (
+            <div className="mt-4 pt-4 border-t border-neutral-900/60">
+              <Link
+                href="/super-admin/dashboard"
+                className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+              >
+                <ShieldAlert className="w-4 h-4 text-red-400 animate-pulse" />
+                Super Admin Portal
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Sidebar Footer / User Profile */}
         <div className="p-4 border-t border-neutral-900/60 bg-neutral-950/40">
           <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/[0.01] border border-white/5">
-            <div className="w-8 h-8 rounded-full bg-sky-500/10 flex items-center justify-center border border-sky-500/20">
-              <span className="text-sky-400 font-extrabold text-xs">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${isSuperAdmin ? "bg-red-500/10 border-red-500/30 text-red-400" : isStaff ? "bg-amber-500/10 border-amber-500/30 text-amber-400" : "bg-sky-500/10 border-sky-500/20 text-sky-400"}`}>
+              <span className="font-extrabold text-xs">
                 {profile
                   ? profile.name
                       .split(" ")
@@ -130,11 +146,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   : ".."}
               </span>
             </div>
-            <div>
-              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">
+            <div className="overflow-hidden">
+              <div className="text-[9px] uppercase tracking-widest font-extrabold text-white truncate">
                 {profile ? profile.name : "System Loading..."}
               </div>
-              <div className="text-[8px] uppercase tracking-widest text-neutral-500 font-bold">
+              <div className={`text-[8px] uppercase tracking-widest font-bold ${isSuperAdmin ? "text-red-400" : isStaff ? "text-amber-400" : "text-sky-400"}`}>
                 {profile ? profile.role.replace("_", " ") : "Store operations"}
               </div>
             </div>
