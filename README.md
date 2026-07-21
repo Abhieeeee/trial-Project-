@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:1f6feb,100:58a6ff&height=160&section=header&text=trial-Project-&fontSize=36&fontColor=ffffff&fontAlignY=35&desc=Full-Stack%20Next.js%20Web%20Application&descSize=16&descAlignY=55&descColor=8b949e&animation=fadeIn" width="100%" />
 
-First, run the development server:
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
+</p>
+
+---
+
+## 📋 Overview
+
+A production-grade full-stack web application built with **Next.js 14+** and **TypeScript**, powered by **Supabase** for authentication, real-time data, and PostgreSQL database management. Features server-side rendering, API routes, and custom database triggers.
+
+## 🏗️ Architecture
+
+```
+trial-Project-/
+├── public/              # Static assets (images, fonts, icons)
+├── src/                 # Application source code
+│   ├── app/             # Next.js App Router pages & layouts
+│   ├── components/      # Reusable React components
+│   └── lib/             # Utility functions & Supabase client
+├── supabase/            # Database migrations & seed files
+│   └── migrations/      # PLpgSQL triggers & functions
+├── create_users.js      # User seeding script
+├── next.config.ts       # Next.js configuration
+├── tsconfig.json        # TypeScript configuration
+├── eslint.config.mjs    # ESLint rules
+├── postcss.config.mjs   # PostCSS / Tailwind configuration
+└── package.json         # Dependencies & scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚡ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Server-Side Rendering** — Optimized page loads with Next.js App Router
+- **Type-Safe Codebase** — End-to-end TypeScript for reliability
+- **Supabase Integration** — Auth, real-time subscriptions, and row-level security
+- **Custom Database Logic** — PLpgSQL triggers and stored procedures
+- **User Management** — Automated user creation and seeding scripts
+- **Modern Styling** — PostCSS pipeline with utility-first CSS
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- **Node.js** >= 18.x
+- **npm** or **yarn** or **pnpm**
+- **Supabase** account (or local Supabase CLI)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Clone the repository
+git clone https://github.com/Abhieeeee/trial-Project-.git
+cd trial-Project-
 
-## Deploy on Vercel
+# Install dependencies
+npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Set up environment variables
+cp .env.example .env.local
+# Add your Supabase URL and anon key to .env.local
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Run the development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+### Database Setup
+
+```bash
+# Apply Supabase migrations
+npx supabase db push
+
+# Seed users (optional)
+node create_users.js
+```
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js 14+ (App Router) |
+| **Language** | TypeScript |
+| **Backend** | Supabase (Auth, Database, Storage) |
+| **Database** | PostgreSQL + PLpgSQL |
+| **Styling** | PostCSS + Tailwind CSS |
+| **Deployment** | Vercel |
+| **Linting** | ESLint |
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/Abhieeeee">Abhi Mishra</a></sub>
+</div>
+
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:1f6feb,100:58a6ff&height=100&section=footer" width="100%" />
+</div>
