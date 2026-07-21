@@ -2,7 +2,7 @@ const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
 
 const envPath = "./.env.local";
-if (fs.existsSync(envPath)) {
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL && fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, "utf-8");
   envContent.split("\n").forEach(line => {
     const parts = line.split("=");
