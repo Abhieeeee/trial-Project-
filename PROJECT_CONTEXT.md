@@ -7,6 +7,8 @@ Use this document to quickly onboard any AI assistant (such as Gemini, Antigravi
 ## 📂 1. Project Location & Stack
 * **Local Path:** `C:\Users\DELL\.gemini\antigravity\scratch\aura-street`
 * **Git Repository:** `https://github.com/Abhieeeee/trial-Project-`
+* **Vercel Project:** `trial-project` (linked to `am4512040-2910s-projects`)
+* **Production URL:** `https://trial-project-bice.vercel.app`
 * **Vercel Deploy:** Connects to GitHub for automated pushes to the `main` branch.
 * **Core Technologies:**
   * **Framework:** Next.js 16.2.10 (Turbopack & App Router)
