@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 export async function GET() {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const postgresUrl = process.env.POSTGRES_URL;
 
   if (!postgresUrl) {
