@@ -24,8 +24,9 @@ These accounts have already been programmatically registered in the Supabase dat
 | :--- | :--- | :--- | :--- |
 | **Super Admin** | `super@aurastreet.com` | `SuperAdminSecure123!` | `/super-admin/dashboard` |
 | **Admin** | `admin@aurastreet.com` | `AdminSecure123!` | `/admin/dashboard` |
+| **Staff** | `staff@aurastreet.com` | `StaffSecure123!` | `/admin/orders` |
 
-*Default roles are mapped automatically from the `profiles` table inside the database.*
+*Roles are mapped from the `profiles` table. Staff role is detected via email override in `src/proxy.ts`.*
 
 ---
 
@@ -35,6 +36,10 @@ These accounts have already been programmatically registered in the Supabase dat
   1. Checks for active session cookie via client anon key.
   2. Bypasses client-side RLS using `SUPABASE_SERVICE_ROLE_KEY` inside the Edge-compatible `createServerClient` to securely query the user's role from the database.
   3. Automatically routes unauthorized roles to their allowed landing dashboards or back to `/admin/login`.
+* **Role Guards:**
+  * `staff` → Only `/admin/orders` and `/admin/inventory` (limited view)
+  * `admin` → Full `/admin/*` access
+  * `super_admin` → Full `/admin/*` and `/super-admin/*` access
 
 ---
 
@@ -70,4 +75,8 @@ Due to local script execution policy restrictions on PowerShell, run commands us
   git add .
   git commit -m "your message"
   git push
+  ```
+* **Register New Users in Supabase:**
+  ```cmd
+  cmd /c "node create_users.js"
   ```
