@@ -39,8 +39,8 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabaseAuth.auth.getUser();
 
-  // Protect admin, super-admin, and user-dashboard routes
-  if (pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/user-dashboard")) {
+  // Protect admin, super-admin, user-dashboard, and dashboard routes
+  if (pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/user-dashboard") || pathname.startsWith("/dashboard")) {
     if (!user) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
@@ -67,8 +67,11 @@ export async function proxy(request: NextRequest) {
     const role = profile?.email === "staff@aurastreet.com" ? "staff" : (profile?.role ?? "user");
 
     // 3. Role-based guards
-    // Staff role constraints: can only access orders and inventory in the admin suite
     if (role === "staff") {
+      // Staff role constraints: can only access orders and inventory in the admin suite, or dashboard/staff
+      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/staff")) {
+        return NextResponse.redirect(new URL("/dashboard/staff", request.url));
+      }
       if (pathname.startsWith("/super-admin") || pathname.startsWith("/admin")) {
         const allowedStaffPaths = ["/admin/orders", "/admin/inventory"];
         const isAllowed = allowedStaffPaths.some(path => pathname.startsWith(path));
@@ -76,14 +79,19 @@ export async function proxy(request: NextRequest) {
           return NextResponse.redirect(new URL("/admin/orders", request.url));
         }
       }
-    } else {
-      // Super admin guard for non-staff roles
-      if (pathname.startsWith("/super-admin") && role !== "super_admin") {
+    } else if (role === "admin") {
+      // Admin constraints: can access /dashboard/admin and /dashboard/staff
+      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/admin") && !pathname.startsWith("/dashboard/staff")) {
+        return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+      }
+      if (pathname.startsWith("/super-admin")) {
         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       }
-
-      // Admin guard for non-staff roles — super_admin also allowed
-      if (pathname.startsWith("/admin") && !["admin", "super_admin"].includes(role)) {
+    } else if (role === "super_admin") {
+      // Super admin can access everything in /dashboard and other admin panels
+    } else {
+      // Standard users are blocked from all dashboard/admin routes
+      if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || pathname.startsWith("/super-admin")) {
         return NextResponse.redirect(new URL("/user-dashboard", request.url));
       }
     }
@@ -93,5 +101,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/super-admin/:path*", "/user-dashboard/:path*"],
+  matcher: ["/admin/:path*", "/super-admin/:path*", "/user-dashboard/:path*", "/dashboard/:path*"],
 };
