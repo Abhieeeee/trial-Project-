@@ -33,15 +33,15 @@ These accounts have already been programmatically registered in the Supabase dat
 ---
 
 ## 🔒 3. Authentication & Routing Architecture
-* **Routing Guard (`src/proxy.ts`):** Next.js 16 Proxy convention intercepts all routes matching `/admin/:path*`, `/super-admin/:path*`, and `/user-dashboard/:path*`.
+* **Routing Guard (`src/proxy.ts`):** Next.js 16 Proxy convention intercepts all routes matching `/admin/:path*`, `/super-admin/:path*`, `/user-dashboard/:path*`, and `/dashboard/:path*`.
 * **Security Checks:**
   1. Checks for active session cookie via client anon key.
   2. Bypasses client-side RLS using `SUPABASE_SERVICE_ROLE_KEY` inside the Edge-compatible `createServerClient` to securely query the user's role from the database.
   3. Automatically routes unauthorized roles to their allowed landing dashboards or back to `/admin/login`.
 * **Role Guards:**
-  * `staff` → Only `/admin/orders` and `/admin/inventory` (limited view)
-  * `admin` → Full `/admin/*` access
-  * `super_admin` → Full `/admin/*` and `/super-admin/*` access
+  * `staff` → `/admin/orders`, `/admin/inventory`, and `/dashboard/staff` (read-only inventory details and live order feeds)
+  * `admin` → Full `/admin/*` and `/dashboard/admin` (add/mint products, adjust stock levels, transition orders)
+  * `super_admin` → Full `/admin/*`, `/super-admin/*`, and `/dashboard/superadmin` (user management table, command system logs console, and cascade delete warning modal)
 
 ---
 
