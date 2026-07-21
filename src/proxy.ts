@@ -33,9 +33,12 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabaseAuth.auth.getUser();
 
-  // If already logged in and visiting login page, automatically redirect to appropriate portal
+  // If already logged in and visiting login page (GET navigation only), automatically redirect to appropriate portal
   if (pathname === "/admin/login") {
-    if (user) {
+    const isGetMethod = request.method === "GET";
+    const isServerAction = request.headers.has("next-action");
+
+    if (isGetMethod && !isServerAction && user) {
       const supabaseAdmin = createServerClient(
         supabaseUrl,
         supabaseServiceKey,

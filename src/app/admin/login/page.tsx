@@ -537,13 +537,30 @@ export default function AdminLogin() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           setStatusText("ACTIVE SESSION DETECTED");
-          const role = await getUserRole(user.id);
+          let role = "user";
+          if (user.email === "super@aurastreet.com") {
+            role = "super_admin";
+          } else if (user.email === "staff@aurastreet.com") {
+            role = "staff";
+          } else {
+            try {
+              const { data: profile } = await supabase
+                .from("profiles")
+                .select("role")
+                .eq("id", user.id)
+                .single();
+              if (profile?.role) role = profile.role;
+              else role = await getUserRole(user.id);
+            } catch {
+              role = await getUserRole(user.id);
+            }
+          }
           setAuthRole(role);
           setPhase("success");
-          if (role === "super_admin") router.push("/super-admin/dashboard");
-          else if (role === "admin") router.push("/admin/dashboard");
-          else if (role === "staff") router.push("/admin/orders");
-          else router.push("/user-dashboard");
+          if (role === "super_admin") window.location.href = "/super-admin/dashboard";
+          else if (role === "admin") window.location.href = "/admin/dashboard";
+          else if (role === "staff") window.location.href = "/admin/orders";
+          else window.location.href = "/user-dashboard";
         }
       } catch (e) {
         console.error("Session check error:", e);
@@ -658,18 +675,40 @@ export default function AdminLogin() {
       }
 
       setStatusText("ACCESS APPROVED");
-      const role = await getUserRole(data.user.id);
+
+      let role = "user";
+      if (data.user.email === "super@aurastreet.com") {
+        role = "super_admin";
+      } else if (data.user.email === "staff@aurastreet.com") {
+        role = "staff";
+      } else {
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", data.user.id)
+            .single();
+          if (profile?.role) {
+            role = profile.role;
+          } else {
+            role = await getUserRole(data.user.id);
+          }
+        } catch {
+          role = await getUserRole(data.user.id);
+        }
+      }
+
       setAuthRole(role);
       setPhase("success");
 
       setTimeout(() => setStatusText("LAUNCHING ENVIRONMENT"), 250);
 
       setTimeout(() => {
-        if (role === "super_admin") router.push("/super-admin/dashboard");
-        else if (role === "admin") router.push("/admin/dashboard");
-        else if (role === "staff") router.push("/admin/orders");
-        else router.push("/user-dashboard");
-      }, 1000);
+        if (role === "super_admin") window.location.href = "/super-admin/dashboard";
+        else if (role === "admin") window.location.href = "/admin/dashboard";
+        else if (role === "staff") window.location.href = "/admin/orders";
+        else window.location.href = "/user-dashboard";
+      }, 800);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Handshake exception.";
       setError(message);
