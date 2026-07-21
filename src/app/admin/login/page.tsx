@@ -540,6 +540,8 @@ export default function AdminLogin() {
           let role = "user";
           if (user.email === "super@aurastreet.com") {
             role = "super_admin";
+          } else if (user.email === "admin@aurastreet.com") {
+            role = "admin";
           } else if (user.email === "staff@aurastreet.com") {
             role = "staff";
           } else {
@@ -679,6 +681,8 @@ export default function AdminLogin() {
       let role = "user";
       if (data.user.email === "super@aurastreet.com") {
         role = "super_admin";
+      } else if (data.user.email === "admin@aurastreet.com") {
+        role = "admin";
       } else if (data.user.email === "staff@aurastreet.com") {
         role = "staff";
       } else {

@@ -90,8 +90,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         
         {/* Sidebar Header */}
         <div className="h-20 flex items-center px-8 border-b border-neutral-900/60 justify-between">
-          <Link href="/admin/dashboard" className="text-xs font-bold tracking-[0.35em] uppercase font-display select-none text-white flex items-center gap-1.5">
-            AURA<span className="text-sky-400 font-extrabold">.</span>ADMIN
+          <Link href={isStaff ? "/admin/orders" : "/admin/dashboard"} className="text-xs font-bold tracking-[0.35em] uppercase font-display select-none text-white flex items-center gap-1.5">
+            AURA<span className={isStaff ? "text-amber-400 font-extrabold" : "text-sky-400 font-extrabold"}>.</span>{isStaff ? "STAFF" : "ADMIN"}
           </Link>
           <button className="md:hidden text-neutral-500 hover:text-white transition-colors" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
