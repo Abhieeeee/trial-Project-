@@ -54,7 +54,7 @@ export async function GET() {
       const existingUser = userList.users.find(u => u.email === account.email);
       let userId = existingUser?.id;
 
-      if (existingUser) {
+      if (existingUser && userId) {
         log.push(`User exists (ID: ${userId}). Resetting password and confirming email...`);
         const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
           password: account.password,
