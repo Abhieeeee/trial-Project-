@@ -181,7 +181,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-10">
+        <main data-lenis-prevent className="flex-1 overflow-y-auto p-6 md:p-10">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

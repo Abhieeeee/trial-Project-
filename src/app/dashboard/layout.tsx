@@ -265,7 +265,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-12">
+        <main data-lenis-prevent className="flex-1 overflow-y-auto p-6 md:p-12">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

@@ -13,6 +13,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 0.9,
+      prevent: (node) => !!node.closest?.("[data-lenis-prevent]"),
     });
 
     // Setup RequestAnimationFrame loop
