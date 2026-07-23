@@ -5,6 +5,7 @@ import { Mail, MessageCircle, Headphones, MapPin, Send, CheckCircle2 } from "luc
 import { motion, AnimatePresence } from "framer-motion";
 import PageIntro from "@/components/PageIntro";
 import PageShell from "@/components/PageShell";
+import PersonalTouchForm from "@/components/PersonalTouchForm";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -145,6 +146,11 @@ export default function ContactPage() {
               </motion.div>
             ))}
           </motion.div>
+        </section>
+
+        {/* Personal Touch & Improvement Portal Section */}
+        <section className="px-6 md:px-12 max-w-7xl mx-auto pb-28">
+          <PersonalTouchForm />
         </section>
       </div>
     </PageShell>

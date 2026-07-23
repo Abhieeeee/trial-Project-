@@ -6,6 +6,7 @@ import { TrendingUp, ShoppingBag, CheckCircle2, Clock, Truck, Package, Copy, Che
 import { Badge } from "@/components/admin/Badge";
 import PageShell from "@/components/PageShell";
 import PageIntro from "@/components/PageIntro";
+import PersonalTouchForm from "@/components/PersonalTouchForm";
 
 type OrderStatus = "Pending" | "Shipped" | "Delivered" | "Cancelled";
 
@@ -217,6 +218,9 @@ export default function UserDashboard() {
             </motion.div>
           ))}
         </div>
+
+        {/* Co-Creation & Personal Touch Form */}
+        <PersonalTouchForm />
 
       </div>
     </PageShell>
