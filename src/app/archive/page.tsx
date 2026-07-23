@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/CustomCursor";
 
 const seasons = [
   {
@@ -69,7 +68,6 @@ export default function Archive() {
 
   return (
     <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-32">
-      <CustomCursor />
       <Header />
 
       <section className="px-6 md:px-12 max-w-5xl mx-auto mb-24">

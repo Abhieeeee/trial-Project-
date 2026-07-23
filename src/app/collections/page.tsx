@@ -6,7 +6,6 @@ import Link from "next/link";
 import { MoveRight, Shield, Leaf, Beaker } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/CustomCursor";
 
 export default function Collections() {
   const staggerContainer = {
@@ -30,7 +29,6 @@ export default function Collections() {
 
   return (
     <main className="relative min-h-screen bg-black text-white w-full overflow-hidden">
-      <CustomCursor />
       <Header />
 
       {/* Hero Section */}

@@ -6,7 +6,6 @@ import Image from "next/image";
 import { ArrowDown, ChevronRight, Compass } from "lucide-react";
 import Link from "next/link";
 import DynamicBg from "@/components/DynamicBg";
-import CustomCursor from "@/components/CustomCursor";
 import Header from "@/components/Header";
 import ProductCanvas from "@/components/ProductCanvas";
 import ProductGrid from "@/components/ProductGrid";
@@ -50,9 +49,6 @@ export default function Home() {
   return (
     <main className="relative min-h-screen bg-black text-white w-full overflow-hidden">
       
-      {/* 1. Global Custom Animated Cursor */}
-      <CustomCursor />
-
       {/* 2. Global Immersive Atmospheric Background */}
       <DynamicBg />
 

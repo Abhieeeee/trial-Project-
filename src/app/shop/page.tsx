@@ -7,7 +7,6 @@ import Link from "next/link";
 import { RotateCcw, Search, ShieldCheck, SlidersHorizontal, Truck, ChevronDown, Share2, Check } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/CustomCursor";
 import StoreProductCard from "@/components/StoreProductCard";
 import { categories, products as fallbackProducts, type Product } from "@/lib/catalog";
 import { createClient } from "@/lib/supabase/client";
@@ -115,7 +114,6 @@ function ShopContent() {
 
   return (
     <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-[140px] lg:pt-[180px]">
-      <CustomCursor />
       <Header />
 
       <section className="px-6 md:px-12 max-w-7xl mx-auto mb-16">
