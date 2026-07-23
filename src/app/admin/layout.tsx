@@ -17,6 +17,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -196,6 +197,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="flex items-center gap-4">
+            <RoleSwitcher />
+
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/5 border border-green-500/10 text-green-500 text-[8px] uppercase tracking-widest font-extrabold">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
               SYSTEM ONLINE

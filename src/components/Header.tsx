@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useCurrency, CurrencyCode } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 const navLinks = [
   { label: "Collections", href: "/collections" },
@@ -137,6 +138,9 @@ export default function Header() {
             <Link className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Search products" href="/shop" data-magnetic>
               <Search className="w-4 h-4" />
             </Link>
+
+            <RoleSwitcher />
+
             <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
               <UserRound className="w-4 h-4" />
             </Link>
