@@ -121,7 +121,17 @@ export default function AccountPage() {
         setLoading(false);
       }
     }
+
     checkAuth();
+
+    // Listen for live auth state changes (e.g. Google OAuth callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleGoogleLogin = async () => {
