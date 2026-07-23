@@ -14,7 +14,8 @@ import {
   ChevronRight,
   ArrowRight,
   Mail,
-  Zap,
+  Sparkles,
+  Lock,
 } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import PageIntro from '@/components/PageIntro';
@@ -202,77 +203,93 @@ export default function AccountPage() {
         />
       )}
 
-      <section className="px-6 md:px-12 max-w-4xl mx-auto pb-28 font-sans">
+      <section className="px-6 md:px-12 max-w-5xl mx-auto pb-32 font-sans">
         
-        {/* UNAUTHENTICATED STATE: Clean, Uncluttered, Perfectly Centered Login Card */}
+        {/* UNAUTHENTICATED STATE: Spacious, Animated Luxury Login Portal */}
         {!user && !loading && (
-          <div className="min-h-[70vh] flex flex-col items-center justify-center py-12">
+          <div className="min-h-[75vh] flex flex-col items-center justify-center py-16 relative">
+            
+            {/* Animated Ambient Backlight Glow */}
+            <div className="absolute w-[350px] h-[350px] bg-gradient-to-tr from-[#00D2FF]/20 to-purple-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="w-full max-w-md bg-neutral-950/95 border border-white/10 rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6 font-sans relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-xl bg-black/80 border border-white/15 rounded-[2.5rem] p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl space-y-8 font-sans relative z-10"
             >
-              {/* Header Title */}
-              <div className="text-center space-y-2">
-                <span className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-[#00D2FF] font-mono">
-                  AURA STREET // CUSTOMER PORTAL
-                </span>
-                <h1 className="text-2xl font-extrabold uppercase tracking-tight text-white">
-                  Customer Sign In
-                </h1>
-                <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-                  Sign in to view your orders, wishlist, and checkout.
-                </p>
+              {/* Luxury Emblem & Header */}
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-white/10 to-white/0 border border-white/15 flex items-center justify-center mx-auto shadow-inner text-[#00D2FF]">
+                  <Sparkles className="w-7 h-7 text-[#00D2FF]" />
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.35em] text-[#00D2FF] font-mono block mb-1">
+                    AURA STREET // PRIVATE PORTAL
+                  </span>
+                  <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-white font-sans">
+                    Customer Sign In
+                  </h1>
+                  <p className="text-xs md:text-sm text-neutral-400 font-sans leading-relaxed mt-2 max-w-sm mx-auto">
+                    Sign in to manage active order shipments, view saved wishlist items, and access VIP drops.
+                  </p>
+                </div>
               </div>
 
               {/* 1-Click Google Sign In Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleGoogleLogin}
                 disabled={signingIn}
-                className="w-full py-3.5 px-6 bg-white hover:bg-neutral-200 text-black font-extrabold rounded-xl transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-wider cursor-pointer shadow-lg font-mono group"
+                className="w-full py-4.5 px-8 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-4 text-xs md:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.15)] font-mono group"
               >
-                <GoogleIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>{signingIn ? "Authenticating..." : "Continue with Google"}</span>
-              </button>
+                <GoogleIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>{signingIn ? "Authenticating Session..." : "Continue with Google"}</span>
+              </motion.button>
 
-              {/* Or Divider */}
-              <div className="flex items-center gap-4 my-2">
+              {/* Styled Or Divider */}
+              <div className="flex items-center gap-4 py-1">
                 <div className="h-[1px] flex-1 bg-white/10" />
-                <span className="text-[9px] uppercase tracking-widest text-neutral-500 font-mono font-bold">
-                  OR EMAIL SIGN IN
+                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-500 font-mono font-bold">
+                  OR EMAIL MAGIC ACCESS
                 </span>
                 <div className="h-[1px] flex-1 bg-white/10" />
               </div>
 
-              {/* Direct Email Sign In Input Form */}
-              <form onSubmit={handleEmailSignIn} className="space-y-3 font-mono">
+              {/* Direct Email Sign In Form with Zero-Overlap Padding */}
+              <form onSubmit={handleEmailSignIn} className="space-y-4 font-mono">
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-neutral-400 pointer-events-none">
+                    <Mail className="w-4 h-4" />
+                  </div>
                   <input
                     type="email"
                     required
                     placeholder="Enter your email address..."
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 focus:border-[#00D2FF] rounded-xl py-3 pl-10 pr-4 text-xs text-white placeholder:text-neutral-500 focus:outline-none transition-colors"
+                    className="w-full bg-white/5 border border-white/10 focus:border-[#00D2FF] focus:bg-white/[0.07] rounded-2xl py-4 pl-14 pr-5 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner"
                   />
                 </div>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                   type="submit"
                   disabled={signingIn}
-                  className="w-full py-3 px-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#00D2FF] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-4 px-8 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#00D2FF] text-white text-xs font-bold uppercase tracking-wider rounded-2xl transition-all flex items-center justify-center gap-3 cursor-pointer group shadow-lg"
                 >
                   <span>Continue with Email</span>
-                  <ArrowRight className="w-4 h-4 text-[#00D2FF]" />
-                </button>
+                  <ArrowRight className="w-4 h-4 text-[#00D2FF] group-hover:translate-x-1.5 transition-transform" />
+                </motion.button>
               </form>
 
               {/* Security Footer Badge */}
-              <div className="pt-4 border-t border-white/10 flex items-center justify-center gap-2 text-[9px] uppercase tracking-widest text-neutral-500 font-mono">
+              <div className="pt-6 border-t border-white/10 flex items-center justify-center gap-2.5 text-[10px] uppercase tracking-widest text-neutral-500 font-mono">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>256-Bit Encrypted Session</span>
+                <span>256-Bit SSL Encrypted Customer Auth</span>
               </div>
             </motion.div>
           </div>
