@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   CreditCard,
   Heart,
@@ -9,13 +9,18 @@ import {
   MapPin,
   Package,
   Shield,
-  User,
   ShieldCheck,
   ChevronRight,
   ArrowRight,
   Mail,
   Sparkles,
   Lock,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  AlertCircle,
+  Zap,
+  UserCheck,
 } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import PageIntro from '@/components/PageIntro';
@@ -82,7 +87,11 @@ export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [signingIn, setSigningIn] = useState(false);
-  const [emailInput, setEmailInput] = useState("");
+  const [authMode, setAuthMode] = useState<'magic' | 'password'>('magic');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [authFeedback, setAuthFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const { totalWishlist } = useWishlist();
 
   const supabase = createClient();
@@ -94,13 +103,13 @@ export default function AccountPage() {
         if (data.user) {
           setUser(data.user);
         } else {
-          const savedSession = localStorage.getItem("aura_user_session");
+          const savedSession = localStorage.getItem('aura_user_session');
           if (savedSession) {
             setUser(JSON.parse(savedSession));
           }
         }
       } catch (err) {
-        console.error("User check error:", err);
+        console.error('User check error:', err);
       } finally {
         setLoading(false);
       }
@@ -119,6 +128,7 @@ export default function AccountPage() {
 
   const handleGoogleLogin = async () => {
     setSigningIn(true);
+    setAuthFeedback(null);
 
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -132,27 +142,28 @@ export default function AccountPage() {
       if (error) {
         const googleSession = {
           id: `goog-user-${Date.now()}`,
-          email: "collector.aura@gmail.com",
+          email: 'collector.aura@gmail.com',
           user_metadata: {
-            full_name: "Google Verified Collector",
-            avatar_url: "",
+            full_name: 'Google Verified Collector',
+            avatar_url: '',
           },
-          app_metadata: { provider: "google" },
+          app_metadata: { provider: 'google' },
         };
-        localStorage.setItem("aura_user_session", JSON.stringify(googleSession));
+        localStorage.setItem('aura_user_session', JSON.stringify(googleSession));
         setUser(googleSession);
+        setAuthFeedback({ type: 'success', message: 'Google Authentication Successful!' });
       }
     } catch (err: any) {
       const googleSession = {
         id: `goog-user-${Date.now()}`,
-        email: "collector.aura@gmail.com",
+        email: 'collector.aura@gmail.com',
         user_metadata: {
-          full_name: "Google Verified Collector",
-          avatar_url: "",
+          full_name: 'Google Verified Collector',
+          avatar_url: '',
         },
-        app_metadata: { provider: "google" },
+        app_metadata: { provider: 'google' },
       };
-      localStorage.setItem("aura_user_session", JSON.stringify(googleSession));
+      localStorage.setItem('aura_user_session', JSON.stringify(googleSession));
       setUser(googleSession);
     } finally {
       setSigningIn(false);
@@ -163,6 +174,7 @@ export default function AccountPage() {
     e.preventDefault();
     if (!emailInput) return;
     setSigningIn(true);
+    setAuthFeedback(null);
 
     setTimeout(() => {
       const simulatedUser = {
@@ -170,27 +182,49 @@ export default function AccountPage() {
         email: emailInput,
         user_metadata: {
           full_name: emailInput.split('@')[0],
-          avatar_url: "",
+          avatar_url: '',
         },
-        app_metadata: { provider: "email" },
+        app_metadata: { provider: 'email' },
       };
-      localStorage.setItem("aura_user_session", JSON.stringify(simulatedUser));
+      localStorage.setItem('aura_user_session', JSON.stringify(simulatedUser));
       setUser(simulatedUser);
       setSigningIn(false);
-    }, 600);
+      setAuthFeedback({ type: 'success', message: 'Signed in successfully!' });
+    }, 500);
+  };
+
+  const handleDemoSignIn = () => {
+    setSigningIn(true);
+    setAuthFeedback(null);
+    setTimeout(() => {
+      const demoUser = {
+        id: `usr-demo-${Date.now()}`,
+        email: 'customer.aura@street.com',
+        user_metadata: {
+          full_name: 'Aura VIP Customer',
+          avatar_url: '',
+        },
+        app_metadata: { provider: 'demo' },
+      };
+      localStorage.setItem('aura_user_session', JSON.stringify(demoUser));
+      setUser(demoUser);
+      setSigningIn(false);
+      setAuthFeedback({ type: 'success', message: 'Authenticated as VIP Customer!' });
+    }, 400);
   };
 
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
     } catch {}
-    localStorage.removeItem("aura_user_session");
+    localStorage.removeItem('aura_user_session');
     setUser(null);
+    setAuthFeedback(null);
   };
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Maya Rivera";
-  const displayEmail = user?.email || "collector.aura@gmail.com";
-  const isGoogleUser = user?.app_metadata?.provider === "google" || user?.id?.startsWith("goog-");
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Maya Rivera';
+  const displayEmail = user?.email || 'collector.aura@gmail.com';
+  const isGoogleUser = user?.app_metadata?.provider === 'google' || user?.id?.startsWith('goog-');
 
   return (
     <PageShell>
@@ -203,93 +237,227 @@ export default function AccountPage() {
         />
       )}
 
-      <section className="px-6 md:px-12 max-w-5xl mx-auto pb-32 font-sans">
-        
-        {/* UNAUTHENTICATED STATE: Spacious, Animated Luxury Login Portal */}
+      <div className="w-full flex flex-col items-center justify-center font-sans">
+        {/* Loading State Skeleton */}
+        {loading && (
+          <div className="min-h-[70vh] flex flex-col items-center justify-center py-12">
+            <div className="w-12 h-12 rounded-full border-2 border-[#00D2FF] border-t-transparent animate-spin mb-4" />
+            <p className="text-xs font-mono text-neutral-300 uppercase tracking-widest animate-pulse">
+              Verifying Customer Credentials...
+            </p>
+          </div>
+        )}
+
+        {/* UNAUTHENTICATED STATE: Perfectly Centered, High-Contrast Luxury Login Portal */}
         {!user && !loading && (
-          <div className="min-h-[75vh] flex flex-col items-center justify-center py-16 relative">
-            
-            {/* Animated Ambient Backlight Glow */}
-            <div className="absolute w-[350px] h-[350px] bg-gradient-to-tr from-[#00D2FF]/20 to-purple-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+          <div className="min-h-[calc(100vh-140px)] w-full flex items-center justify-center px-4 sm:px-6 py-12 relative my-auto">
+            {/* Ambient Dual Backlight Glow */}
+            <div className="absolute w-[380px] h-[380px] bg-gradient-to-tr from-[#00D2FF]/25 via-blue-600/20 to-purple-600/25 rounded-full blur-[110px] pointer-events-none animate-pulse" />
+            <div className="absolute w-[250px] h-[250px] bg-[#00D2FF]/15 rounded-full blur-[90px] pointer-events-none" />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-xl bg-black/80 border border-white/15 rounded-[2.5rem] p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.8)] backdrop-blur-3xl space-y-8 font-sans relative z-10"
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-md sm:max-w-lg bg-neutral-950/95 border border-white/20 rounded-[2rem] sm:rounded-[2.5rem] p-7 sm:p-11 shadow-[0_25px_80px_rgba(0,0,0,0.9)] backdrop-blur-3xl space-y-7 relative z-10 my-auto"
             >
-              {/* Luxury Emblem & Header */}
+              {/* Portal Header */}
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-white/10 to-white/0 border border-white/15 flex items-center justify-center mx-auto shadow-inner text-[#00D2FF]">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#00D2FF]/20 to-white/5 border border-[#00D2FF]/40 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(0,210,255,0.2)] text-[#00D2FF]">
                   <Sparkles className="w-7 h-7 text-[#00D2FF]" />
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-[0.35em] text-[#00D2FF] font-mono block mb-1">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] font-mono mb-2">
+                    <UserCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
                     AURA STREET // PRIVATE PORTAL
                   </span>
-                  <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-white font-sans">
+                  <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white font-sans mt-1">
                     Customer Sign In
                   </h1>
-                  <p className="text-xs md:text-sm text-neutral-400 font-sans leading-relaxed mt-2 max-w-sm mx-auto">
-                    Sign in to manage active order shipments, view saved wishlist items, and access VIP drops.
+                  <p className="text-xs sm:text-sm text-neutral-200 font-sans leading-relaxed mt-2.5 max-w-sm mx-auto font-medium">
+                    Sign in to track orders, manage saved items, and receive drop access.
                   </p>
                 </div>
               </div>
 
               {/* 1-Click Google Sign In Button */}
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
                 onClick={handleGoogleLogin}
                 disabled={signingIn}
-                className="w-full py-4.5 px-8 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-4 text-xs md:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.15)] font-mono group"
+                className="w-full py-4 px-6 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-3.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.2)] font-mono group border border-white"
               >
-                <GoogleIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span>{signingIn ? "Authenticating Session..." : "Continue with Google"}</span>
+                <GoogleIcon className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="font-extrabold text-black">
+                  {signingIn ? 'Authenticating...' : 'Continue with Google'}
+                </span>
               </motion.button>
 
-              {/* Styled Or Divider */}
+              {/* Styled High-Contrast Or Divider */}
               <div className="flex items-center gap-4 py-1">
-                <div className="h-[1px] flex-1 bg-white/10" />
-                <span className="text-[9px] uppercase tracking-[0.25em] text-neutral-500 font-mono font-bold">
-                  OR EMAIL MAGIC ACCESS
+                <div className="h-[1px] flex-1 bg-white/20" />
+                <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-neutral-300 font-mono font-bold px-3 py-0.5 bg-white/5 rounded-full border border-white/10">
+                  OR SIGN IN WITH EMAIL
                 </span>
-                <div className="h-[1px] flex-1 bg-white/10" />
+                <div className="h-[1px] flex-1 bg-white/20" />
               </div>
 
-              {/* Direct Email Sign In Form with Zero-Overlap Padding */}
+              {/* Auth Mode Toggle Tabs (Magic Link vs Password) */}
+              <div className="grid grid-cols-2 p-1 bg-white/5 border border-white/10 rounded-xl font-mono text-xs">
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('magic')}
+                  className={`py-2 px-3 rounded-lg font-bold transition-all text-center cursor-pointer ${
+                    authMode === 'magic'
+                      ? 'bg-[#00D2FF] text-black shadow-md'
+                      : 'text-neutral-300 hover:text-white'
+                  }`}
+                >
+                  Magic Access
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('password')}
+                  className={`py-2 px-3 rounded-lg font-bold transition-all text-center cursor-pointer ${
+                    authMode === 'password'
+                      ? 'bg-[#00D2FF] text-black shadow-md'
+                      : 'text-neutral-300 hover:text-white'
+                  }`}
+                >
+                  Password Login
+                </button>
+              </div>
+
+              {/* Feedback Message */}
+              <AnimatePresence>
+                {authFeedback && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-mono font-medium ${
+                      authFeedback.type === 'success'
+                        ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
+                        : 'bg-red-500/15 border border-red-500/40 text-red-300'
+                    }`}
+                  >
+                    {authFeedback.type === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                    )}
+                    <span>{authFeedback.message}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* High-Contrast Email / Password Sign In Form */}
               <form onSubmit={handleEmailSignIn} className="space-y-4 font-mono">
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-neutral-400 pointer-events-none">
-                    <Mail className="w-4 h-4" />
+                <div className="space-y-1.5 text-left">
+                  <label
+                    htmlFor="customer-email"
+                    className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                  >
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-[#00D2FF] pointer-events-none">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="customer-email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="name@example.com"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                    />
                   </div>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter your email address..."
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 focus:border-[#00D2FF] focus:bg-white/[0.07] rounded-2xl py-4 pl-14 pr-5 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner"
-                  />
                 </div>
 
+                {authMode === 'password' && (
+                  <div className="space-y-1.5 text-left">
+                    <div className="flex items-center justify-between">
+                      <label
+                        htmlFor="customer-password"
+                        className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                      >
+                        Password
+                      </label>
+                      <span className="text-[10px] text-[#00D2FF] hover:underline cursor-pointer">
+                        Forgot?
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-[#00D2FF] pointer-events-none">
+                        <Lock className="w-4 h-4" />
+                      </div>
+                      <input
+                        id="customer-password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        autoComplete="current-password"
+                        placeholder="••••••••••••"
+                        value={passwordInput}
+                        onChange={(e) => setPasswordInput(e.target.value)}
+                        className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-11 pr-11 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer p-1"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Primary High-Contrast Glow Action Button */}
                 <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
                   type="submit"
                   disabled={signingIn}
-                  className="w-full py-4 px-8 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#00D2FF] text-white text-xs font-bold uppercase tracking-wider rounded-2xl transition-all flex items-center justify-center gap-3 cursor-pointer group shadow-lg"
+                  className="w-full py-4 px-6 bg-gradient-to-r from-[#00D2FF] via-[#00B8FF] to-blue-600 hover:from-[#33E0FF] hover:to-blue-500 text-black text-xs sm:text-sm font-extrabold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_0_25px_rgba(0,210,255,0.4)] group border border-cyan-300/40"
                 >
-                  <span>Continue with Email</span>
-                  <ArrowRight className="w-4 h-4 text-[#00D2FF] group-hover:translate-x-1.5 transition-transform" />
+                  <span>
+                    {signingIn
+                      ? 'Authenticating...'
+                      : authMode === 'magic'
+                      ? 'Continue with Email'
+                      : 'Sign In to Account'}
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1.5 transition-transform" />
                 </motion.button>
               </form>
 
+              {/* Quick Instant Demo Login Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={handleDemoSignIn}
+                  disabled={signingIn}
+                  className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 border border-white/20 hover:border-[#00D2FF] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 text-[#00D2FF]" />
+                  <span>Quick Instant Demo Sign In</span>
+                </button>
+              </div>
+
               {/* Security Footer Badge */}
-              <div className="pt-6 border-t border-white/10 flex items-center justify-center gap-2.5 text-[10px] uppercase tracking-widest text-neutral-500 font-mono">
+              <div className="pt-5 border-t border-white/15 flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-neutral-300 font-mono">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>256-Bit SSL Encrypted Customer Auth</span>
+                <span className="font-semibold text-neutral-200">256-Bit SSL Encrypted Customer Auth</span>
               </div>
             </motion.div>
           </div>
@@ -297,75 +465,80 @@ export default function AccountPage() {
 
         {/* AUTHENTICATED STATE: Clean Customer Dashboard */}
         {user && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            {/* User Profile Overview */}
-            <div className="bg-neutral-950 border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
-              <div className="flex items-center gap-5 text-center sm:text-left">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d2ff] to-purple-500 p-[2px] shrink-0">
-                  <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-                    {user?.user_metadata?.avatar_url ? (
-                      <img src={user.user_metadata.avatar_url} alt={displayName} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-xl font-bold text-white font-mono">
-                        {displayName.substring(0, 2).toUpperCase()}
-                      </span>
-                    )}
+          <section className="px-6 md:px-12 max-w-5xl w-full mx-auto pb-32 font-sans">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8 mt-6"
+            >
+              {/* User Profile Overview */}
+              <div className="bg-neutral-950 border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
+                <div className="flex items-center gap-5 text-center sm:text-left">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d2ff] to-purple-500 p-[2px] shrink-0">
+                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                      {user?.user_metadata?.avatar_url ? (
+                        <img
+                          src={user.user_metadata.avatar_url}
+                          alt={displayName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xl font-bold text-white font-mono">
+                          {displayName.substring(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 justify-center sm:justify-start">
+                      <h2 className="text-xl font-bold text-white font-sans">{displayName}</h2>
+                      {isGoogleUser && (
+                        <span className="px-2.5 py-0.5 rounded bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/40 text-[9px] font-mono font-bold uppercase tracking-wider">
+                          Google Verified
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-neutral-300 font-mono">{displayEmail}</p>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 justify-center sm:justify-start">
-                    <h2 className="text-xl font-bold text-white font-sans">{displayName}</h2>
-                    {isGoogleUser && (
-                      <span className="px-2.5 py-0.5 rounded bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase tracking-wider">
-                        Google Verified
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-neutral-400 font-mono">{displayEmail}</p>
-                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2.5 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Sign Out
+                </button>
               </div>
 
-              <button
-                onClick={handleSignOut}
-                className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5" /> Sign Out
-              </button>
-            </div>
-
-            {/* Account Dashboard Quick Navigation */}
-            <div className="space-y-3 font-mono">
-              {menuItems.map((item) => (
-                <a
-                  key={item.title}
-                  href={item.href}
-                  className="bg-neutral-950 border border-white/10 hover:border-[#00D2FF] rounded-2xl p-5 flex items-center justify-between group transition-all"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/30 transition-all">
-                      <item.icon className="w-4 h-4" />
+              {/* Account Dashboard Quick Navigation */}
+              <div className="space-y-3 font-mono">
+                {menuItems.map((item) => (
+                  <a
+                    key={item.title}
+                    href={item.href}
+                    className="bg-neutral-950 border border-white/10 hover:border-[#00D2FF] rounded-2xl p-5 flex items-center justify-between group transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/40 transition-all">
+                        <item.icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-[10px] text-neutral-300 mt-0.5">{item.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-[10px] text-neutral-400 mt-0.5">{item.description}</p>
-                    </div>
-                  </div>
 
-                  <ChevronRight className="w-4 h-4 text-neutral-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </a>
-              ))}
-            </div>
-          </motion.div>
+                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          </section>
         )}
-
-      </section>
+      </div>
     </PageShell>
   );
 }
