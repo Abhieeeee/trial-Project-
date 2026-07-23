@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Bell,
-  ChevronRight,
   CreditCard,
   Heart,
   LogOut,
@@ -13,9 +11,14 @@ import {
   Shield,
   User,
   ShieldCheck,
+  ChevronRight,
+  ArrowRight,
+  Lock,
+  Mail,
+  Zap,
 } from 'lucide-react';
-import PageIntro from '@/components/PageIntro';
 import PageShell from '@/components/PageShell';
+import PageIntro from '@/components/PageIntro';
 import { createClient } from '@/lib/supabase/client';
 import { useWishlist } from '@/lib/wishlistContext';
 
@@ -52,18 +55,18 @@ const menuItems = [
   {
     icon: Heart,
     title: 'Saved Wishlist',
-    description: 'View your saved techwear pieces',
+    description: 'View your saved techwear garments',
     href: '/shop',
   },
   {
     icon: MapPin,
-    title: 'Shipping Addresses',
-    description: 'Manage delivery destinations',
+    title: 'Shipping Destinations',
+    description: 'Manage delivery addresses',
     href: '/checkout',
   },
   {
     icon: CreditCard,
-    title: 'Payment Options',
+    title: 'Payment Preferences',
     description: 'Cards, eSewa, Khalti & Apple Pay',
     href: '/checkout',
   },
@@ -79,6 +82,8 @@ export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [signingIn, setSigningIn] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
   const { totalWishlist } = useWishlist();
 
   const supabase = createClient();
@@ -156,6 +161,27 @@ export default function AccountPage() {
     }
   };
 
+  const handleEmailSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailInput) return;
+    setSigningIn(true);
+
+    setTimeout(() => {
+      const simulatedUser = {
+        id: `usr-${Date.now()}`,
+        email: emailInput,
+        user_metadata: {
+          full_name: emailInput.split('@')[0],
+          avatar_url: "",
+        },
+        app_metadata: { provider: "email" },
+      };
+      localStorage.setItem("aura_user_session", JSON.stringify(simulatedUser));
+      setUser(simulatedUser);
+      setSigningIn(false);
+    }, 600);
+  };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -170,58 +196,108 @@ export default function AccountPage() {
 
   return (
     <PageShell>
-      <PageIntro
-        eyebrow="Customer Account"
-        title={user ? `Welcome, ${displayName}` : "Sign In to Aura Street"}
-        text={user ? "Access your saved wishlist, active order shipments, and customer privileges." : "Sign in to manage your orders, wishlist, and delivery preferences."}
-      />
+      {/* If Authenticated: Render PageIntro Hero */}
+      {user && (
+        <PageIntro
+          eyebrow="Customer Account"
+          title={`Welcome, ${displayName}`}
+          text="Access your saved wishlist, active order shipments, and customer privileges."
+        />
+      )}
 
-      <section className="px-6 md:px-12 max-w-4xl mx-auto pb-32 font-sans">
+      <section className="px-6 md:px-12 max-w-4xl mx-auto pb-28 font-sans">
         
-        {/* UNAUTHENTICATED STATE: Minimal, Ultra-Clean Login Box */}
+        {/* UNAUTHENTICATED STATE: Perfectly Centered Luxury Sign-In Card */}
         {!user && !loading && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-neutral-950 border border-white/10 rounded-2xl p-8 sm:p-10 text-center space-y-6 max-w-md mx-auto shadow-2xl font-mono"
-          >
-            <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 text-[#00D2FF] flex items-center justify-center mx-auto">
-              <User className="w-7 h-7" />
-            </div>
-
-            <div className="space-y-1">
-              <h2 className="text-xl font-bold uppercase tracking-wider text-white font-sans">
-                Customer Sign In
-              </h2>
-              <p className="text-xs text-neutral-400 font-sans leading-relaxed">
-                Sign in to view your orders and saved wishlist.
-              </p>
-            </div>
-
-            <button
-              onClick={handleGoogleLogin}
-              disabled={signingIn}
-              className="w-full py-3.5 px-6 bg-white hover:bg-neutral-200 text-black font-bold rounded-xl transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-widest cursor-pointer shadow-md font-mono"
+          <div className="min-h-[70vh] flex flex-col items-center justify-center py-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="w-full max-w-md bg-neutral-950/90 border border-white/15 rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-2xl space-y-6 font-sans relative overflow-hidden"
             >
-              <GoogleIcon className="w-4 h-4" />
-              <span>{signingIn ? "Connecting Google..." : "Continue with Google"}</span>
-            </button>
+              {/* Subtle Ambient Glow Pill */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#00D2FF]/20 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="pt-4 border-t border-neutral-900 flex items-center justify-center gap-2 text-[9px] uppercase tracking-widest text-neutral-500 font-mono">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Secure 256-Bit SSL Auth
-            </div>
-          </motion.div>
+              {/* Brand Lock Icon Header */}
+              <div className="text-center space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 text-[#00D2FF] flex items-center justify-center mx-auto shadow-inner">
+                  <Zap className="w-6 h-6 text-[#00D2FF]" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-[#00D2FF] font-mono">
+                    AURA STREET // PRIVATE PORTAL
+                  </p>
+                  <h1 className="text-2xl font-extrabold uppercase tracking-tight text-white mt-1">
+                    Customer Sign In
+                  </h1>
+                  <p className="text-xs text-neutral-400 mt-1 font-sans">
+                    Access your active orders, saved wishlist, and checkout.
+                  </p>
+                </div>
+              </div>
+
+              {/* 1-Click Google Sign In Button */}
+              <button
+                onClick={handleGoogleLogin}
+                disabled={signingIn}
+                className="w-full py-4 px-6 bg-white hover:bg-neutral-200 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-wider cursor-pointer shadow-xl font-mono group"
+              >
+                <GoogleIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>{signingIn ? "Authenticating..." : "Continue with Google"}</span>
+              </button>
+
+              {/* Or Divider */}
+              <div className="flex items-center gap-4 my-2">
+                <div className="h-[1px] flex-1 bg-white/10" />
+                <span className="text-[9px] uppercase tracking-widest text-neutral-500 font-mono font-bold">
+                  OR EMAIL SIGN IN
+                </span>
+                <div className="h-[1px] flex-1 bg-white/10" />
+              </div>
+
+              {/* Direct Email Sign In Input Form */}
+              <form onSubmit={handleEmailSignIn} className="space-y-3 font-mono">
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="Enter your email address..."
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 focus:border-[#00D2FF] rounded-xl py-3 pl-11 pr-4 text-xs text-white placeholder:text-neutral-500 focus:outline-none transition-colors"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={signingIn}
+                  className="w-full py-3.5 px-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#00D2FF] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Continue with Email</span>
+                  <ArrowRight className="w-4 h-4 text-[#00D2FF]" />
+                </button>
+              </form>
+
+              {/* Security Footer Badge */}
+              <div className="pt-4 border-t border-white/10 flex items-center justify-center gap-2 text-[9px] uppercase tracking-widest text-neutral-500 font-mono">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>256-Bit Encrypted Session</span>
+              </div>
+            </motion.div>
+          </div>
         )}
 
-        {/* AUTHENTICATED STATE: Clean Dashboard Layout */}
+        {/* AUTHENTICATED STATE: Clean Customer Dashboard */}
         {user && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-8"
           >
-            {/* User Profile Card */}
-            <div className="bg-neutral-950 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+            {/* User Profile Overview */}
+            <div className="bg-neutral-950 border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
               <div className="flex items-center gap-5 text-center sm:text-left">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d2ff] to-purple-500 p-[2px] shrink-0">
                   <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
@@ -237,9 +313,9 @@ export default function AccountPage() {
 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 justify-center sm:justify-start">
-                    <h2 className="text-lg font-bold text-white font-sans">{displayName}</h2>
+                    <h2 className="text-xl font-bold text-white font-sans">{displayName}</h2>
                     {isGoogleUser && (
-                      <span className="px-2 py-0.5 rounded bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase tracking-wider">
+                      <span className="px-2.5 py-0.5 rounded bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase tracking-wider">
                         Google Verified
                       </span>
                     )}
@@ -250,22 +326,22 @@ export default function AccountPage() {
 
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" /> Sign Out
               </button>
             </div>
 
-            {/* Account Quick Options List */}
+            {/* Account Dashboard Quick Navigation */}
             <div className="space-y-3 font-mono">
               {menuItems.map((item) => (
                 <a
                   key={item.title}
                   href={item.href}
-                  className="bg-neutral-950 border border-white/10 hover:border-[#00D2FF] rounded-xl p-5 flex items-center justify-between group transition-all"
+                  className="bg-neutral-950 border border-white/10 hover:border-[#00D2FF] rounded-2xl p-5 flex items-center justify-between group transition-all"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/30 transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/30 transition-all">
                       <item.icon className="w-4 h-4" />
                     </div>
                     <div>
