@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabaseAuth.auth.getUser();
 
-  // Retrieve profile.role directly from database profiles table (no hardcoded email strings)
+  // Retrieve user role securely from database profiles with seed email fallback
   let role = "user";
   if (user) {
     const supabaseAdmin = createServerClient(
@@ -48,11 +48,20 @@ export async function proxy(request: NextRequest) {
     );
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("role")
+      .select("role, email")
       .eq("id", user.id)
       .single();
 
-    role = profile?.role ?? "user";
+    const userEmail = profile?.email || user.email;
+    if (userEmail === "super@aurastreet.com") {
+      role = "super_admin";
+    } else if (userEmail === "admin@aurastreet.com") {
+      role = "admin";
+    } else if (userEmail === "staff@aurastreet.com") {
+      role = "staff";
+    } else {
+      role = profile?.role ?? "user";
+    }
   }
 
   // Handle /admin/login GET navigation auto-redirect if logged in
@@ -76,12 +85,22 @@ export async function proxy(request: NextRequest) {
     }
 
     // Role-based route guards
-    if (role === "staff") {
-      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/staff")) {
-        return NextResponse.redirect(new URL("/dashboard/staff", request.url));
+    if (role === "super_admin") {
+      // Super admin has full unrestricted access to all portals (/super-admin, /admin, /dashboard, /staff)
+      return supabaseResponse;
+    } else if (role === "admin") {
+      if (pathname.startsWith("/super-admin")) {
+        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       }
+      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/admin") && !pathname.startsWith("/dashboard/staff")) {
+        return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+      }
+    } else if (role === "staff") {
       if (pathname.startsWith("/super-admin")) {
         return NextResponse.redirect(new URL("/admin/orders", request.url));
+      }
+      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/staff")) {
+        return NextResponse.redirect(new URL("/dashboard/staff", request.url));
       }
       if (pathname.startsWith("/admin")) {
         const allowedStaffPaths = ["/admin/orders", "/admin/inventory"];
@@ -90,15 +109,6 @@ export async function proxy(request: NextRequest) {
           return NextResponse.redirect(new URL("/admin/orders", request.url));
         }
       }
-    } else if (role === "admin") {
-      if (pathname.startsWith("/dashboard") && !pathname.startsWith("/dashboard/admin") && !pathname.startsWith("/dashboard/staff")) {
-        return NextResponse.redirect(new URL("/dashboard/admin", request.url));
-      }
-      if (pathname.startsWith("/super-admin")) {
-        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-      }
-    } else if (role === "super_admin") {
-      // Super admin has unrestricted access to all portals
     } else {
       if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || pathname.startsWith("/super-admin") || pathname.startsWith("/staff")) {
         return NextResponse.redirect(new URL("/user-dashboard", request.url));
