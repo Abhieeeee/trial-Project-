@@ -143,7 +143,7 @@ export default function AiAssistant() {
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-[9999]">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="relative group p-4 bg-black hover:bg-neutral-950 border border-white/15 hover:border-[#00d2ff] rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.9)] focus:outline-none cursor-pointer"
@@ -170,7 +170,7 @@ export default function AiAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className="fixed bottom-24 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[420px] h-[560px] bg-black/95 border border-white/10 rounded-[20px] shadow-[0_0_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl z-50 flex flex-col overflow-hidden font-mono"
+            className="fixed bottom-24 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[420px] h-[560px] bg-black/95 border border-white/10 rounded-[20px] shadow-[0_0_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl z-[9999] flex flex-col overflow-hidden font-mono"
           >
             {/* HUD Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-neutral-950/80">

@@ -56,10 +56,13 @@ export default function CustomCursor() {
       const isClickable =
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
         target.closest("a") ||
         target.closest("button") ||
         target.closest('[role="button"]') ||
         target.closest("input") ||
+        target.closest("textarea") ||
         target.closest("select") ||
         target.hasAttribute("data-hover");
 
@@ -114,13 +117,13 @@ export default function CustomCursor() {
     <>
       {/* 1. Center Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-brand-sky rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
+        className="fixed top-0 left-0 w-2 h-2 bg-[#00d2ff] rounded-full pointer-events-none z-[999999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
         style={{ x: cursorX, y: cursorY }}
       />
 
       {/* 2. Glowing Spring Ring */}
       <motion.div
-        className="fixed top-0 left-0 rounded-full border border-white pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
+        className="fixed top-0 left-0 rounded-full border border-white pointer-events-none z-[999999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
         style={{
           x: ringX,
           y: ringY,
