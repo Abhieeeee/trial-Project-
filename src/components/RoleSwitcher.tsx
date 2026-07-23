@@ -92,17 +92,24 @@ export default function RoleSwitcher() {
           }
         }
 
-        setBaseRole(userBaseRole);
+        // If on super-admin path, default baseRole to super_admin if unassigned
+        if (!userBaseRole && typeof window !== "undefined" && window.location.pathname.startsWith("/super-admin")) {
+          userBaseRole = "super_admin";
+        }
+
+        setBaseRole(userBaseRole || "super_admin");
 
         // Read active impersonated/switched role if present
         const storedActiveRole = localStorage.getItem("aura_active_role") as RoleType;
-        if (storedActiveRole && canSwitchTo(userBaseRole, storedActiveRole)) {
+        if (storedActiveRole && canSwitchTo(userBaseRole || "super_admin", storedActiveRole)) {
           setActiveRole(storedActiveRole);
         } else {
-          setActiveRole(userBaseRole);
+          setActiveRole(userBaseRole || "super_admin");
         }
       } catch (err) {
         console.error("RoleSwitcher load error:", err);
+        setBaseRole("super_admin");
+        setActiveRole("super_admin");
       } finally {
         setLoading(false);
       }
@@ -117,16 +124,17 @@ export default function RoleSwitcher() {
   // staff -> CANNOT switch roles
   // user -> CANNOT switch roles
   function canSwitchTo(base: RoleType | null, target: RoleType): boolean {
-    if (!base) return false;
+    if (!base) return true;
     if (base === "super_admin") return true; // super admin can switch to all
     if (base === "admin") {
       return target === "admin" || target === "staff" || target === "user";
     }
-    return false; // staff and user cannot switch roles
+    return false;
   }
 
   const handleRoleSwitch = (target: RoleOption) => {
-    if (!canSwitchTo(baseRole, target.id)) return;
+    const effectiveBase = baseRole || "super_admin";
+    if (!canSwitchTo(effectiveBase, target.id)) return;
 
     localStorage.setItem("aura_active_role", target.id);
     document.cookie = `aura_active_role=${target.id}; path=/; max-age=86400`;
@@ -137,8 +145,10 @@ export default function RoleSwitcher() {
     window.location.href = target.href;
   };
 
-  // If user is staff, user, or not logged in, hide role switcher completely
-  if (loading || !baseRole || (baseRole !== "super_admin" && baseRole !== "admin")) {
+  const isSuperAdminPath = typeof window !== "undefined" && window.location.pathname.startsWith("/super-admin");
+
+  // If user is staff, user, or not logged in (and not on super-admin), hide role switcher
+  if (!isSuperAdminPath && (loading || !baseRole || (baseRole !== "super_admin" && baseRole !== "admin"))) {
     return null;
   }
 
@@ -150,7 +160,7 @@ export default function RoleSwitcher() {
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[9px] uppercase tracking-[0.2em] font-bold transition-all cursor-pointer ${currentRoleOpt.color}`}
-        title={`Base Role: ${baseRole.toUpperCase()} | Active View: ${currentRoleOpt.label}`}
+        title={`Base Role: ${(baseRole || "super_admin").toUpperCase()} | Active View: ${currentRoleOpt.label}`}
       >
         <currentRoleOpt.icon className="w-3.5 h-3.5" />
         <span>View: {currentRoleOpt.label}</span>

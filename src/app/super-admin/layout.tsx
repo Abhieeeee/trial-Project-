@@ -22,6 +22,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -171,6 +172,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
           </div>
 
           <div className="flex items-center gap-4">
+            <RoleSwitcher />
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/5 border border-red-500/10 text-red-400 text-[8px] uppercase tracking-widest font-extrabold">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
               ROOT SESSION SECURE
