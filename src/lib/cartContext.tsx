@@ -53,16 +53,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (saved) {
         setItems(JSON.parse(saved));
       } else {
-        const initial = catalogProducts.slice(0, 2).map((p) => ({
-          id: p.id,
-          name: p.name,
-          price: p.price,
-          numericPrice: p.numericPrice,
-          category: p.category,
-          image: p.image,
-          quantity: 1,
-        }));
-        setItems(initial);
+        setItems([]);
       }
     } catch {}
   }, []);

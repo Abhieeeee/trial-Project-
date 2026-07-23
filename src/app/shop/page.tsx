@@ -9,11 +9,50 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CustomCursor from "@/components/CustomCursor";
 import StoreProductCard from "@/components/StoreProductCard";
-import { categories, products } from "@/lib/catalog";
+import { categories, products as fallbackProducts, type Product } from "@/lib/catalog";
+import { createClient } from "@/lib/supabase/client";
 
 function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const [productList, setProductList] = useState<Product[]>(fallbackProducts);
+
+  // Fetch dynamic products from Supabase with fallback to catalog.ts
+  useEffect(() => {
+    async function loadDynamicProducts() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("is_active", true);
+
+        if (data && data.length > 0 && !error) {
+          const mapped: Product[] = data.map((p) => ({
+            id: p.id,
+            name: p.name,
+            price: `€${p.price}.00`,
+            numericPrice: Number(p.price),
+            category: p.category as any,
+            stock: p.stock,
+            colorways: p.colorways || 1,
+            material: p.material || "Technical Fabric",
+            slug: p.name.toLowerCase().replace(/\s+/g, "-"),
+            image: p.images && p.images[0] ? p.images[0] : "/moto-jacket.png",
+            description: p.description || "",
+            badge: p.stock < 15 ? "LOW STOCK" : undefined,
+            details: [p.material, `${p.stock} units available`],
+            sizes: ["S", "M", "L", "XL"],
+          }));
+          setProductList(mapped);
+        }
+      } catch (err) {
+        console.error("Shop product fetch error, fallback active:", err);
+      }
+    }
+    loadDynamicProducts();
+  }, []);
 
   // Read initial values from URL search params
   const initialCat = searchParams.get("category") || "All";
@@ -46,7 +85,7 @@ function ShopContent() {
   };
 
   const filteredProducts = useMemo(() => {
-    return products
+    return productList
       .filter((product) => activeCategory === "All" || product.category === activeCategory)
       .filter((product) => {
         const haystack = `${product.name} ${product.category} ${product.material} ${product.description}`.toLowerCase();

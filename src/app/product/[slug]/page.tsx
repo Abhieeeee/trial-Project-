@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,13 +10,55 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageShell from "@/components/PageShell";
 import StoreProductCard from "@/components/StoreProductCard";
 import ProductReviews from "@/components/ProductReviews";
-import { products } from "@/lib/catalog";
+import { products as fallbackProducts, type Product } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const product = products.find((item) => item.slug === slug);
+
+  const fallbackMatch = fallbackProducts.find((item) => item.slug === slug);
+  const [product, setProduct] = useState<Product | null>(fallbackMatch || fallbackProducts[0] || null);
+
+  useEffect(() => {
+    async function loadProductDetail() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("products")
+          .select("*")
+          .eq("is_active", true);
+
+        if (data && data.length > 0) {
+          const matched = data.find(
+            (p) => p.name.toLowerCase().replace(/\s+/g, "-") === slug
+          );
+          if (matched) {
+            setProduct({
+              id: matched.id,
+              name: matched.name,
+              price: `€${matched.price}.00`,
+              numericPrice: Number(matched.price),
+              category: matched.category as any,
+              stock: matched.stock,
+              colorways: matched.colorways || 1,
+              material: matched.material || "Technical Fabric",
+              slug: matched.name.toLowerCase().replace(/\s+/g, "-"),
+              image: matched.images && matched.images[0] ? matched.images[0] : "/moto-jacket.png",
+              description: matched.description || "",
+              badge: matched.stock < 15 ? "LOW STOCK" : undefined,
+              details: [matched.material, `${matched.stock} units available`],
+              sizes: ["S", "M", "L", "XL"],
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Product detail fetch error:", err);
+      }
+    }
+    loadProductDetail();
+  }, [slug]);
 
   if (!product) {
     notFound();
@@ -27,9 +69,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
 
   const [activeImage, setActiveImage] = useState(product.image);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "M");
 
-  const related = products.filter((item) => item.slug !== product.slug).slice(0, 4);
+  const related = fallbackProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 
   const imagesList = [product.image, "/hero-editorial.png", "/editorial-spread.png"];
 

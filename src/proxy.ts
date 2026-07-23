@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabaseAuth.auth.getUser();
 
-  // If user is authenticated, retrieve profile role using service key client
+  // Retrieve profile.role directly from database profiles table (no hardcoded email strings)
   let role = "user";
   if (user) {
     const supabaseAdmin = createServerClient(
@@ -48,18 +48,11 @@ export async function proxy(request: NextRequest) {
     );
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("email, role")
+      .select("role")
       .eq("id", user.id)
       .single();
 
-    const email = profile?.email || user.email;
-    role = email === "super@aurastreet.com"
-      ? "super_admin"
-      : email === "admin@aurastreet.com"
-      ? "admin"
-      : email === "staff@aurastreet.com"
-      ? "staff"
-      : (profile?.role ?? "user");
+    role = profile?.role ?? "user";
   }
 
   // Handle /admin/login GET navigation auto-redirect if logged in

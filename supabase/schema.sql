@@ -13,13 +13,13 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id         UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email      TEXT NOT NULL UNIQUE,
   name       TEXT NOT NULL DEFAULT '',
-  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('super_admin', 'admin', 'user')),
+  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('super_admin', 'admin', 'staff', 'user')),
   avatar_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Auto-create profile on signup
+-- Auto-create profile on signup (strictly defaults to 'user' role for security)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'user')
+    'user'
   );
   RETURN NEW;
 END;
@@ -112,21 +112,26 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: users can read their own profile; admins can read all
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
 CREATE POLICY "Admins can view all profiles" ON public.profiles
   FOR ALL USING (
     EXISTS (
       SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin', 'staff')
     )
   );
 
--- Products: anyone authenticated can read; only admin+ can write
-CREATE POLICY "Authenticated users can view products" ON public.products
-  FOR SELECT USING (auth.role() = 'authenticated');
+-- Products: public can view active products; admin+ can write
+DROP POLICY IF EXISTS "Authenticated users can view products" ON public.products;
+DROP POLICY IF EXISTS "Public users can view active products" ON public.products;
+CREATE POLICY "Public users can view active products" ON public.products
+  FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage products" ON public.products;
 CREATE POLICY "Admins can manage products" ON public.products
   FOR ALL USING (
     EXISTS (
@@ -135,19 +140,33 @@ CREATE POLICY "Admins can manage products" ON public.products
     )
   );
 
--- Orders: all authenticated staff can read; admins can update
-CREATE POLICY "Authenticated users can view orders" ON public.orders
-  FOR SELECT USING (auth.role() = 'authenticated');
+-- Orders: Anyone can create orders; users can view own orders by email
+DROP POLICY IF EXISTS "Anyone can create orders" ON public.orders;
+CREATE POLICY "Anyone can create orders" ON public.orders
+  FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
+CREATE POLICY "Users can view own orders" ON public.orders
+  FOR SELECT USING (
+    customer_email = (SELECT email FROM auth.users WHERE id = auth.uid())
+    OR
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin', 'staff')
+    )
+  );
+
+DROP POLICY IF EXISTS "Admins can manage orders" ON public.orders;
 CREATE POLICY "Admins can manage orders" ON public.orders
   FOR ALL USING (
     EXISTS (
       SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin', 'staff')
     )
   );
 
 -- Analytics: only admins+
+DROP POLICY IF EXISTS "Admins can view analytics" ON public.analytics_events;
 CREATE POLICY "Admins can view analytics" ON public.analytics_events
   FOR SELECT USING (
     EXISTS (
@@ -181,40 +200,3 @@ INSERT INTO public.orders (order_code, customer_name, customer_email, status, to
   ('ORD-8920', 'James Lee', 'james@example.com', 'Delivered', 265.00, '[{"product_name":"Shadow Hoodie II","quantity":1,"unit_price":265}]'),
   ('ORD-8919', 'Maria Garcia', 'maria@example.com', 'Shipped', 410.00, '[{"product_name":"Street Runner","quantity":1,"unit_price":410}]')
 ON CONFLICT (order_code) DO NOTHING;
-
--- =============================================
--- 8. HELPER VIEWS for Analytics
--- =============================================
-
--- Revenue by month
-CREATE OR REPLACE VIEW public.monthly_revenue AS
-  SELECT
-    DATE_TRUNC('month', created_at) AS month,
-    SUM(total) AS revenue,
-    COUNT(*) AS order_count
-  FROM public.orders
-  WHERE status != 'Cancelled'
-  GROUP BY month
-  ORDER BY month DESC;
-
--- Revenue by day (last 7 days)
-CREATE OR REPLACE VIEW public.daily_revenue_7d AS
-  SELECT
-    DATE(created_at) AS day,
-    SUM(total) AS revenue,
-    COUNT(*) AS order_count
-  FROM public.orders
-  WHERE status != 'Cancelled'
-    AND created_at >= NOW() - INTERVAL '7 days'
-  GROUP BY day
-  ORDER BY day;
-
--- Orders by status
-CREATE OR REPLACE VIEW public.orders_by_status AS
-  SELECT status, COUNT(*) AS count
-  FROM public.orders
-  GROUP BY status;
-
--- =============================================
--- DONE! All tables, triggers, RLS, and seed data are ready.
--- =============================================
