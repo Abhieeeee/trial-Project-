@@ -11,6 +11,7 @@ import PageShell from "@/components/PageShell";
 import StoreProductCard from "@/components/StoreProductCard";
 import { products } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
+import { useCart } from "@/lib/cartContext";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -21,6 +22,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   }
 
   const { formatPrice } = useCurrency();
+  const { addItem } = useCart();
   const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
 
   const [activeImage, setActiveImage] = useState(product.image);
@@ -131,11 +133,25 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
             {/* Add to Cart Actions */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
-              <Link href="/cart" className="h-14 rounded bg-white text-black hover:bg-brand-sky hover:text-white transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] font-extrabold" data-magnetic>
+              <button
+                type="button"
+                onClick={() =>
+                  addItem({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    numericPrice: product.numericPrice || rawPrice,
+                    category: product.category,
+                    image: product.image,
+                    quantity: 1,
+                  })
+                }
+                className="h-14 rounded bg-[#00d2ff] text-black hover:bg-cyan-400 font-bold transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] cursor-pointer shadow-[0_0_20px_rgba(0,210,255,0.2)] font-mono"
+              >
                 <ShoppingBag className="w-4 h-4" />
-                Add to Bag
-              </Link>
-              <button className="h-14 rounded border border-neutral-800 px-5 text-neutral-300 hover:border-brand-sky hover:text-white transition-colors cursor-pointer" aria-label="Add to wishlist" data-magnetic>
+                Add to Bag ({formatPrice(rawPrice)})
+              </button>
+              <button className="h-14 rounded border border-neutral-800 px-5 text-neutral-300 hover:border-brand-sky hover:text-white transition-colors cursor-pointer" aria-label="Add to wishlist">
                 <Heart className="w-4 h-4" />
               </button>
             </div>

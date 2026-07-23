@@ -40,24 +40,24 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           
-          {/* Top-Left Localization */}
-          <div className="hidden lg:flex items-center gap-5 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-500 relative">
+          {/* Top-Left Localization Currency Selector */}
+          <div className="flex items-center gap-3 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-400 relative">
             <div className="relative">
               <button 
                 onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
-                className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/10 hover:border-[#00D2FF] hover:text-white transition-all cursor-pointer font-mono"
                 data-magnetic
+                title="Select store currency"
               >
                 <Globe className="w-3 h-3 text-[#00D2FF]" />
-                <span>{currencies[currency].label}</span>
+                <span>{currencies[currency]?.flag || "🌐"} {currencies[currency]?.symbol} {currency}</span>
               </button>
 
               <AnimatePresence>
                 {currencyMenuOpen && (
                   <>
-                    {/* Invisible overlay to close dropdown */}
                     <div 
-                      className="fixed inset-0 z-10 cursor-default" 
+                      className="fixed inset-0 z-[60] cursor-default" 
                       onClick={() => setCurrencyMenuOpen(false)} 
                     />
                     <motion.div
@@ -65,8 +65,11 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
                       transition={{ duration: 0.18, ease: "easeOut" }}
-                      className="absolute left-0 mt-2.5 w-36 bg-black/90 border border-neutral-850 rounded-lg overflow-hidden py-1.5 z-20 backdrop-blur-md"
+                      className="absolute left-0 mt-2 w-48 bg-neutral-950/95 border border-white/15 rounded-lg overflow-hidden py-2 z-[70] backdrop-blur-xl shadow-2xl font-mono text-[9px]"
                     >
+                      <div className="px-3 py-1 text-[8px] text-neutral-500 uppercase tracking-widest border-b border-neutral-900 mb-1 font-bold">
+                        Select Currency
+                      </div>
                       {(Object.keys(currencies) as CurrencyCode[]).map((code) => (
                         <button
                           key={code}
@@ -74,11 +77,15 @@ export default function Header() {
                             setCurrency(code);
                             setCurrencyMenuOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2 hover:bg-white/5 transition-colors text-[9px] uppercase tracking-[0.2em] font-mono block ${
-                            currency === code ? "text-[#00D2FF] font-bold" : "text-neutral-400"
+                          className={`w-full text-left px-3.5 py-2 hover:bg-white/10 transition-colors tracking-wider flex items-center justify-between cursor-pointer ${
+                            currency === code ? "text-[#00D2FF] font-bold bg-[#00D2FF]/10" : "text-neutral-300"
                           }`}
                         >
-                          {currencies[code].label}
+                          <span className="flex items-center gap-2">
+                            <span>{currencies[code].flag}</span>
+                            <span>{code} ({currencies[code].symbol})</span>
+                          </span>
+                          {currency === code && <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF]" />}
                         </button>
                       ))}
                     </motion.div>
@@ -86,8 +93,8 @@ export default function Header() {
                 )}
               </AnimatePresence>
             </div>
-            <span className="text-neutral-800">|</span>
-            <span className="text-neutral-400">Paris Edition</span>
+            <span className="hidden sm:inline text-neutral-800">|</span>
+            <span className="hidden sm:inline text-neutral-500 font-mono">Global Storefront</span>
           </div>
  
           {/* Wordmark AURA.STREET */}
