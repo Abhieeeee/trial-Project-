@@ -34,23 +34,47 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profile, setProfile] = useState<{ name: string; role: string } | null>(null);
 
+  const [activeRole, setActiveRole] = useState<string>("admin");
+
   useEffect(() => {
     const supabase = createClient();
     async function loadProfile() {
       const { data: { user } } = await supabase.auth.getUser();
+      let userRole = "admin";
       if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("name, role, email")
-          .eq("id", user.id)
-          .single();
-        if (data) {
-          const role = data.email === "staff@aurastreet.com" ? "staff" : data.role;
-          setProfile({ name: data.name, role: role });
+        if (user.email === "super@aurastreet.com") userRole = "super_admin";
+        else if (user.email === "admin@aurastreet.com") userRole = "admin";
+        else if (user.email === "staff@aurastreet.com") userRole = "staff";
+        else {
+          const { data } = await supabase
+            .from("profiles")
+            .select("name, role, email")
+            .eq("id", user.id)
+            .single();
+          if (data) {
+            userRole = data.role;
+            setProfile({ name: data.name, role: data.role });
+          }
         }
+      }
+
+      // Check stored active role from Role Switcher
+      const storedRole = localStorage.getItem("aura_active_role");
+      if (storedRole) {
+        setActiveRole(storedRole);
+      } else {
+        setActiveRole(userRole);
       }
     }
     loadProfile();
+
+    const handleRoleChange = () => {
+      const stored = localStorage.getItem("aura_active_role");
+      if (stored) setActiveRole(stored);
+    };
+
+    window.addEventListener("storage", handleRoleChange);
+    return () => window.removeEventListener("storage", handleRoleChange);
   }, []);
 
   // If on login page, render clean black canvas
@@ -67,12 +91,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Settings", href: "/admin/access", icon: Settings },
   ];
 
-  const navItems = profile?.role === "staff"
+  const currentRole = activeRole || profile?.role || "admin";
+  const isSuperAdmin = currentRole === "super_admin" || pathname.startsWith("/super-admin");
+  const isStaff = currentRole === "staff";
+
+  const navItems = isStaff
     ? allNavItems.filter(item => ["Orders", "Inventory"].includes(item.name))
     : allNavItems;
 
-  const isSuperAdmin = profile?.role === "super_admin";
-  const isStaff = profile?.role === "staff";
+  const bgThemeClass = isSuperAdmin
+    ? "bg-[#0c0404]"
+    : isStaff
+    ? "bg-[#0e0a03]"
+    : "bg-[#030914]";
 
   const themeAccent = isSuperAdmin
     ? "text-red-400 border-red-500/30 bg-red-500/10 shadow-red-500/20"
@@ -81,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : "text-[#00D2FF] border-[#00D2FF]/30 bg-[#00D2FF]/10 shadow-[#00D2FF]/20";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex overflow-hidden relative font-sans selection:bg-[#00D2FF]/30 selection:text-white">
+    <div className={`min-h-screen ${bgThemeClass} text-white flex overflow-hidden relative font-sans selection:bg-[#00D2FF]/30 selection:text-white transition-colors duration-500`}>
       
       {/* Ambient Cyber Light Blobs */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#00D2FF]/[0.025] rounded-full blur-[140px] pointer-events-none" />

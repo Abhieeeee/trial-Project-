@@ -85,16 +85,16 @@ export default async function SuperAdminDashboardPage() {
               <ShieldAlert className="w-3.5 h-3.5 text-red-400 animate-pulse" /> MASTER AUTHORITY LEVEL 4
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold uppercase tracking-[0.15em] text-white font-display">
+          <h1 className="text-2xl md:text-3xl font-extrabold uppercase tracking-wider text-white font-sans">
             Super Admin Control Tower
           </h1>
-          <p className="mt-2 text-xs text-neutral-400 tracking-wide font-sans max-w-xl">
+          <p className="mt-1 text-xs text-neutral-400 font-sans max-w-xl">
             Complete executive visibility across platform gross revenue, security roles, system health, and infrastructure audit logs.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-[9px] font-extrabold uppercase tracking-widest text-red-400 backdrop-blur-xl">
+          <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-[9px] font-extrabold uppercase tracking-widest text-red-400 backdrop-blur-xl">
             <ShieldCheck className="h-4 w-4" />
             <span>Full System Permissions Active</span>
           </div>
@@ -102,29 +102,29 @@ export default async function SuperAdminDashboardPage() {
       </div>
 
       {/* Metrics Row */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 font-sans">
         {executiveMetrics.map((metric) => (
           <div 
             key={metric.label} 
-            className="glass-panel-glow rounded-2xl p-6 border border-red-500/20 hover:border-red-500/50 transition-all duration-300 relative overflow-hidden group space-y-4"
+            className="glass-panel-glow rounded-2xl p-6 border border-red-500/20 hover:border-red-500/50 transition-all duration-300 relative overflow-hidden group space-y-3"
           >
-            <div className="flex items-center justify-between">
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-neutral-400 group-hover:text-white transition-colors">
+            <div className="flex items-center justify-between font-mono">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 group-hover:text-white transition-colors">
                 {metric.label}
               </p>
-              <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 group-hover:border-red-500/50 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 group-hover:border-red-500/50 transition-all">
                 <metric.icon className="h-4 w-4" />
               </div>
             </div>
 
             <div>
-              <p className="text-3xl font-extrabold tracking-tight text-white font-display">
+              <p className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-sans">
                 {metric.value}
               </p>
             </div>
 
-            <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-              <span className={`px-2.5 py-1 rounded text-[8px] uppercase tracking-widest font-extrabold border ${metric.changeTone}`}>
+            <div className="pt-2 border-t border-white/5 flex items-center justify-between font-mono">
+              <span className={`px-2 py-0.5 rounded text-[8px] uppercase tracking-widest font-bold border ${metric.changeTone}`}>
                 {metric.change}
               </span>
               <span className="text-[8px] uppercase tracking-widest text-neutral-500">Authority Sync</span>
@@ -137,7 +137,7 @@ export default async function SuperAdminDashboardPage() {
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.6fr_1fr]">
         
         {/* Weekly Revenue Graph */}
-        <section className="glass-panel-glow rounded-2xl border border-red-500/20 p-6 md:p-8 space-y-6 relative">
+        <section className="glass-panel-glow rounded-2xl border border-red-500/20 p-6 md:p-8 space-y-6 relative font-sans">
           <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-5">
             <div>
               <h2 className="text-sm font-extrabold uppercase tracking-[0.2em] text-white font-display">
