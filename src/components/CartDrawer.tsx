@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, Truck, Sparkles } from "lucide-react";
+import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, Truck, Tag, Check, AlertCircle } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currency";
 
@@ -18,19 +18,35 @@ export function CartDrawer() {
     totalItems,
     subtotal,
     freeShippingThreshold,
+    appliedCode,
+    discountPercent,
+    applyDiscount,
+    removeDiscount,
+    discountAmount,
+    finalTotal,
   } = useCart();
 
   const { formatPrice } = useCurrency();
+  const [promoInput, setPromoInput] = useState("");
+  const [promoFeedback, setPromoFeedback] = useState<{ success: boolean; text: string } | null>(null);
 
-  // Free shipping progress calculations
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
   const shippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+
+  const handleApplyPromo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!promoInput.trim()) return;
+
+    const result = applyDiscount(promoInput);
+    setPromoFeedback({ success: result.success, text: result.message });
+    if (result.success) setPromoInput("");
+  };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop Blur Overlay */}
+          {/* Backdrop Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -71,8 +87,8 @@ export function CartDrawer() {
               </button>
             </div>
 
-            {/* Free Shipping Progress Meter */}
-            <div className="px-6 py-4 bg-neutral-900/60 border-b border-white/5 space-y-2">
+            {/* Free Shipping Meter */}
+            <div className="px-6 py-3 bg-neutral-900/60 border-b border-white/5 space-y-2">
               <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider">
                 <span className="flex items-center gap-2 text-neutral-300">
                   <Truck className="w-3.5 h-3.5 text-[#00d2ff]" />
@@ -90,7 +106,7 @@ export function CartDrawer() {
               </div>
             </div>
 
-            {/* Items Thread */}
+            {/* Items List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 font-mono text-[11px] scrollbar-thin scrollbar-thumb-neutral-800">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-12">
@@ -167,27 +183,78 @@ export function CartDrawer() {
               )}
             </div>
 
-            {/* Footer Summary & Checkout */}
+            {/* Footer Summary, Promo Code Box & Checkout */}
             {items.length > 0 && (
-              <div className="p-6 border-t border-white/10 bg-neutral-950 space-y-4">
-                <div className="space-y-2 font-mono text-xs">
+              <div className="p-6 border-t border-white/10 bg-neutral-950 space-y-4 font-mono">
+                
+                {/* Promo Code Form */}
+                <div className="space-y-2">
+                  {appliedCode ? (
+                    <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between text-[9px] uppercase">
+                      <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                        <Tag className="w-3 h-3" /> Code '{appliedCode}' Active (-{discountPercent}%)
+                      </span>
+                      <button
+                        onClick={removeDiscount}
+                        className="text-neutral-400 hover:text-white text-[8px] underline cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleApplyPromo} className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="PROMO CODE (e.g. AURA10)"
+                        value={promoInput}
+                        onChange={(e) => setPromoInput(e.target.value)}
+                        className="flex-1 bg-black border border-neutral-800 p-2 text-[9px] uppercase text-white focus:outline-none focus:border-[#00d2ff]"
+                      />
+                      <button
+                        type="submit"
+                        className="px-3 py-2 bg-neutral-900 border border-neutral-700 text-white font-bold text-[9px] uppercase hover:bg-neutral-800 cursor-pointer"
+                      >
+                        Apply
+                      </button>
+                    </form>
+                  )}
+
+                  {promoFeedback && !appliedCode && (
+                    <p className={`text-[8px] uppercase tracking-wider ${
+                      promoFeedback.success ? "text-emerald-400" : "text-amber-400"
+                    }`}>
+                      {promoFeedback.text}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2 text-xs">
                   <div className="flex justify-between text-neutral-400 uppercase">
                     <span>Subtotal</span>
                     <span className="text-white font-bold">{formatPrice(subtotal)}</span>
                   </div>
+
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-400 uppercase font-bold">
+                      <span>Promo Savings</span>
+                      <span>-{formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between text-neutral-400 uppercase">
                     <span>Shipping</span>
                     <span className="text-[#00d2ff]">
                       {remainingForFreeShipping === 0 ? "FREE" : "Calculated at checkout"}
                     </span>
                   </div>
+                  
                   <div className="pt-2 border-t border-white/10 flex justify-between text-sm font-bold text-white uppercase">
-                    <span>Estimated Total</span>
-                    <span className="text-[#00d2ff]">{formatPrice(subtotal)}</span>
+                    <span>Total Payable</span>
+                    <span className="text-[#00d2ff]">{formatPrice(finalTotal)}</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-2 font-mono text-[9px] uppercase tracking-widest font-bold">
+                <div className="grid grid-cols-2 gap-3 pt-2 text-[9px] uppercase tracking-widest font-bold">
                   <Link
                     href="/cart"
                     onClick={closeCart}

@@ -26,6 +26,14 @@ interface CartContextType {
   totalItems: number;
   subtotal: number;
   freeShippingThreshold: number;
+  
+  // Promo Code Engine
+  appliedCode: string | null;
+  discountPercent: number;
+  applyDiscount: (code: string) => { success: boolean; message: string };
+  removeDiscount: () => void;
+  discountAmount: number;
+  finalTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,16 +41,18 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+
   const freeShippingThreshold = 200;
 
-  // Initialize cart from localStorage or default catalog items
+  // Initialize cart from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem("aura_street_cart");
       if (saved) {
         setItems(JSON.parse(saved));
       } else {
-        // Initial sample cart items for immediate preview
         const initial = catalogProducts.slice(0, 2).map((p) => ({
           id: p.id,
           name: p.name,
@@ -54,9 +64,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }));
         setItems(initial);
       }
-    } catch {
-      // Fallback
-    }
+    } catch {}
   }, []);
 
   // Save to localStorage on change
@@ -79,7 +87,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         );
       }
 
-      // Lookup in catalog if metadata is incomplete
       const catalogMatch = catalogProducts.find((p) => p.id === newItem.id);
       const fullItem: CartItem = {
         id: newItem.id,
@@ -93,7 +100,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       return [...prev, fullItem];
     });
-    setIsOpen(true); // Auto-open quick cart drawer when item is added!
+    setIsOpen(true);
   };
 
   const removeItem = (id: string) => {
@@ -114,10 +121,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = () => {
+    setItems([]);
+    setAppliedCode(null);
+    setDiscountPercent(0);
+  };
+
+  const applyDiscount = (code: string) => {
+    const cleanCode = code.trim().toUpperCase();
+    if (cleanCode === "AURA10") {
+      setAppliedCode("AURA10");
+      setDiscountPercent(10);
+      return { success: true, message: "Code AURA10 applied: 10% Discount Unlocked!" };
+    } else if (cleanCode === "NEPAL2026") {
+      setAppliedCode("NEPAL2026");
+      setDiscountPercent(15);
+      return { success: true, message: "Code NEPAL2026 applied: 15% VIP Nepal Discount Unlocked!" };
+    } else if (cleanCode === "FREESHIP") {
+      setAppliedCode("FREESHIP");
+      setDiscountPercent(5);
+      return { success: true, message: "Code FREESHIP applied: Free Shipping & 5% Off!" };
+    } else {
+      return { success: false, message: "Invalid promo code. Try 'AURA10' or 'NEPAL2026'." };
+    }
+  };
+
+  const removeDiscount = () => {
+    setAppliedCode(null);
+    setDiscountPercent(0);
+  };
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = items.reduce((sum, i) => sum + i.numericPrice * i.quantity, 0);
+  const discountAmount = (subtotal * discountPercent) / 100;
+  const finalTotal = Math.max(0, subtotal - discountAmount);
 
   return (
     <CartContext.Provider
@@ -134,6 +171,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         totalItems,
         subtotal,
         freeShippingThreshold,
+        appliedCode,
+        discountPercent,
+        applyDiscount,
+        removeDiscount,
+        discountAmount,
+        finalTotal,
       }}
     >
       {children}

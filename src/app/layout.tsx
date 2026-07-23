@@ -6,6 +6,8 @@ import CommandMenu from "@/components/CommandMenu";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import { CartProvider } from "@/lib/cartContext";
 import { CartDrawer } from "@/components/CartDrawer";
+import { WishlistProvider } from "@/lib/wishlistContext";
+import { WishlistDrawer } from "@/components/WishlistDrawer";
 import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
@@ -44,12 +46,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white font-sans">
         <CartProvider>
-          <ScrollProgressBar />
-          <CustomCursor />
-          <SmoothScroll>{children}</SmoothScroll>
-          <CartDrawer />
-          <AiAssistant />
-          <CommandMenu />
+          <WishlistProvider>
+            <ScrollProgressBar />
+            <CustomCursor />
+            <SmoothScroll>{children}</SmoothScroll>
+            <CartDrawer />
+            <WishlistDrawer />
+            <AiAssistant />
+            <CommandMenu />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

@@ -2,15 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Plus, ShoppingBag } from "lucide-react";
+import { Eye, Plus, Heart } from "lucide-react";
 import type { Product } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
+import { useWishlist } from "@/lib/wishlistContext";
 
 export default function StoreProductCard({ product }: { product: Product }) {
   const { formatPrice } = useCurrency();
   const { addItem } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
   const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
+  const isSaved = isInWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -23,6 +27,20 @@ export default function StoreProductCard({ product }: { product: Product }) {
       category: product.category,
       image: product.image,
       quantity: 1,
+    });
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      numericPrice: product.numericPrice || rawPrice,
+      category: product.category,
+      image: product.image,
+      slug: product.slug,
     });
   };
 
@@ -43,6 +61,21 @@ export default function StoreProductCard({ product }: { product: Product }) {
               {product.badge}
             </span>
           )}
+
+          {/* Heart Wishlist Trigger */}
+          <button
+            type="button"
+            onClick={handleToggleWishlist}
+            className={`absolute top-4 right-4 z-20 p-2 rounded-full border backdrop-blur-md transition-all cursor-pointer ${
+              isSaved
+                ? "bg-red-500/20 border-red-500/50 text-red-400"
+                : "bg-black/60 border-white/10 text-neutral-400 hover:text-white hover:border-white/30"
+            }`}
+            title={isSaved ? "Saved to wishlist" : "Save to wishlist"}
+          >
+            <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
+          </button>
+
           <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-220 flex flex-col items-center justify-center gap-3 z-10 p-4">
             <span className="w-full py-3 bg-white text-black text-[9px] uppercase tracking-[0.2em] font-mono font-bold rounded hover:bg-[#00d2ff] transition-colors flex items-center justify-center gap-2">
               <Eye className="w-3.5 h-3.5" />

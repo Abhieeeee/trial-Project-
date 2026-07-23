@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Globe, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { Globe, Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { useCurrency, CurrencyCode } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
+import { useWishlist } from "@/lib/wishlistContext";
 
 const navLinks = [
   { label: "Collections", href: "/collections" },
@@ -20,6 +21,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currency, setCurrency, currencies } = useCurrency();
   const { openCart, totalItems } = useCart();
+  const { openWishlist, totalWishlist } = useWishlist();
   const [currencyMenuOpen, setCurrencyMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -138,12 +140,24 @@ export default function Header() {
             <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
               <UserRound className="w-4 h-4" />
             </Link>
+            {/* Wishlist Trigger Button */}
+            <button
+              type="button"
+              onClick={openWishlist}
+              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1 cursor-pointer font-mono"
+              aria-label="Saved wishlist"
+              title="Saved Wishlist"
+            >
+              <Heart className={`w-4 h-4 ${totalWishlist > 0 ? "text-red-400 fill-red-400" : "text-neutral-400 hover:text-red-400"}`} />
+              <span className="text-[9px] font-semibold text-neutral-400">({totalWishlist})</span>
+            </button>
+
+            {/* Shopping Bag Quick Cart Trigger */}
             <button
               type="button"
               onClick={openCart}
-              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1.5 cursor-pointer"
+              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1.5 cursor-pointer font-mono"
               aria-label="Shopping bag"
-              data-magnetic
             >
               <ShoppingBag className="w-4 h-4 text-[#00D2FF]" />
               {totalItems > 0 && (

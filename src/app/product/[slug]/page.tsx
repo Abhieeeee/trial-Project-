@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import PageShell from "@/components/PageShell";
 import StoreProductCard from "@/components/StoreProductCard";
+import ProductReviews from "@/components/ProductReviews";
 import { products } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
@@ -185,6 +186,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
           </div>
         </div>
+
+        {/* Customer Reviews & Ratings Section */}
+        <ProductReviews productName={product.name} />
       </section>
 
       {/* Suggested Fits */}

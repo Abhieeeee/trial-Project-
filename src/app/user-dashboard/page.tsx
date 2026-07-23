@@ -1,55 +1,105 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, ShoppingBag, CheckCircle2, Clock } from "lucide-react";
+import { TrendingUp, ShoppingBag, CheckCircle2, Clock, Truck, Package, Copy, Check, MapPin, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/admin/Badge";
 import PageShell from "@/components/PageShell";
 import PageIntro from "@/components/PageIntro";
 
 type OrderStatus = "Pending" | "Shipped" | "Delivered" | "Cancelled";
 
-const todaySales = [
-  { id: "ORD-8924", customer: "Alex Chen", item: "Moto Jacket", amount: "€680", status: "Pending" as OrderStatus, time: "2 min ago" },
-  { id: "ORD-8923", customer: "Sarah Miller", item: "Essential Hoodie", amount: "€245", status: "Shipped" as OrderStatus, time: "15 min ago" },
-  { id: "ORD-8922", customer: "David Kim", item: "Tech Shell Jacket", amount: "€520", status: "Delivered" as OrderStatus, time: "2 hrs ago" },
-  { id: "ORD-8920", customer: "James Lee", item: "Shadow Hoodie II", amount: "€265", status: "Delivered" as OrderStatus, time: "5 hrs ago" },
-];
+interface OrderTracking {
+  id: string;
+  customer: string;
+  item: string;
+  amount: string;
+  status: OrderStatus;
+  step: number; // 1 to 4
+  trackingCode: string;
+  carrier: string;
+  address: string;
+  date: string;
+}
 
-const tasks = [
-  { label: "Process pending orders (28 total)", done: false, priority: "high" },
-  { label: "Prepare shipping labels for Jun 25 batch", done: false, priority: "high" },
-  { label: "Check inventory: Shadow Hoodie II (Low)", done: false, priority: "medium" },
-  { label: "Reply to customer inquiry #3421", done: true, priority: "low" },
-  { label: "Update order #8919 tracking info", done: true, priority: "medium" },
+const customerOrders: OrderTracking[] = [
+  {
+    id: "AUR-NP8492",
+    customer: "Aarav Sharma",
+    item: "Moto Techwear Leather Jacket",
+    amount: "NPR 98,600 (€680)",
+    status: "Shipped",
+    step: 3,
+    trackingCode: "NP-KT-9048201",
+    carrier: "Express Nepal Air Courier",
+    address: "Kathmandu Valley, Lazimpat Ward 2",
+    date: "July 22, 2026",
+  },
+  {
+    id: "AUR-INT2049",
+    customer: "Alex Chen",
+    item: "Essential Geometry Hoodie",
+    amount: "€245",
+    status: "Pending",
+    step: 2,
+    trackingCode: "DHL-EX-4920194",
+    carrier: "DHL Express Global",
+    address: "Tokyo, Shibuya-ku 150-0042",
+    date: "July 23, 2026",
+  },
+  {
+    id: "AUR-NP1029",
+    customer: "Siddharth Shrestha",
+    item: "Shadow Cargo Pants II",
+    amount: "NPR 37,700 (€260)",
+    status: "Delivered",
+    step: 4,
+    trackingCode: "NP-KT-1029384",
+    carrier: "Kathmandu City Express",
+    address: "Patan, Lalitpur Ward 3",
+    date: "July 18, 2026",
+  },
 ];
 
 const cardClass = "glass-panel-glow";
 
 export default function UserDashboard() {
-  const now = new Date();
-  const greeting = now.getHours() < 12 ? "Good Morning" : now.getHours() < 18 ? "Good Afternoon" : "Good Evening";
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copyTracking = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedId(code);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const steps = [
+    { title: "Order Verified", label: "Payment Confirmed" },
+    { title: "Packed at Hub", label: "Quality Inspection" },
+    { title: "In Transit", label: "Courier Dispatch" },
+    { title: "Delivered", label: "Final Destination" },
+  ];
 
   return (
     <PageShell>
-      <div className="max-w-7xl mx-auto px-layout-padding py-12 space-y-8">
+      <div className="max-w-7xl mx-auto px-layout-padding py-12 space-y-8 font-sans">
         
-        {/* ── Page Intro ── */}
+        {/* Page Intro */}
         <PageIntro 
-          eyebrow="Staff Portal" 
-          title={greeting} 
-          text="Internal team operational feed and quick task queue." 
+          eyebrow="Customer Dashboard" 
+          title="Live Order Tracking & Fulfillment" 
+          text="Track parcel dispatch, view 4-step fulfillment telemetry, and manage active order shipments." 
         />
 
-        {/* ── Summary Cards ── */}
+        {/* Summary Cards */}
         <motion.div
           initial="hidden" animate="show"
           variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-5"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-5 font-mono"
         >
           {[
-            { label: "Today's Orders", value: "14", icon: ShoppingBag, color: "text-brand-sky" },
-            { label: "Pending Dispatch", value: "28", icon: Clock, color: "text-yellow-500" },
-            { label: "Delivered Today", value: "9", icon: CheckCircle2, color: "text-green-500" },
+            { label: "Active Deliveries", value: "2 Packages", icon: Truck, color: "text-[#00d2ff]" },
+            { label: "Completed Orders", value: "12 Orders", icon: CheckCircle2, color: "text-emerald-400" },
+            { label: "Dispatch Hub", value: "Kathmandu / Paris", icon: MapPin, color: "text-amber-400" },
           ].map((s, i) => (
             <motion.div
               key={i}
@@ -60,75 +110,114 @@ export default function UserDashboard() {
                 <s.icon className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-2xl font-display font-bold text-white">{s.value}</div>
-                <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">{s.label}</div>
+                <div className="text-xl font-display font-bold text-white">{s.value}</div>
+                <div className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold">{s.label}</div>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* ── Main Content ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        {/* Orders Tracking Cards with 4-Step Timeline */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b border-neutral-900 pb-3 font-mono">
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+              <Package className="w-4 h-4 text-[#00d2ff]" /> Active Customer Shipments
+            </h3>
+            <span className="text-[9px] uppercase tracking-widest text-neutral-500">Live Telemetry</span>
+          </div>
 
-          {/* Today's Order Feed */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className={`${cardClass} xl:col-span-2 overflow-hidden rounded-2xl`}
-          >
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-neutral-800">
-              <div>
-                <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Live Feed</p>
-                <h3 className="text-sm font-bold text-white uppercase tracking-widest">Recent Sales</h3>
-              </div>
-              <TrendingUp className="w-4 h-4 text-neutral-500" />
-            </div>
-            <div className="divide-y divide-neutral-800">
-              {todaySales.map((s) => (
-                <div key={s.id} className="flex items-center justify-between px-6 py-4 hover:bg-white/[0.02] transition-colors gap-4">
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold text-neutral-500 tracking-widest mb-0.5">{s.id}</p>
-                    <p className="text-xs font-bold text-white truncate">{s.customer}</p>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest">{s.item}</p>
+          {customerOrders.map((order) => (
+            <motion.div
+              key={order.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`${cardClass} p-6 sm:p-8 rounded-2xl space-y-6 border border-neutral-850`}
+            >
+              {/* Order Info Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-850 pb-5 font-mono text-xs">
+                <div>
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="text-[#00d2ff] font-bold text-sm">{order.id}</span>
+                    <Badge status={order.status} />
                   </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <Badge status={s.status} />
-                    <span className="text-xs font-bold text-brand-sky w-14 text-right">{s.amount}</span>
-                    <span className="text-[9px] text-neutral-600 uppercase tracking-widest w-16 text-right hidden sm:block">{s.time}</span>
+                  <p className="text-white font-bold text-sm uppercase font-display">{order.item}</p>
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-widest mt-1">
+                    Recipient: {order.customer} // {order.date}
+                  </p>
+                </div>
+
+                <div className="text-left sm:text-right space-y-1">
+                  <span className="text-sm font-bold text-white">{order.amount}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] text-neutral-400 uppercase font-mono">Tracking Code:</span>
+                    <button
+                      onClick={() => copyTracking(order.trackingCode)}
+                      className="px-2 py-0.5 bg-neutral-900 border border-neutral-700 hover:border-[#00d2ff] text-[9px] text-[#00d2ff] font-mono rounded flex items-center gap-1 cursor-pointer"
+                    >
+                      {copiedId === order.trackingCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      {order.trackingCode}
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+              </div>
 
-          {/* Task List */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            className={`${cardClass} p-6 flex flex-col rounded-2xl`}
-          >
-            <div className="mb-5">
-              <p className="text-[9px] uppercase tracking-widest text-neutral-500 font-bold mb-1">Today</p>
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest">Task List</h3>
-            </div>
-            <div className="flex-1 flex flex-col gap-3">
-              {tasks.map((t, i) => (
-                <label key={i} className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer group transition-colors ${t.done ? "border-neutral-800/50 opacity-50" : "border-neutral-800 hover:border-neutral-700 hover:bg-white/[0.02]"}`}>
-                  <input type="checkbox" defaultChecked={t.done} className="mt-0.5 w-3.5 h-3.5 accent-brand-sky shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-[11px] font-semibold leading-tight ${t.done ? "line-through text-neutral-600" : "text-white"}`}>{t.label}</p>
-                    <span className={`text-[9px] uppercase tracking-widest font-bold mt-1 block ${t.priority === "high" ? "text-red-500" : t.priority === "medium" ? "text-yellow-500" : "text-neutral-600"}`}>
-                      {t.priority} priority
-                    </span>
-                  </div>
-                </label>
-              ))}
-            </div>
-            <div className="mt-5 pt-4 border-t border-neutral-800 flex justify-between text-[9px] uppercase tracking-widest font-bold">
-              <span className="text-neutral-500">{tasks.filter(t => t.done).length} / {tasks.length} Done</span>
-              <span className="text-brand-sky">{Math.round(tasks.filter(t => t.done).length / tasks.length * 100)}%</span>
-            </div>
-          </motion.div>
+              {/* 4-Step Fulfillment Progress Timeline */}
+              <div className="space-y-4 font-mono">
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-neutral-400 mb-2">
+                  <span>Carrier: <strong className="text-white">{order.carrier}</strong></span>
+                  <span>Destination: <strong className="text-white">{order.address}</strong></span>
+                </div>
 
+                <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {steps.map((st, idx) => {
+                    const stepNum = idx + 1;
+                    const isPassed = order.step >= stepNum;
+                    const isCurrent = order.step === stepNum;
+
+                    return (
+                      <div
+                        key={st.title}
+                        className={`p-4 border rounded-xl relative transition-all ${
+                          isCurrent
+                            ? "border-[#00d2ff] bg-[#00d2ff]/10 text-white shadow-[0_0_15px_rgba(0,210,255,0.15)]"
+                            : isPassed
+                            ? "border-emerald-500/40 bg-emerald-500/5 text-neutral-300"
+                            : "border-neutral-900 bg-neutral-950/40 text-neutral-600"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                            isCurrent
+                              ? "bg-[#00d2ff] text-black"
+                              : isPassed
+                              ? "bg-emerald-400 text-black"
+                              : "bg-neutral-800 text-neutral-500"
+                          }`}>
+                            {isPassed && !isCurrent ? "✓" : stepNum}
+                          </span>
+                          <span className={`text-[8px] uppercase tracking-widest font-bold ${
+                            isCurrent ? "text-[#00d2ff] animate-pulse" : isPassed ? "text-emerald-400" : "text-neutral-600"
+                          }`}>
+                            {isCurrent ? "In Progress" : isPassed ? "Completed" : "Queued"}
+                          </span>
+                        </div>
+
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-white font-display mb-0.5">
+                          {st.title}
+                        </h4>
+                        <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                          {st.label}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </motion.div>
+          ))}
         </div>
+
       </div>
     </PageShell>
   );
