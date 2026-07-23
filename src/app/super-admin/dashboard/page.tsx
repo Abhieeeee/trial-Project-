@@ -15,6 +15,7 @@ import {
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getDashboardStats, getWeeklyRevenue } from "@/lib/db";
+import RoleSwitcher from "@/components/RoleSwitcher";
 
 export const revalidate = 0; // Live dashboard reports
 
@@ -94,6 +95,7 @@ export default async function SuperAdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <RoleSwitcher />
           <div className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-[9px] font-extrabold uppercase tracking-widest text-red-400 backdrop-blur-xl">
             <ShieldCheck className="h-4 w-4" />
             <span>Full System Permissions Active</span>

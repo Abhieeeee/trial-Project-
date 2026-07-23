@@ -139,10 +139,6 @@ export default function Header() {
               <Search className="w-4 h-4" />
             </Link>
 
-            <div className="hidden xl:block">
-              <RoleSwitcher />
-            </div>
-
             <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
               <UserRound className="w-4 h-4" />
             </Link>
