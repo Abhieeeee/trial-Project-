@@ -358,25 +358,21 @@ export default function AccountPage() {
                 <div className="space-y-1.5 text-left">
                   <label
                     htmlFor="customer-email"
-                    className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                    className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
                   >
-                    Email Address
+                    <Mail className="w-3.5 h-3.5 text-[#00D2FF]" />
+                    <span>Email Address</span>
                   </label>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-[#00D2FF] pointer-events-none">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <input
-                      id="customer-email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      placeholder="name@example.com"
-                      value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
-                      className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-11 pr-4 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
-                    />
-                  </div>
+                  <input
+                    id="customer-email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="name@example.com"
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 px-4 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                  />
                 </div>
 
                 {authMode === 'password' && (
@@ -384,18 +380,16 @@ export default function AccountPage() {
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="customer-password"
-                        className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                        className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
                       >
-                        Password
+                        <Lock className="w-3.5 h-3.5 text-[#00D2FF]" />
+                        <span>Password</span>
                       </label>
                       <span className="text-[10px] text-[#00D2FF] hover:underline cursor-pointer">
                         Forgot?
                       </span>
                     </div>
                     <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-[#00D2FF] pointer-events-none">
-                        <Lock className="w-4 h-4" />
-                      </div>
                       <input
                         id="customer-password"
                         type={showPassword ? 'text' : 'password'}
@@ -404,7 +398,7 @@ export default function AccountPage() {
                         placeholder="••••••••••••"
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
-                        className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-11 pr-11 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                        className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-4 pr-11 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
                       />
                       <button
                         type="button"
