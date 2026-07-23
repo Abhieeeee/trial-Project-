@@ -66,7 +66,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white flex overflow-hidden relative">
+    <div className="min-h-screen bg-[#0c0404] text-white flex overflow-hidden relative transition-colors duration-500">
       
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/[0.015] rounded-full blur-[120px] pointer-events-none" />

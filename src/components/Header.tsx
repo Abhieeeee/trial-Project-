@@ -134,12 +134,14 @@ export default function Header() {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-3 md:gap-5">
             <Link className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Search products" href="/shop" data-magnetic>
               <Search className="w-4 h-4" />
             </Link>
 
-            <RoleSwitcher />
+            <div className="hidden xl:block">
+              <RoleSwitcher />
+            </div>
 
             <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
               <UserRound className="w-4 h-4" />

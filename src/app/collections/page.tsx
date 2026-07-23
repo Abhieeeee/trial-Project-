@@ -55,7 +55,7 @@ export default function Collections() {
           <span className="block text-[10px] uppercase tracking-[0.35em] text-brand-sky mb-4 text-glow-sky font-bold font-mono">
             Explore the Archives
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold uppercase tracking-wider font-sans text-white drop-shadow-2xl">
             THE COLLECTIONS
           </h1>
         </motion.div>

@@ -55,7 +55,7 @@ function CheckoutForm() {
   const [country, setCountry] = useState("Nepal");
 
   // Region Tab & Selected Payment Method
-  const [regionTab, setRegionTab] = useState<"nepal" | "international">("nepal");
+  const [regionTab, setRegionTab] = useState<"nepal" | "international">(currency === "NPR" ? "nepal" : "international");
   const [paymentMethod, setPaymentMethod] = useState<string>("esewa");
 
   // Gateway Specific Input States

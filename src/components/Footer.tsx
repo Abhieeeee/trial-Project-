@@ -38,7 +38,7 @@ export default function Footer() {
                 placeholder="ENTER EMAIL ADDRESS"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full py-4 bg-neutral-950/40 border border-neutral-900 focus:border-brand-sky rounded px-5 text-[10px] tracking-[0.2em] font-semibold text-white placeholder-neutral-700 outline-none transition-colors duration-300"
+                className="w-full py-4 bg-neutral-950/40 border border-neutral-900 focus:border-brand-sky rounded px-5 text-[10px] tracking-[0.2em] font-semibold text-white placeholder-neutral-700 outline-none focus:ring-1 focus:ring-[#00D2FF] transition-colors duration-300"
                 required
                 data-hover
               />

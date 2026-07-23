@@ -55,7 +55,7 @@ export default function CartPage() {
                         <Image src={item.image} alt={item.name} fill className="object-cover" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white font-display mb-1">{item.name}</h3>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-white font-sans mb-1">{item.name}</h3>
                         <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-mono mb-2">{item.category}</p>
                         <span className="text-xs text-[#00d2ff] font-mono font-bold">{formatPrice(item.numericPrice)}</span>
                       </div>

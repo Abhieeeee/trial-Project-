@@ -95,7 +95,7 @@ export default function Home() {
             {/* Giant Title */}
             <motion.h1 
               variants={itemFadeUp}
-              className="text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-[0.12em] leading-[1.05] font-display mb-6 text-white"
+              className="text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-wider leading-[1.05] font-display mb-6 text-white"
             >
               AURA <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-100 to-neutral-400">

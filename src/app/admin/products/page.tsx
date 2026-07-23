@@ -51,7 +51,7 @@ export default function AdminProductsPage() {
     <div className="pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold uppercase tracking-widest text-white mb-2">Products</h1>
+          <h1 className="text-2xl font-sans font-extrabold uppercase tracking-wider text-white mb-2">Products</h1>
           <p className="text-xs text-neutral-400 uppercase tracking-widest">
             Add products, variants, tags, product media, and bulk upload inventory.
           </p>

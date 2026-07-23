@@ -37,7 +37,7 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-5xl font-display font-bold uppercase tracking-[0.1em] mb-8 text-white">
               Restraint is the loudest detail.
             </h2>
-            <p className="text-sm text-neutral-455 leading-relaxed tracking-wide mb-10">
+            <p className="text-sm text-neutral-400 leading-relaxed tracking-wide mb-10">
               Every garment is built as a long-term object: heavy cotton, weather-ready shells, brushed hardware, clean labels,
               and fit blocks that feel oversized without losing structure.
             </p>
