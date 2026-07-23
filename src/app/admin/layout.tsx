@@ -118,17 +118,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
 
-          {isSuperAdmin && (
-            <div className="mt-4 pt-4 border-t border-neutral-900/60">
+          <div className="mt-4 pt-4 border-t border-neutral-900/60 flex flex-col gap-2">
+            <Link
+              href="/dashboard/admin"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border bg-sky-500/10 text-sky-400 border-sky-500/30 hover:bg-sky-500/20 shadow-[0_0_15px_rgba(0,210,255,0.1)]"
+            >
+              <LayoutDashboard className="w-4 h-4 text-sky-400" />
+              Admin Console Mode
+            </Link>
+
+            {isSuperAdmin && (
               <Link
                 href="/super-admin/dashboard"
-                className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]"
               >
                 <ShieldAlert className="w-4 h-4 text-red-400 animate-pulse" />
                 Super Admin Portal
               </Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Sidebar Footer / User Profile */}

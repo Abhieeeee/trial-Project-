@@ -122,12 +122,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Define navigation items based on role
   const allNavItems = [
     { name: "Staff Workspace", href: "/dashboard/staff", icon: Warehouse, allowedRoles: ["staff", "admin", "super_admin"] },
-    { name: "Admin Console", href: "/dashboard/admin", icon: Sliders, allowedRoles: ["admin", "super_admin"] },
+    { name: "Admin Console", href: "/dashboard/admin", icon: LayoutDashboard, allowedRoles: ["admin", "super_admin"] },
     { name: "Super Override", href: "/dashboard/superadmin", icon: Terminal, allowedRoles: ["super_admin"] },
+    { name: "Orders Feed", href: "/admin/orders", icon: ShoppingBag, allowedRoles: ["staff", "admin", "super_admin"] },
+    { name: "Inventory Watch", href: "/admin/inventory", icon: Warehouse, allowedRoles: ["staff", "admin", "super_admin"] },
+    { name: "Products Catalog", href: "/admin/products", icon: PackageSearch, allowedRoles: ["admin", "super_admin"] },
+    { name: "Customer Directory", href: "/admin/customers", icon: UsersRound, allowedRoles: ["admin", "super_admin"] },
   ];
-
-  // Load sliders icons dynamically as fallback if not present, otherwise use layout dashboard
-  const SlidersIcon = Sliders;
 
   const navItems = allNavItems.filter(item => item.allowedRoles.includes(profile.role));
 

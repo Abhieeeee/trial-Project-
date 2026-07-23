@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Globe, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { useCurrency, CurrencyCode } from "@/lib/currency";
+import { useCart } from "@/lib/cartContext";
 
 const navLinks = [
   { label: "Collections", href: "/collections" },
@@ -18,6 +19,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currency, setCurrency, currencies } = useCurrency();
+  const { openCart, totalItems } = useCart();
   const [currencyMenuOpen, setCurrencyMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -129,16 +131,19 @@ export default function Header() {
             <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
               <UserRound className="w-4 h-4" />
             </Link>
-            <Link
+            <button
+              type="button"
+              onClick={openCart}
               className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1.5 cursor-pointer"
               aria-label="Shopping bag"
-              href="/cart"
               data-magnetic
             >
-              <ShoppingBag className="w-4 h-4" />
-              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-[#00D2FF] rounded-full shadow-[0_0_8px_#00D2FF]" />
-              <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em] font-semibold text-neutral-400">(0)</span>
-            </Link>
+              <ShoppingBag className="w-4 h-4 text-[#00D2FF]" />
+              {totalItems > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#00D2FF] rounded-full shadow-[0_0_8px_#00D2FF] animate-pulse" />
+              )}
+              <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em] font-semibold text-neutral-300">({totalItems})</span>
+            </button>
             <button
               className="md:hidden p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
               onClick={() => setMobileMenuOpen(true)}

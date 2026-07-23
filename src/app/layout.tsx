@@ -4,6 +4,9 @@ import SmoothScroll from "@/components/SmoothScroll";
 import AiAssistant from "@/components/AiAssistant";
 import CommandMenu from "@/components/CommandMenu";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import { CartProvider } from "@/lib/cartContext";
+import { CartDrawer } from "@/components/CartDrawer";
+import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
 const syne = Syne({
@@ -40,10 +43,14 @@ export default function RootLayout({
       className={`h-full antialiased ${syne.variable} ${jetbrainsMono.variable} ${inter.variable}`}
     >
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white font-sans">
-        <ScrollProgressBar />
-        <SmoothScroll>{children}</SmoothScroll>
-        <AiAssistant />
-        <CommandMenu />
+        <CartProvider>
+          <ScrollProgressBar />
+          <CustomCursor />
+          <SmoothScroll>{children}</SmoothScroll>
+          <CartDrawer />
+          <AiAssistant />
+          <CommandMenu />
+        </CartProvider>
       </body>
     </html>
   );

@@ -1,20 +1,42 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { RotateCcw, Search, ShieldCheck, SlidersHorizontal, Truck, ChevronDown } from "lucide-react";
+import { RotateCcw, Search, ShieldCheck, SlidersHorizontal, Truck, ChevronDown, Share2, Check } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CustomCursor from "@/components/CustomCursor";
 import StoreProductCard from "@/components/StoreProductCard";
 import { categories, products } from "@/lib/catalog";
 
-export default function Shop() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [query, setQuery] = useState("");
-  const [sort, setSort] = useState("featured");
+function ShopContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Read initial values from URL search params
+  const initialCat = searchParams.get("category") || "All";
+  const initialQuery = searchParams.get("search") || "";
+  const initialSort = searchParams.get("sort") || "featured";
+
+  const [activeCategory, setActiveCategory] = useState(initialCat);
+  const [query, setQuery] = useState(initialQuery);
+  const [sort, setSort] = useState(initialSort);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  // Sync state changes to URL query parameters
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (activeCategory && activeCategory !== "All") params.set("category", activeCategory);
+    if (query.trim()) params.set("search", query.trim());
+    if (sort && sort !== "featured") params.set("sort", sort);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `/shop?${queryString}` : "/shop";
+    router.replace(newUrl, { scroll: false });
+  }, [activeCategory, query, sort, router]);
 
   const sortLabels: Record<string, string> = {
     featured: "Featured",
@@ -38,6 +60,20 @@ export default function Shop() {
       });
   }, [activeCategory, query, sort]);
 
+  const handleShareLink = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  const clearFilters = () => {
+    setActiveCategory("All");
+    setQuery("");
+    setSort("featured");
+  };
+
   return (
     <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-[140px] lg:pt-[180px]">
       <CustomCursor />
@@ -49,20 +85,32 @@ export default function Shop() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
         >
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-8 font-mono">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-white">Shop</span>
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-8 font-mono">
+            <div className="flex items-center gap-2">
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
+              <span>/</span>
+              <span className="text-white">Shop</span>
+            </div>
+            
+            <button
+              onClick={handleShareLink}
+              className="flex items-center gap-1.5 hover:text-[#00d2ff] transition-colors cursor-pointer"
+              title="Copy shareable URL link"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{copiedLink ? "Link Copied!" : "Share View"}</span>
+            </button>
           </div>
+
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white mb-10">
             SHOP ALL
           </h1>
-          <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed tracking-widest mb-12">
+          <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed tracking-widest mb-12 font-mono">
             FILTER PREMIUM HOODIES, JACKETS, PANTS, SNEAKERS, AND ACCESSORIES. EACH PIECE INCORPORATES OUR SIGNATURE FASHION GEOMETRY AND CYBER-LUXURY COMPOSITION.
           </p>
 
           <div className="glass-panel-glow rounded-xl p-4 mb-10 grid gap-4 lg:grid-cols-[1fr_auto_auto] items-center">
-            {/* Search Input Underline-Trace Accent */}
+            {/* Search Input */}
             <label className="relative block">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
@@ -79,7 +127,6 @@ export default function Shop() {
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="w-full lg:w-56 bg-black border border-neutral-800 rounded-lg py-3.5 px-4 text-[10px] uppercase tracking-[0.2em] text-neutral-400 focus:outline-none focus:border-brand-sky focus:text-white transition-all flex items-center justify-between cursor-pointer"
-                aria-label="Sort products dropdown"
               >
                 <span>SORT: {sortLabels[sort]}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-neutral-500" />
@@ -102,8 +149,10 @@ export default function Shop() {
                           setSort(key);
                           setDropdownOpen(false);
                         }}
-                        className={`w-full text-left py-3 px-4 text-[10px] uppercase tracking-[0.2em] hover:bg-neutral-900 transition-colors cursor-pointer ${
-                          sort === key ? "text-brand-sky font-bold bg-brand-sky/5" : "text-neutral-400"
+                        className={`w-full px-4 py-3 text-left text-[10px] uppercase tracking-[0.2em] font-mono transition-colors cursor-pointer ${
+                          sort === key
+                            ? "bg-brand-sky/10 text-brand-sky font-bold"
+                            : "text-neutral-400 hover:bg-neutral-900 hover:text-white"
                         }`}
                       >
                         {value}
@@ -114,74 +163,69 @@ export default function Shop() {
               </AnimatePresence>
             </div>
 
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-500 px-2">
-              <SlidersHorizontal className="w-4 h-4 text-brand-sky" />
-              {filteredProducts.length} Items
-            </div>
+            {/* Reset Filters Trigger */}
+            <button
+              onClick={clearFilters}
+              className="flex items-center justify-center gap-2 px-5 py-3.5 bg-black border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white text-[10px] uppercase tracking-[0.2em] font-mono rounded-lg transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#00d2ff]" /> RESET
+            </button>
           </div>
 
-          <div className="flex flex-wrap gap-4 mb-16">
-            {categories.map((cat) => (
+          {/* Category Filter Chips */}
+          <div className="flex flex-wrap gap-2 mb-12">
+            {["All", ...categories].map((category) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-bold border transition-all duration-300 ${
-                  activeCategory === cat
-                    ? "border-brand-sky bg-brand-sky/10 text-white shadow-[0_0_15px_rgba(125,211,252,0.15)]"
-                    : "border-neutral-800 text-neutral-400 hover:border-brand-sky hover:text-white"
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`px-5 py-2.5 rounded-full text-[9px] uppercase tracking-[0.25em] font-mono transition-all duration-220 border cursor-pointer ${
+                  activeCategory === category
+                    ? "bg-white text-black font-bold border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                    : "bg-black/60 text-neutral-400 border-neutral-800 hover:border-neutral-700 hover:text-white"
                 }`}
-                data-magnetic
               >
-                {cat}
+                {category}
               </button>
             ))}
           </div>
-        </motion.div>
 
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-12">
-          <AnimatePresence mode="popLayout">
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
-              >
-                <StoreProductCard product={product} />
-              </motion.div>
+              <StoreProductCard key={product.id} product={product} />
             ))}
-          </AnimatePresence>
-        </motion.div>
-      </section>
+          </div>
 
-      <section className="py-24 px-6 md:px-12 bg-neutral-950 border-t border-neutral-900">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { icon: Truck, title: "Global Shipping", desc: "Free worldwide shipping on all orders over EUR 200." },
-            { icon: RotateCcw, title: "Complimentary Returns", desc: "30-day return requests with guided return labels." },
-            { icon: ShieldCheck, title: "Secure Checkout", desc: "A checkout-ready frontend with wallet and card payment states." },
-          ].map((feature, idx) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.6 }}
-              className="flex flex-col items-center text-center p-8 glass-panel border border-white/5 rounded-xl"
-            >
-              <div className="w-12 h-12 rounded-full bg-neutral-900 flex items-center justify-center mb-6">
-                <feature.icon className="w-5 h-5 text-brand-sky" />
-              </div>
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3">{feature.title}</h4>
-              <p className="text-[11px] text-neutral-400 leading-relaxed max-w-[220px]">{feature.desc}</p>
-            </motion.div>
-          ))}
-        </div>
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-20 border border-neutral-800 rounded-xl bg-neutral-950/40">
+              <p className="text-xs uppercase tracking-[0.25em] text-neutral-500 font-mono">
+                No items match query parameters.
+              </p>
+              <button
+                onClick={clearFilters}
+                className="mt-4 px-6 py-2.5 bg-[#00d2ff] text-black font-bold text-[9px] uppercase tracking-widest rounded"
+              >
+                Reset Catalog Filters
+              </button>
+            </div>
+          )}
+        </motion.div>
       </section>
 
       <Footer />
     </main>
+  );
+}
+
+export default function Shop() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center font-mono text-[10px] text-[#00d2ff] uppercase tracking-widest">
+        Loading catalog telemetry...
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }

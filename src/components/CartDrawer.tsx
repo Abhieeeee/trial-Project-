@@ -1,0 +1,213 @@
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, Truck, Sparkles } from "lucide-react";
+import { useCart } from "@/lib/cartContext";
+import { useCurrency } from "@/lib/currency";
+
+export function CartDrawer() {
+  const {
+    items,
+    isOpen,
+    closeCart,
+    updateQuantity,
+    removeItem,
+    totalItems,
+    subtotal,
+    freeShippingThreshold,
+  } = useCart();
+
+  const { formatPrice } = useCurrency();
+
+  // Free shipping progress calculations
+  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
+  const shippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop Blur Overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeCart}
+            className="fixed inset-0 z-[9990] bg-black/80 backdrop-blur-md cursor-pointer"
+          />
+
+          {/* Slide-over Drawer Panel */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            className="fixed top-0 right-0 z-[9995] w-full sm:w-[460px] h-full bg-neutral-950 border-l border-white/10 shadow-2xl flex flex-col justify-between font-sans overflow-hidden"
+          >
+            {/* Header Bar */}
+            <div className="p-6 border-b border-white/10 bg-black/40 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 border border-[#00d2ff]/30 bg-[#00d2ff]/10 text-[#00d2ff]">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white">
+                    Quick Bag Overview ({totalItems})
+                  </h2>
+                  <p className="text-[9px] font-mono uppercase tracking-[0.14em] text-neutral-400">
+                    AURA STREET EXPRESS CHECKOUT
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={closeCart}
+                className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Free Shipping Progress Meter */}
+            <div className="px-6 py-4 bg-neutral-900/60 border-b border-white/5 space-y-2">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider">
+                <span className="flex items-center gap-2 text-neutral-300">
+                  <Truck className="w-3.5 h-3.5 text-[#00d2ff]" />
+                  {remainingForFreeShipping === 0
+                    ? "Express Free Shipping Unlocked!"
+                    : `Add ${formatPrice(remainingForFreeShipping)} more for Free Shipping`}
+                </span>
+                <span className="text-[#00d2ff] font-bold">{Math.round(shippingProgress)}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-black rounded-full overflow-hidden border border-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-[#00d2ff] to-cyan-400 transition-all duration-500"
+                  style={{ width: `${shippingProgress}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Items Thread */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 font-mono text-[11px] scrollbar-thin scrollbar-thumb-neutral-800">
+              {items.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-12">
+                  <ShoppingBag className="w-12 h-12 text-neutral-700 animate-pulse" />
+                  <p className="text-xs uppercase tracking-[0.2em] text-neutral-400 font-bold">
+                    YOUR BAG IS EMPTY
+                  </p>
+                  <p className="text-[9px] text-neutral-500 uppercase tracking-widest max-w-xs">
+                    Explore our latest Japanese technical fabric outerwear and streetwear drops.
+                  </p>
+                  <Link
+                    href="/shop"
+                    onClick={closeCart}
+                    className="mt-4 px-6 py-3 bg-[#00d2ff] text-black font-bold uppercase tracking-[0.2em] text-[9px] hover:bg-cyan-400 transition-colors"
+                  >
+                    Browse Collections
+                  </Link>
+                </div>
+              ) : (
+                items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-4 border border-white/5 bg-black/40 hover:border-white/15 transition-colors flex gap-4 items-center relative group"
+                  >
+                    <div className="relative w-16 h-20 bg-neutral-900 border border-white/10 overflow-hidden shrink-0">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h4 className="font-bold text-white uppercase truncate text-xs">
+                        {item.name}
+                      </h4>
+                      <p className="text-[9px] text-neutral-400 uppercase tracking-wider">
+                        {item.category}
+                      </p>
+                      <p className="text-[#00d2ff] font-bold text-xs">
+                        {formatPrice(item.numericPrice)}
+                      </p>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-3 pt-1">
+                        <div className="inline-flex items-center border border-white/10 bg-neutral-900 font-mono text-[9px]">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="px-2 py-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="px-3 py-1 font-bold text-white">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="px-2 py-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="text-neutral-500 hover:text-red-400 transition-colors p-1 cursor-pointer"
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer Summary & Checkout */}
+            {items.length > 0 && (
+              <div className="p-6 border-t border-white/10 bg-neutral-950 space-y-4">
+                <div className="space-y-2 font-mono text-xs">
+                  <div className="flex justify-between text-neutral-400 uppercase">
+                    <span>Subtotal</span>
+                    <span className="text-white font-bold">{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-neutral-400 uppercase">
+                    <span>Shipping</span>
+                    <span className="text-[#00d2ff]">
+                      {remainingForFreeShipping === 0 ? "FREE" : "Calculated at checkout"}
+                    </span>
+                  </div>
+                  <div className="pt-2 border-t border-white/10 flex justify-between text-sm font-bold text-white uppercase">
+                    <span>Estimated Total</span>
+                    <span className="text-[#00d2ff]">{formatPrice(subtotal)}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 font-mono text-[9px] uppercase tracking-widest font-bold">
+                  <Link
+                    href="/cart"
+                    onClick={closeCart}
+                    className="py-3.5 text-center border border-neutral-800 hover:border-white text-neutral-300 hover:text-white transition-colors"
+                  >
+                    View Bag
+                  </Link>
+                  <Link
+                    href="/checkout"
+                    onClick={closeCart}
+                    className="py-3.5 text-center bg-[#00d2ff] hover:bg-cyan-400 text-black transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,210,255,0.2)]"
+                  >
+                    Checkout <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
