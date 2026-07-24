@@ -32,30 +32,30 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-black/70 border-r border-neutral-900/60 backdrop-blur-2xl transform transition-transform duration-300 md:translate-x-0 md:static flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         
         {/* Sidebar Header */}
-        <div className="h-20 flex items-center px-8 border-b border-neutral-900/60 justify-between">
+        <div className="h-14 flex items-center px-6 border-b border-white/10 justify-between">
           <Link href="/user-dashboard" className="text-xs font-bold tracking-[0.35em] uppercase font-display select-none text-white flex items-center gap-1.5">
-            AURA<span className="text-neutral-500 font-extrabold">.</span>STAFF
+            AURA<span className="text-[#00D2FF]">.</span>STAFF
           </Link>
-          <button className="md:hidden text-neutral-500 hover:text-white transition-colors" onClick={() => setSidebarOpen(false)}>
+          <button className="md:hidden text-neutral-400 hover:text-white transition-colors" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation Items */}
-        <div className="flex-1 overflow-y-auto py-8 px-4 flex flex-col gap-2">
+        <div className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1.5 font-mono">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-300 border ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-extrabold transition-all duration-200 border ${
                   isActive 
-                    ? "bg-white/5 text-white border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.02)]" 
-                    : "text-neutral-500 border-transparent hover:bg-white/[0.02] hover:text-white"
+                    ? "bg-white/10 text-white border-white/20 shadow-sm" 
+                    : "text-neutral-400 border-transparent hover:bg-white/[0.03] hover:text-white"
                 }`}
               >
-                <item.icon className={`w-4 h-4 ${isActive ? "text-white" : "text-neutral-500"}`} />
+                <item.icon className={`w-4 h-4 ${isActive ? "text-[#00D2FF]" : "text-neutral-500"}`} />
                 {item.name}
               </Link>
             );
@@ -63,10 +63,10 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* Sidebar Footer / User Profile */}
-        <div className="p-4 border-t border-neutral-900/60 bg-neutral-950/40">
-          <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-white/[0.01] border border-white/5">
-            <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center border border-neutral-700 text-neutral-400">
-              <User className="w-4 h-4" />
+        <div className="p-3 border-t border-white/10 bg-black/60 font-mono">
+          <div className="flex items-center gap-3 px-3 py-2.5 mb-2.5 rounded-xl bg-white/[0.03] border border-white/10">
+            <div className="w-7 h-7 rounded-full bg-neutral-800 flex items-center justify-center border border-white/10 text-neutral-300">
+              <User className="w-3.5 h-3.5" />
             </div>
             <div>
               <div className="text-[9px] uppercase tracking-widest font-extrabold text-white">Staff Member</div>
@@ -76,13 +76,13 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
           <div className="flex gap-2">
             <Link
               href="/"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-3 border border-neutral-900 rounded-xl text-[8px] uppercase tracking-wider font-extrabold text-neutral-500 hover:text-white hover:bg-white/[0.02] transition-all duration-300"
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border border-white/10 rounded-lg text-[8px] uppercase tracking-wider font-extrabold text-neutral-400 hover:text-white hover:bg-white/5 transition-all"
             >
               <ArrowLeft className="w-3 h-3" /> Store
             </Link>
             <Link
               href="/admin/login"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-3 border border-neutral-900 rounded-xl text-[8px] uppercase tracking-wider font-extrabold text-red-500/80 hover:text-red-400 hover:bg-red-950/20 transition-all duration-300"
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border border-red-500/20 rounded-lg text-[8px] uppercase tracking-wider font-extrabold text-red-400 hover:bg-red-500/10 transition-all"
             >
               <LogOut className="w-3 h-3" /> Log Out
             </Link>
@@ -93,7 +93,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 flex items-center justify-between px-6 md:px-12 bg-neutral-950/40 border-b border-neutral-900/60 sticky top-0 z-30 backdrop-blur-xl">
+        <header className="h-14 flex items-center justify-between px-6 md:px-10 bg-black/60 border-b border-white/10 sticky top-0 z-30 backdrop-blur-2xl font-mono">
           <button 
             className="md:hidden text-neutral-400 hover:text-white transition-colors"
             onClick={() => setSidebarOpen(true)}
@@ -102,18 +102,18 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
           </button>
 
           <div className="hidden md:block">
-            <h2 className="text-[10px] uppercase tracking-[0.25em] font-extrabold text-neutral-500">Staff Dashboard</h2>
+            <h2 className="text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-400">Staff Dashboard Telemetry</h2>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-800/10 border border-neutral-800/20 text-neutral-400 text-[8px] uppercase tracking-widest font-extrabold">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-neutral-300 text-[8px] uppercase tracking-widest font-bold">
               Read-Only Mode
             </span>
           </div>
         </header>
 
         {/* Page Content */}
-        <main data-lenis-prevent className="flex-1 overflow-y-auto p-6 md:p-10">
+        <main data-lenis-prevent className="flex-1 overflow-y-auto p-5 md:p-8">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
