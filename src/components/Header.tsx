@@ -34,25 +34,25 @@ export default function Header() {
   return (
     <>
       <header 
-        className="fixed top-0 left-0 w-full z-40 transition-all duration-220 py-5"
+        className="fixed top-0 left-0 w-full z-40 transition-all duration-300 py-4"
         style={{
-          backgroundColor: isScrolled ? "rgba(5, 5, 5, 0.85)" : "transparent",
-          backdropFilter: isScrolled ? "blur(20px)" : "none",
-          borderBottom: isScrolled ? "1px solid rgba(232, 228, 223, 0.05)" : "1px solid transparent",
+          backgroundColor: isScrolled ? "rgba(5, 5, 5, 0.9)" : "transparent",
+          backdropFilter: isScrolled ? "blur(24px)" : "none",
+          borderBottom: isScrolled ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid transparent",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           
           {/* Top-Left Localization Currency Selector */}
-          <div className="flex items-center gap-3 text-[9px] uppercase tracking-[0.25em] font-medium text-neutral-400 relative">
+          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-400 relative">
             <div className="relative">
               <button 
                 onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/5 border border-white/10 hover:border-[#00D2FF] hover:text-white transition-all cursor-pointer font-mono"
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 hover:border-white/25 hover:text-white transition-all cursor-pointer font-mono text-[10px]"
                 data-magnetic
                 title="Select store currency"
               >
-                <Globe className="w-3 h-3 text-[#00D2FF]" />
+                <Globe className="w-3.5 h-3.5 text-[#00D2FF]" />
                 <span>{currencies[currency]?.flag || "🌐"} {currencies[currency]?.symbol} {currency}</span>
               </button>
 
@@ -64,13 +64,13 @@ export default function Header() {
                       onClick={() => setCurrencyMenuOpen(false)} 
                     />
                     <motion.div
-                      initial={{ opacity: 0, y: 5 }}
+                      initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      transition={{ duration: 0.18, ease: "easeOut" }}
-                      className="absolute left-0 mt-2 w-48 bg-neutral-950/95 border border-white/15 rounded-lg overflow-hidden py-2 z-[70] backdrop-blur-xl shadow-2xl font-mono text-[9px]"
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute left-0 mt-2 w-48 bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden py-2 z-[70] backdrop-blur-2xl shadow-2xl font-mono text-[10px]"
                     >
-                      <div className="px-3 py-1 text-[8px] text-neutral-500 uppercase tracking-widest border-b border-neutral-900 mb-1 font-bold">
+                      <div className="px-3 py-1 text-[8px] text-neutral-500 uppercase tracking-widest border-b border-white/5 mb-1 font-bold">
                         Select Currency
                       </div>
                       {(Object.keys(currencies) as CurrencyCode[]).map((code) => (
@@ -80,8 +80,8 @@ export default function Header() {
                             setCurrency(code);
                             setCurrencyMenuOpen(false);
                           }}
-                          className={`w-full text-left px-3.5 py-2 hover:bg-white/10 transition-colors tracking-wider flex items-center justify-between cursor-pointer ${
-                            currency === code ? "text-[#00D2FF] font-bold bg-[#00D2FF]/10" : "text-neutral-300"
+                          className={`w-full text-left px-3.5 py-2 hover:bg-white/5 transition-colors tracking-wider flex items-center justify-between cursor-pointer ${
+                            currency === code ? "text-[#00D2FF] font-bold bg-[#00D2FF]/5" : "text-neutral-300"
                           }`}
                         >
                           <span className="flex items-center gap-2">
@@ -97,44 +97,42 @@ export default function Header() {
               </AnimatePresence>
             </div>
             <span className="hidden sm:inline text-neutral-800">|</span>
-            <span className="hidden sm:inline text-neutral-500 font-mono">Global Storefront</span>
+            <span className="hidden sm:inline text-neutral-500 font-mono text-[9px] tracking-widest">Global Store</span>
           </div>
  
           {/* Wordmark AURA.STREET */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center"
           >
             <Link
               href="/"
-              className="text-base md:text-lg font-bold tracking-[0.4em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-220 text-white"
+              className="text-base md:text-lg font-bold tracking-[0.35em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-200 text-white"
             >
               AURA<span className="text-[#00D2FF]">.</span>STREET
             </Link>
           </motion.div>
  
-          {/* Dynamic Laser Nav Links */}
+          {/* Dynamic Nav Links */}
           <nav className="hidden md:flex items-center">
-            <div className="flex items-center gap-8 py-2 px-8 rounded-full border border-transparent">
+            <div className="flex items-center gap-8 py-1.5 px-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative text-[9px] uppercase tracking-[0.3em] font-medium text-neutral-400 hover:text-white transition-colors duration-220 group py-1"
+                  className="relative text-[10px] uppercase tracking-[0.25em] font-medium text-neutral-400 hover:text-white transition-colors duration-200 group py-1"
                 >
                   {link.label}
-                  {/* Glowing Laser Underline effect */}
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-220 origin-left" />
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] blur-[4px] scale-x-0 group-hover:scale-x-100 transition-transform duration-220 origin-left opacity-60" />
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
                 </Link>
               ))}
             </div>
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Search products" href="/shop" data-magnetic>
               <Search className="w-4 h-4" />
             </Link>
@@ -151,7 +149,7 @@ export default function Header() {
               title="Saved Wishlist"
             >
               <Heart className={`w-4 h-4 ${totalWishlist > 0 ? "text-red-400 fill-red-400" : "text-neutral-400 hover:text-red-400"}`} />
-              <span className="text-[9px] font-semibold text-neutral-400">({totalWishlist})</span>
+              <span className="text-[10px] font-semibold text-neutral-400">({totalWishlist})</span>
             </button>
 
             {/* Shopping Bag Quick Cart Trigger */}
@@ -163,9 +161,9 @@ export default function Header() {
             >
               <ShoppingBag className="w-4 h-4 text-[#00D2FF]" />
               {totalItems > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#00D2FF] rounded-full shadow-[0_0_8px_#00D2FF] animate-pulse" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#00D2FF] rounded-full shadow-[0_0_6px_#00D2FF]" />
               )}
-              <span className="hidden lg:inline text-[9px] uppercase tracking-[0.25em] font-semibold text-neutral-300">({totalItems})</span>
+              <span className="hidden lg:inline text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-300">({totalItems})</span>
             </button>
             <button
               className="md:hidden p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"

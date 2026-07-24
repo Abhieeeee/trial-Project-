@@ -100,23 +100,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : allNavItems;
 
   const bgThemeClass = isSuperAdmin
-    ? "bg-[#0c0404]"
+    ? "bg-[#080404]"
     : isStaff
-    ? "bg-[#0e0a03]"
-    : "bg-[#030914]";
+    ? "bg-[#080603]"
+    : "bg-[#050505]";
 
   const themeAccent = isSuperAdmin
-    ? "text-red-400 border-red-500/30 bg-red-500/10 shadow-red-500/20"
+    ? "text-red-400 border-red-500/20 bg-red-500/10"
     : isStaff
-    ? "text-amber-400 border-amber-500/30 bg-amber-500/10 shadow-amber-500/20"
-    : "text-[#00D2FF] border-[#00D2FF]/30 bg-[#00D2FF]/10 shadow-[#00D2FF]/20";
+    ? "text-amber-400 border-amber-500/20 bg-amber-500/10"
+    : "text-[#00D2FF] border-[#00D2FF]/20 bg-[#00D2FF]/10";
 
   return (
     <div className={`min-h-screen ${bgThemeClass} text-white flex overflow-hidden relative font-sans selection:bg-[#00D2FF]/30 selection:text-white transition-colors duration-500`}>
       
       {/* Ambient Cyber Light Blobs */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-[#00D2FF]/[0.025] rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-purple-500/[0.02] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#00D2FF]/[0.015] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-purple-500/[0.015] rounded-full blur-[140px] pointer-events-none" />
 
       {/* Mobile Backdrop Overlay */}
       {sidebarOpen && (
@@ -130,7 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* Sidebar Navigation */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-black/80 border-r border-white/10 backdrop-blur-2xl transform transition-transform duration-300 md:translate-x-0 md:static md:w-64 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#080808]/90 border-r border-white/10 backdrop-blur-2xl transform transition-transform duration-300 md:translate-x-0 md:static md:w-64 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         
         {/* Brand Header */}
         <div className="h-20 flex items-center px-6 border-b border-white/10 justify-between">
@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-[9px] uppercase tracking-[0.2em] font-bold transition-all duration-200 group border ${
                   isActive 
-                    ? "bg-white/5 text-white border-white/20 shadow-lg" 
+                    ? "bg-white/10 text-white border-white/20 shadow-md" 
                     : "text-neutral-400 border-transparent hover:bg-white/[0.03] hover:text-white"
                 }`}
               >
@@ -176,7 +176,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {isActive && (
                   <motion.div
                     layoutId="activeTabIndicator"
-                    className="absolute right-2 w-1.5 h-1.5 rounded-full bg-[#00D2FF] shadow-[0_0_8px_#00D2FF]"
+                    className="absolute right-2 w-1.5 h-1.5 rounded-full bg-[#00D2FF]"
                   />
                 )}
               </Link>
@@ -201,7 +201,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href="/super-admin/dashboard"
                 className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-[9px] uppercase tracking-[0.2em] font-bold transition-all border bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
               >
-                <ShieldAlert className="w-3.5 h-3.5 text-red-400 animate-pulse" />
+                <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
                 Super Admin HUD
               </Link>
             )}

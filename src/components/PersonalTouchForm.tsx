@@ -90,16 +90,16 @@ export default function PersonalTouchForm() {
   };
 
   return (
-    <section className="glass-panel-glow rounded-2xl p-6 sm:p-10 font-sans border border-white/10 relative overflow-hidden">
+    <section className="rounded-2xl p-6 sm:p-10 font-sans border border-white/10 bg-neutral-950/80 backdrop-blur-xl relative overflow-hidden">
       
       {/* Background ambient lighting */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#00d2ff]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#00D2FF]/[0.02] rounded-full blur-3xl pointer-events-none" />
 
       <div className="mb-8 font-mono">
-        <span className="text-[9px] uppercase tracking-[0.25em] text-[#00d2ff] font-bold">
+        <span className="text-[9px] uppercase tracking-[0.25em] text-[#00D2FF] font-bold">
           CUSTOMER CO-CREATION & IMPROVEMENT PORTAL
         </span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-wider text-white font-display mt-2">
+        <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-white font-display mt-2">
           Personal Touch & Feedback Form
         </h2>
         <p className="text-xs text-neutral-400 mt-2 max-w-2xl leading-relaxed">
@@ -132,13 +132,13 @@ export default function PersonalTouchForm() {
                       onClick={() => setCategory(cat.id)}
                       className={`p-4 border text-left rounded-xl transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                         isSelected
-                          ? cat.tone + " font-bold shadow-lg ring-1 ring-white/20"
-                          : "border-neutral-850 bg-black/60 text-neutral-400 hover:border-neutral-700 hover:text-white"
+                          ? "border-[#00D2FF]/40 bg-[#00D2FF]/10 text-white font-bold"
+                          : "border-white/5 bg-black/40 text-neutral-400 hover:border-white/20 hover:text-white"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <cat.icon className="w-5 h-5 shrink-0" />
-                        {isSelected && <span className="w-2 h-2 rounded-full bg-[#00d2ff]" />}
+                        <cat.icon className="w-5 h-5 shrink-0 text-[#00D2FF]" />
+                        {isSelected && <span className="w-2 h-2 rounded-full bg-[#00D2FF]" />}
                       </div>
                       <div>
                         <h4 className="text-xs uppercase font-bold text-white mb-1">{cat.label}</h4>
@@ -153,7 +153,7 @@ export default function PersonalTouchForm() {
             {/* Input Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1">
+                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
                   Full Name *
                 </label>
                 <input
@@ -162,12 +162,12 @@ export default function PersonalTouchForm() {
                   placeholder="E.G. AARAV SHARMA"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00d2ff] rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1">
+                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
                   Email Address *
                 </label>
                 <input
@@ -176,12 +176,12 @@ export default function PersonalTouchForm() {
                   placeholder="E.G. AARAV@AURASTREET.COM"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00d2ff] rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1">
+                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
                   Phone / WhatsApp (Optional)
                 </label>
                 <input
@@ -189,12 +189,12 @@ export default function PersonalTouchForm() {
                   placeholder="E.G. +977 9801234567"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00d2ff] rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1">
+                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
                   Feedback Title / Topic
                 </label>
                 <input
@@ -202,12 +202,12 @@ export default function PersonalTouchForm() {
                   placeholder="E.G. CUSTOM INITIALS EMBROIDERY ON HOODIE"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00d2ff] rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1">
+                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
                   Personal Touch Request & Improvement Notes *
                 </label>
                 <textarea
@@ -216,13 +216,13 @@ export default function PersonalTouchForm() {
                   placeholder="Describe your personal touch request (e.g., custom chest emblem, sleeve length adjustment) or your suggestions to improve Aura Street storefront..."
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full bg-black border border-neutral-800 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00d2ff] rounded-lg resize-none"
+                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg resize-none"
                 />
               </div>
             </div>
 
             {/* Preferred Channel & Submit */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-neutral-850">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-white/5">
               <div className="flex items-center gap-4 text-[9px] uppercase tracking-wider text-neutral-400">
                 <span>Preferred Contact:</span>
                 <div className="flex gap-2">
@@ -231,10 +231,10 @@ export default function PersonalTouchForm() {
                       key={pref}
                       type="button"
                       onClick={() => setContactPref(pref)}
-                      className={`px-3 py-1 border rounded cursor-pointer ${
+                      className={`px-3 py-1 border rounded-lg cursor-pointer transition-colors ${
                         contactPref === pref
-                          ? "border-[#00d2ff] text-[#00d2ff] font-bold bg-[#00d2ff]/10"
-                          : "border-neutral-800 text-neutral-500"
+                          ? "border-[#00D2FF] text-[#00D2FF] font-bold bg-[#00D2FF]/10"
+                          : "border-white/10 text-neutral-500 hover:text-white"
                       }`}
                     >
                       {pref}
@@ -246,13 +246,13 @@ export default function PersonalTouchForm() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-8 py-4 bg-[#00d2ff] text-black font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-cyan-400 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(0,210,255,0.2)] rounded-lg"
+                className="w-full sm:w-auto px-8 py-3.5 bg-white text-black font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-[#00D2FF] transition-colors flex items-center justify-center gap-2 cursor-pointer rounded-lg shadow-lg"
               >
                 {submitting ? (
                   <span>Transmitting Notes...</span>
                 ) : (
                   <>
-                    Submit Feedback & Personal Touch <Send className="w-4 h-4" />
+                    Submit Notes <Send className="w-3.5 h-3.5" />
                   </>
                 )}
               </button>

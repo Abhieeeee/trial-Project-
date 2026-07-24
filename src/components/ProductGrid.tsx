@@ -66,18 +66,18 @@ export default function ProductGrid() {
   };
 
   return (
-    <section id="shop" className="py-32 bg-black relative z-10 px-6 md:px-12 font-sans">
+    <section id="shop" className="py-28 bg-black relative z-10 px-6 md:px-12 font-sans border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#00d2ff] mb-3 font-semibold font-mono">
-              Drop 01 // Live Database Collection
+            <p className="text-[10px] uppercase tracking-[0.25em] text-[#00D2FF] mb-3 font-semibold font-mono">
+              Drop 01 // Collection Catalog
             </p>
-            <h2 className="text-3xl md:text-4xl font-extrabold uppercase tracking-[0.15em] font-display text-white">
+            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-wider font-display text-white">
               The Collection
             </h2>
           </div>
-          <p className="text-xs text-neutral-400 max-w-sm tracking-wide leading-relaxed font-mono">
+          <p className="text-xs text-neutral-400 max-w-sm tracking-wide leading-relaxed font-sans">
             Constructed using heavy-cotton blends, waterproof tech fabrics, and luxury hardware. Tailored for modern silhouettes.
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function ProductGrid() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {items.map((product) => (
             <motion.div key={product.id} variants={cardVariants}>
@@ -96,10 +96,10 @@ export default function ProductGrid() {
           ))}
         </motion.div>
 
-        <div className="mt-20 text-center">
+        <div className="mt-16 text-center">
           <Link
             href="/shop"
-            className="inline-flex px-10 py-4 rounded-full border border-neutral-800 text-[11px] uppercase tracking-[0.35em] font-semibold text-neutral-400 hover:text-white hover:border-[#00d2ff] hover:bg-neutral-950/60 transition-all duration-300 font-mono"
+            className="inline-flex px-8 py-3.5 rounded-lg border border-white/10 text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-300 hover:text-white hover:border-white/30 hover:bg-white/[0.03] transition-all duration-300 font-mono"
           >
             Explore All Garments
           </Link>

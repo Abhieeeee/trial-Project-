@@ -47,17 +47,16 @@ export default function StoreProductCard({ product }: { product: Product }) {
   return (
     <article className="group relative font-sans">
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="aspect-[3/4] w-full bg-neutral-950 rounded-lg overflow-hidden relative mb-6 glass-panel-glow">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-[#00d2ff] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-20" />
+        <div className="aspect-[3/4] w-full bg-neutral-950 rounded-xl overflow-hidden relative mb-4 border border-white/5 group-hover:border-white/20 transition-all duration-300">
           <Image
             src={product.image}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-220"
+            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           />
           {product.badge && (
-            <span className="absolute top-4 left-4 z-20 rounded-full border border-[#00d2ff]/30 bg-black/80 backdrop-blur-md px-3 py-1 text-[8px] uppercase tracking-[0.2em] font-mono font-bold text-[#00d2ff]">
+            <span className="absolute top-3 left-3 z-20 rounded-full border border-white/10 bg-black/70 backdrop-blur-md px-2.5 py-0.5 text-[9px] uppercase tracking-widest font-mono font-medium text-white">
               {product.badge}
             </span>
           )}
@@ -66,42 +65,44 @@ export default function StoreProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={handleToggleWishlist}
-            className={`absolute top-4 right-4 z-20 p-2 rounded-full border backdrop-blur-md transition-all cursor-pointer ${
+            className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-md transition-all cursor-pointer ${
               isSaved
-                ? "bg-red-500/20 border-red-500/50 text-red-400"
-                : "bg-black/60 border-white/10 text-neutral-400 hover:text-white hover:border-white/30"
+                ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                : "bg-black/50 text-neutral-400 hover:text-white hover:bg-black/80"
             }`}
             title={isSaved ? "Saved to wishlist" : "Save to wishlist"}
           >
             <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
           </button>
 
-          <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-220 flex flex-col items-center justify-center gap-3 z-10 p-4">
-            <span className="w-full py-3 bg-white text-black text-[9px] uppercase tracking-[0.2em] font-mono font-bold rounded hover:bg-[#00d2ff] transition-colors flex items-center justify-center gap-2">
+          {/* Hover action overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 gap-2 z-10">
+            <span className="w-full py-2.5 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 shadow-lg">
               <Eye className="w-3.5 h-3.5" />
               Quick View
             </span>
             <button
               type="button"
               onClick={handleAddToCart}
-              className="w-full py-3 bg-black/80 border border-[#00d2ff]/40 text-[#00d2ff] text-[9px] uppercase tracking-[0.2em] font-mono font-bold rounded hover:bg-[#00d2ff] hover:text-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(0,210,255,0.2)]"
+              className="w-full py-2.5 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-white hover:text-black hover:border-white transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md"
             >
               <Plus className="w-3.5 h-3.5" />
               Add to Bag
             </button>
           </div>
         </div>
-        <div className="flex justify-between items-start gap-4">
+
+        <div className="flex justify-between items-start gap-3">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-1 text-white group-hover:text-[#00d2ff] transition-colors font-display">
+            <h3 className="text-sm font-semibold tracking-wide mb-1 text-white group-hover:text-[#00D2FF] transition-colors font-display">
               {product.name}
             </h3>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 font-mono">{product.material}</p>
+            <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-mono">{product.material}</p>
           </div>
-          <span className="text-sm text-[#00d2ff] font-mono font-bold whitespace-nowrap">{formatPrice(rawPrice)}</span>
+          <span className="text-sm text-white font-mono font-bold whitespace-nowrap">{formatPrice(rawPrice)}</span>
         </div>
-        <div className="mt-2 text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
-          {product.colorways} Colorways // {product.stock} In Stock
+        <div className="mt-1.5 text-[9px] uppercase tracking-widest text-neutral-500 font-mono">
+          {product.colorways} Colorways • {product.stock} In Stock
         </div>
       </Link>
     </article>

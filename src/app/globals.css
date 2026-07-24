@@ -76,21 +76,20 @@ body {
   background: #374151;
 }
 
-/* Glassmorphism Styles */
+/* Glassmorphism & Minimal Surfaces */
 .glass-panel {
-  background: rgba(10, 10, 10, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(8, 8, 8, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-panel-glow {
-  background: rgba(10, 10, 10, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(125, 211, 252, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 
-              inset 0 0 12px rgba(125, 211, 252, 0.03);
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.9);
 }
 
 /* Lenis Smooth Scrolling */
@@ -115,23 +114,24 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Glow effects */
+/* Subtle luxury accent utilities */
 .text-glow-sky {
-  text-shadow: 0 0 20px rgba(125, 211, 252, 0.4);
+  text-shadow: 0 0 12px rgba(0, 210, 255, 0.25);
 }
 
 .glow-btn::after {
   content: '';
   position: absolute;
   inset: -1px;
-  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.2), transparent);
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 .glow-btn:hover::after {
   opacity: 1;
 }
+
 

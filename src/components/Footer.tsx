@@ -21,14 +21,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-black border-t border-neutral-950 relative z-10 px-6 md:px-12 pt-28 pb-12">
+    <footer className="bg-black border-t border-white/5 relative z-10 px-6 md:px-12 pt-24 pb-12">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 pb-20 border-b border-neutral-950">
-          <div className="lg:col-span-5 flex flex-col gap-8">
-            <h3 className="text-xl font-bold tracking-[0.3em] uppercase font-display text-white">
-              AURA<span className="text-brand-sky">.</span>STREET
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 pb-16 border-b border-white/5">
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <h3 className="text-xl font-bold tracking-[0.35em] uppercase font-display text-white">
+              AURA<span className="text-[#00D2FF]">.</span>STREET
             </h3>
-            <p className="text-xs text-neutral-500 max-w-sm tracking-wide leading-relaxed">
+            <p className="text-xs text-neutral-400 max-w-sm tracking-wide leading-relaxed">
               Subscribe to drop notifications, editorial releases, and private collections access.
             </p>
 
@@ -38,20 +38,20 @@ export default function Footer() {
                 placeholder="ENTER EMAIL ADDRESS"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full py-4 bg-neutral-950/40 border border-neutral-900 focus:border-brand-sky rounded px-5 text-[10px] tracking-[0.2em] font-semibold text-white placeholder-neutral-700 outline-none focus:ring-1 focus:ring-[#00D2FF] transition-colors duration-300"
+                className="w-full py-3.5 bg-black border border-white/10 focus:border-[#00D2FF] rounded-lg px-4 text-[10px] tracking-[0.2em] font-mono font-medium text-white placeholder-neutral-600 outline-none transition-colors duration-300"
                 required
                 data-hover
               />
               <button
                 type="submit"
-                className="absolute right-3 p-2 text-neutral-500 hover:text-brand-sky transition-colors cursor-pointer"
+                className="absolute right-2 p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
                 data-magnetic
                 aria-label="Subscribe"
               >
-                <ArrowUpRight className="w-5 h-5" />
+                <ArrowUpRight className="w-4 h-4 text-[#00D2FF]" />
               </button>
               {subscribed && (
-                <span className="absolute -bottom-6 left-0 text-[9px] uppercase tracking-[0.2em] text-brand-sky text-glow-sky font-semibold">
+                <span className="absolute -bottom-6 left-0 text-[9px] uppercase tracking-[0.2em] text-[#00D2FF] font-mono font-semibold">
                   Access Granted // Subscribed
                 </span>
               )}
@@ -78,8 +78,8 @@ export default function Footer() {
               ]}
             />
             <div className="flex flex-col gap-6 col-span-2 sm:col-span-1">
-              <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white">Socials</h4>
-              <ul className="flex flex-col gap-4 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-500">
+              <h4 className="text-[10px] uppercase tracking-[0.25em] font-bold text-white">Socials</h4>
+              <ul className="flex flex-col gap-3.5 text-[10px] uppercase tracking-[0.2em] font-mono text-neutral-400">
                 {["Instagram", "TikTok", "Discord", "Pinterest"].map((item) => (
                   <li key={item} className="flex items-center gap-1.5 group">
                     <a href="#" className="hover:text-white transition-colors duration-300">{item}</a>
@@ -91,21 +91,21 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] uppercase tracking-[0.2em] text-neutral-600 font-semibold">
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
           <div className="flex flex-wrap justify-center sm:justify-start gap-x-8 gap-y-2">
             <span>© {new Date().getFullYear()} AURA STREET LTD.</span>
-            <Link href="/privacy" className="hover:text-neutral-400 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-neutral-400 transition-colors">Terms of Use</Link>
-            <Link href="/contact" className="hover:text-neutral-400 transition-colors">Contact</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
 
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors cursor-pointer border border-neutral-900 hover:border-brand-sky/20 px-4 py-2 rounded"
+            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors cursor-pointer border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg"
             data-magnetic
           >
             <span>Back to Top</span>
-            <span className="text-brand-sky text-glow-sky">↑</span>
+            <span className="text-[#00D2FF]">↑</span>
           </button>
         </div>
       </div>

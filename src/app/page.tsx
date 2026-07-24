@@ -110,11 +110,11 @@ export default function Home() {
             {/* CTAs */}
             <motion.div
               variants={itemFadeUp}
-              className="flex flex-wrap items-center gap-5 mb-16"
+              className="flex flex-wrap items-center gap-4 mb-14"
             >
               <Link
                 href="/shop"
-                className="px-8 py-4 bg-white text-black hover:bg-brand-sky hover:text-black rounded text-[10px] uppercase tracking-[0.25em] font-extrabold flex items-center gap-2 group transition-all duration-300 shadow-lg shadow-white/5"
+                className="px-8 py-3.5 bg-white text-black hover:bg-[#00D2FF] hover:text-black rounded-lg text-[10px] uppercase tracking-[0.25em] font-extrabold flex items-center gap-2 group transition-all duration-300 shadow-xl shadow-white/5"
                 data-magnetic
               >
                 <span>Shop Collection</span>
@@ -123,10 +123,10 @@ export default function Home() {
 
               <Link
                 href="/editorial"
-                className="px-8 py-4 rounded border border-neutral-900 bg-neutral-950/20 hover:border-brand-sky hover:bg-neutral-950/60 text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-400 hover:text-white transition-all duration-300 flex items-center gap-2"
+                className="px-8 py-3.5 rounded-lg border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05] text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-300 hover:text-white transition-all duration-300 flex items-center gap-2"
                 data-magnetic
               >
-                <Compass className="w-3.5 h-3.5 text-brand-sky text-glow-sky" />
+                <Compass className="w-3.5 h-3.5 text-[#00D2FF]" />
                 <span>View Editorial</span>
               </Link>
             </motion.div>
@@ -134,18 +134,18 @@ export default function Home() {
             {/* Technical Specifications highlights */}
             <motion.div
               variants={itemFadeUp}
-              className="grid grid-cols-3 gap-6 pt-8 border-t border-neutral-950 max-w-lg text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-semibold"
+              className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5 max-w-lg text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-medium"
             >
               <div>
-                <span className="block text-white mb-1">Heavy Weave</span>
+                <span className="block text-white font-semibold mb-1">Heavy Weave</span>
                 <span>450GSM Cotton</span>
               </div>
               <div>
-                <span className="block text-white mb-1">Tailored Fit</span>
+                <span className="block text-white font-semibold mb-1">Tailored Fit</span>
                 <span>Oversized Cut</span>
               </div>
               <div>
-                <span className="block text-white mb-1">Studio Lighting</span>
+                <span className="block text-white font-semibold mb-1">Studio Lighting</span>
                 <span>PBR Materials</span>
               </div>
             </motion.div>
@@ -158,31 +158,31 @@ export default function Home() {
             animate="visible"
             className="lg:col-span-6 h-[50vh] sm:h-[60vh] lg:h-[80vh] w-full flex items-center justify-center relative"
           >
-            {/* Circular background light halo behind the hoodie */}
-            <div className="absolute w-[80%] h-[80%] rounded-full bg-brand-sky/3 blur-[100px] pointer-events-none select-none" />
+            {/* Soft subtle background glow behind the hoodie */}
+            <div className="absolute w-[70%] h-[70%] rounded-full bg-[#00D2FF]/[0.03] blur-[120px] pointer-events-none select-none" />
             
             <ProductCanvas color={activeColor} />
 
             {/* Color Configurator floating pill panel */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/60 border border-white/5 backdrop-blur-md rounded-full px-4 py-2.5 z-20">
-              <span className="text-[8px] uppercase tracking-[0.25em] font-extrabold text-neutral-500 mr-2 font-mono">SPEC:</span>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-neutral-950/80 border border-white/10 backdrop-blur-xl rounded-full px-4 py-2 z-20 shadow-2xl">
+              <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-neutral-400 mr-1 font-mono">SPEC:</span>
               {[
-                { id: "black", label: "Jet Black", color: "bg-[#111111] border-neutral-850" },
-                { id: "white", label: "Arctic White", color: "bg-[#dfdfdf] border-neutral-200" },
-                { id: "blue", label: "Shadow Blue", color: "bg-[#1b2d42] border-sky-900/60" },
-                { id: "red", label: "Crimson Core", color: "bg-[#561313] border-red-950/60" },
+                { id: "black", label: "Jet Black", color: "bg-[#111111] border-neutral-700" },
+                { id: "white", label: "Arctic White", color: "bg-[#dfdfdf] border-neutral-300" },
+                { id: "blue", label: "Shadow Blue", color: "bg-[#1b2d42] border-sky-800" },
+                { id: "red", label: "Crimson Core", color: "bg-[#561313] border-red-900" },
               ].map((c) => (
                 <button
                   key={c.id}
                   onClick={() => setActiveColor(c.id)}
                   title={c.label}
-                  className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center ${c.color} ${
-                    activeColor === c.id ? "scale-110 border-brand-sky shadow-[0_0_10px_rgba(125,211,252,0.3)]" : "opacity-60 border-transparent hover:opacity-100 hover:scale-105"
+                  className={`w-5 h-5 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center ${c.color} ${
+                    activeColor === c.id ? "scale-110 border-[#00D2FF] ring-2 ring-[#00D2FF]/30" : "opacity-60 border-transparent hover:opacity-100"
                   }`}
                   aria-label={`Select ${c.label} colorway`}
                 >
                   {activeColor === c.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-sky animate-ping absolute" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] absolute" />
                   )}
                 </button>
               ))}
