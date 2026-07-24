@@ -90,20 +90,14 @@ export default function PersonalTouchForm() {
   };
 
   return (
-    <section className="rounded-2xl p-6 sm:p-10 font-sans border border-white/10 bg-neutral-950/80 backdrop-blur-xl relative overflow-hidden">
+    <section className="rounded-xl p-5 sm:p-6 font-sans border border-white/10 bg-white/[0.01] backdrop-blur-xl relative overflow-hidden">
       
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#00D2FF]/[0.02] rounded-full blur-3xl pointer-events-none" />
-
-      <div className="mb-8 font-mono">
-        <span className="text-[9px] uppercase tracking-[0.25em] text-[#00D2FF] font-bold">
-          CUSTOMER CO-CREATION & IMPROVEMENT PORTAL
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-white font-display mt-2">
-          Personal Touch & Feedback Form
+      <div className="mb-5 font-mono">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-white font-display flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#00D2FF]" /> Bespoke Customization & Store Feedback
         </h2>
-        <p className="text-xs text-neutral-400 mt-2 max-w-2xl leading-relaxed">
-          Tell us about your bespoke sizing preferences, personalized embroidery touches, or ideas to make Aura Street even better.
+        <p className="text-[11px] text-neutral-400 mt-1">
+          Tell us your custom sizing requirements, embroidery initials, or store optimization ideas.
         </p>
       </div>
 
