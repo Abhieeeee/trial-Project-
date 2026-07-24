@@ -81,57 +81,64 @@ export default function UserDashboard() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 font-sans">
+    <div className="max-w-6xl mx-auto space-y-6 font-sans">
       
-      {/* Compact Minimal Dashboard Header */}
-      <div className="border-b border-white/10 pb-4">
-        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em] text-[#00D2FF] mb-1">
-          <span>Customer Dashboard</span>
-          <span className="text-neutral-700">//</span>
-          <span className="text-neutral-400">Live Telemetry</span>
+      {/* Top Telemetry Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div>
+          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00D2FF] mb-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] animate-pulse" />
+            <span>Fulfillment Telemetry</span>
+          </div>
+          <h1 className="text-xl font-bold font-display text-white tracking-wide">
+            Shipment & Order Tracking
+          </h1>
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold font-display text-white tracking-wide">
-          Order Tracking & Fulfillment
-        </h1>
-        <p className="text-xs text-neutral-400 mt-1 max-w-xl">
-          Track parcel dispatch, view 4-step fulfillment telemetry, and manage active order shipments.
-        </p>
+
+        <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400">
+          <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-white font-semibold">
+            3 Orders Total
+          </span>
+        </div>
       </div>
 
-      {/* Summary Cards */}
+      {/* High-Density KPI Summary Metrics */}
       <motion.div
         initial="hidden" animate="show"
-        variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono"
+        variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } }}
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono"
       >
         {[
-          { label: "Active Deliveries", value: "2 Packages", icon: Truck, color: "text-[#00D2FF]" },
-          { label: "Completed Orders", value: "12 Orders", icon: CheckCircle2, color: "text-emerald-400" },
-          { label: "Dispatch Hub", value: "Kathmandu / Paris", icon: MapPin, color: "text-amber-400" },
+          { label: "Active Deliveries", value: "2 Parcels", icon: Truck, color: "text-[#00D2FF]", accent: "bg-[#00D2FF]" },
+          { label: "Completed Orders", value: "12 Fulfilled", icon: CheckCircle2, color: "text-emerald-400", accent: "bg-emerald-400" },
+          { label: "Primary Hub", value: "Kathmandu / Paris", icon: MapPin, color: "text-amber-400", accent: "bg-amber-400" },
         ].map((s, i) => (
           <motion.div
             key={i}
-            variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } }}
-            className="p-4 flex items-center gap-3.5 rounded-xl border border-white/10 bg-white/[0.02]"
+            variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.25 } } }}
+            className="p-3.5 flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02]"
           >
-            <div className={`p-2.5 bg-black rounded-lg border border-white/10 ${s.color}`}>
-              <s.icon className="w-4 h-4" />
+            <div className="flex items-center gap-3">
+              <div className={`p-2 bg-black rounded-lg border border-white/10 ${s.color}`}>
+                <s.icon className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white">{s.value}</div>
+                <div className="text-[9px] uppercase tracking-wider text-neutral-400 font-medium">{s.label}</div>
+              </div>
             </div>
-            <div>
-              <div className="text-base font-display font-bold text-white">{s.value}</div>
-              <div className="text-[9px] uppercase tracking-wider text-neutral-400 font-semibold">{s.label}</div>
-            </div>
+            <span className={`w-1.5 h-1.5 rounded-full ${s.accent}`} />
           </motion.div>
         ))}
       </motion.div>
 
       {/* Orders Tracking Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-white/10 pb-2.5 font-mono">
-          <h3 className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-            <Package className="w-4 h-4 text-[#00D2FF]" /> Active Shipments
+      <div className="space-y-3">
+        <div className="flex items-center justify-between pt-2">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
+            <Package className="w-3.5 h-3.5 text-[#00D2FF]" /> Active Parcels
           </h3>
-          <span className="text-[9px] uppercase tracking-widest text-neutral-500">Live Telemetry</span>
+          <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-widest">Live Updates</span>
         </div>
 
         {customerOrders.map((order) => {
@@ -140,61 +147,54 @@ export default function UserDashboard() {
           return (
             <motion.div
               key={order.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-5 sm:p-6 rounded-xl space-y-5 border border-white/10 bg-white/[0.02]"
+              className="p-4 sm:p-5 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all space-y-4 font-mono"
             >
-              {/* Order Header Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4 font-mono text-xs">
-                <div>
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-[#00D2FF] font-bold text-sm">{order.id}</span>
-                    <Badge status={order.status} />
-                  </div>
-                  <p className="text-white font-semibold text-sm font-sans">{order.item}</p>
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-widest mt-0.5">
-                    Recipient: {order.customer} • {order.date}
-                  </p>
+              {/* Order Top Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-[#00D2FF] font-bold text-xs">{order.id}</span>
+                  <Badge status={order.status} />
+                  <span className="text-white font-semibold text-xs font-sans">{order.item}</span>
                 </div>
 
-                <div className="text-left sm:text-right space-y-1">
-                  <span className="text-sm font-bold text-white">{order.amount}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] text-neutral-400 uppercase font-mono">Tracking Code:</span>
-                    <button
-                      onClick={() => copyTracking(order.trackingCode)}
-                      className="px-2.5 py-0.5 bg-black border border-white/10 hover:border-white/30 text-[9px] text-[#00D2FF] font-mono rounded flex items-center gap-1.5 cursor-pointer transition-colors"
-                    >
-                      {copiedId === order.trackingCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                      {order.trackingCode}
-                    </button>
-                  </div>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="font-bold text-white">{order.amount}</span>
+                  <button
+                    onClick={() => copyTracking(order.trackingCode)}
+                    className="px-2.5 py-0.5 bg-black border border-white/10 hover:border-white/30 text-[9px] text-[#00D2FF] rounded flex items-center gap-1 cursor-pointer transition-colors"
+                    title="Copy tracking code"
+                  >
+                    {copiedId === order.trackingCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    <span>{order.trackingCode}</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Carrier & Destination Metadata */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] uppercase tracking-widest text-neutral-400 font-mono">
-                <span>Carrier: <strong className="text-white">{order.carrier}</strong></span>
-                <span>Destination: <strong className="text-white">{order.address}</strong></span>
+              {/* Order Metadata Info Pill */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[9px] text-neutral-400 uppercase tracking-wider">
+                <div>Recipient: <strong className="text-white">{order.customer}</strong></div>
+                <div>Carrier: <strong className="text-white">{order.carrier}</strong></div>
+                <div>Destination: <strong className="text-white">{order.address}</strong></div>
               </div>
 
-              {/* VISUAL SHIPMENT PROGRESS BAR STEPPER */}
-              <div className="pt-1 pb-1 font-mono">
-                <div className="relative w-full px-2">
+              {/* Minimal Linear Progress Stepper */}
+              <div className="pt-2 pb-1">
+                <div className="relative w-full">
+                  {/* Stepper Track */}
+                  <div className="absolute top-3 left-4 right-4 h-1 bg-neutral-900 rounded-full border border-white/5 pointer-events-none" />
                   
-                  {/* Background Track Bar */}
-                  <div className="absolute top-3.5 left-6 right-6 h-1.5 bg-neutral-900 rounded-full border border-white/5 pointer-events-none" />
-
-                  {/* Active Animated Gradient Fill Progress Bar */}
+                  {/* Stepper Active Bar */}
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="absolute top-3.5 left-6 h-1.5 bg-gradient-to-r from-emerald-500 via-[#00D2FF] to-cyan-400 rounded-full pointer-events-none"
-                    style={{ maxWidth: "calc(100% - 3rem)" }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute top-3 left-4 h-1 bg-[#00D2FF] rounded-full pointer-events-none"
+                    style={{ maxWidth: "calc(100% - 2rem)" }}
                   />
 
-                  {/* Milestone Step Nodes */}
+                  {/* Nodes */}
                   <div className="relative z-10 flex items-center justify-between">
                     {steps.map((st, idx) => {
                       const stepNum = idx + 1;
@@ -202,51 +202,28 @@ export default function UserDashboard() {
                       const isCurrent = order.step === stepNum;
 
                       return (
-                        <div key={st.title} className="flex flex-col items-center text-center space-y-1.5 group">
-                          {/* Node Circle */}
-                          <div className="relative">
-                            <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 border ${
-                                isCurrent
-                                  ? "bg-[#00D2FF] text-black border-[#00D2FF] shadow-[0_0_10px_rgba(0,210,255,0.4)] scale-105"
-                                  : isPassed
-                                  ? "bg-emerald-500 text-black border-emerald-400"
-                                  : "bg-neutral-950 text-neutral-600 border-neutral-800"
-                              }`}
-                            >
-                              {isPassed && !isCurrent ? (
-                                <Check className="w-3 h-3 text-black stroke-[3]" />
-                              ) : (
-                                <span>{stepNum}</span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Node Titles & Badges */}
-                          <div className="max-w-[100px] sm:max-w-[120px] space-y-0.5">
-                            <h4 className={`text-[9px] font-bold uppercase tracking-wider transition-colors ${
-                              isCurrent ? "text-[#00D2FF]" : isPassed ? "text-white" : "text-neutral-500"
-                            }`}>
-                              {st.title}
-                            </h4>
-                            <p className="text-[8px] text-neutral-400 uppercase tracking-widest hidden sm:block">
-                              {st.label}
-                            </p>
-                            <span className={`inline-block text-[7px] uppercase tracking-widest font-extrabold px-1.5 py-0.5 rounded border mt-0.5 ${
+                        <div key={st.title} className="flex flex-col items-center text-center space-y-1">
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold border transition-all ${
                               isCurrent
-                                ? "bg-[#00D2FF]/10 text-[#00D2FF] border-[#00D2FF]/30"
+                                ? "bg-[#00D2FF] text-black border-[#00D2FF] shadow-[0_0_8px_rgba(0,210,255,0.5)] scale-110"
                                 : isPassed
-                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                                : "bg-white/5 text-neutral-600 border-white/5"
-                            }`}>
-                              {isCurrent ? "IN PROGRESS" : isPassed ? "DONE" : "QUEUED"}
-                            </span>
+                                ? "bg-emerald-500 text-black border-emerald-400"
+                                : "bg-neutral-950 text-neutral-600 border-neutral-800"
+                            }`}
+                          >
+                            {isPassed && !isCurrent ? <Check className="w-3 h-3 stroke-[3]" /> : stepNum}
                           </div>
+                          
+                          <span className={`text-[8px] uppercase tracking-wider font-semibold ${
+                            isCurrent ? "text-[#00D2FF]" : isPassed ? "text-neutral-300" : "text-neutral-600"
+                          }`}>
+                            {st.title}
+                          </span>
                         </div>
                       );
                     })}
                   </div>
-
                 </div>
               </div>
 
