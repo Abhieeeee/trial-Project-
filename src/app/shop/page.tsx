@@ -113,7 +113,7 @@ function ShopContent() {
   };
 
   return (
-    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-[140px] lg:pt-[180px]">
+    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden pt-[90px] lg:pt-[110px]">
       <Header />
 
       <section className="px-6 md:px-12 max-w-7xl mx-auto mb-16">

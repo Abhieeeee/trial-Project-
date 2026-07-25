@@ -63,17 +63,19 @@ export default function CartPage() {
 
                     <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-8 pt-3 sm:pt-0 border-t sm:border-0 border-neutral-900 font-mono">
                       {/* Quantity Controls */}
-                      <div className="flex items-center border border-white/10 bg-black/60 rounded-lg p-1">
+                      <div className="flex items-center border border-white/15 bg-black/60 rounded-xl overflow-hidden font-mono">
                         <button
                           onClick={() => updateQuantity(item.id, -1)}
-                          className="p-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                          aria-label={`Decrease quantity of ${item.name}`}
+                          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
                         <span className="px-3 text-xs font-bold text-white">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.id, 1)}
-                          className="p-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                          aria-label={`Increase quantity of ${item.name}`}
+                          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -85,7 +87,8 @@ export default function CartPage() {
 
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-neutral-500 hover:text-red-400 transition-colors p-2 cursor-pointer"
+                        className="text-neutral-400 hover:text-red-400 min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors cursor-pointer"
+                        aria-label={`Remove ${item.name} from bag`}
                         title="Remove item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -99,21 +102,36 @@ export default function CartPage() {
 
           {/* Right Summary */}
           {items.length > 0 && (
-            <aside className="glass-panel-glow rounded-xl p-6 h-fit lg:sticky lg:top-28 font-mono">
-              <h2 className="text-sm font-display font-bold uppercase tracking-[0.2em] text-white mb-6 border-b border-neutral-900 pb-4">
+            <aside className="glass-panel-glow rounded-2xl p-6 sm:p-8 h-fit lg:sticky lg:top-28 font-mono space-y-6">
+              <h2 className="text-sm font-display font-bold uppercase tracking-[0.2em] text-white border-b border-white/10 pb-4">
                 Summary
               </h2>
-              <div className="space-y-3 text-xs uppercase tracking-[0.18em] text-neutral-400">
+
+              {/* Free Shipping Progress Meter */}
+              <div className="space-y-2 p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-wider font-bold">
+                  <span className="text-[#00D2FF]">Free Shipping Progress</span>
+                  <span className="text-white">{subtotal >= 200 ? "100%" : `${Math.round(Math.min((subtotal / 200) * 100, 100))}%`}</span>
+                </div>
+                <div className="h-1.5 w-full bg-black rounded-full overflow-hidden border border-white/10">
+                  <div
+                    className="h-full bg-[#00D2FF] transition-all duration-500 shadow-[0_0_8px_#00D2FF]"
+                    style={{ width: `${Math.min((subtotal / 200) * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3 text-xs uppercase tracking-[0.18em] text-neutral-300">
                 <div className="flex justify-between"><span>Subtotal</span><span className="text-white font-bold">{formatPrice(subtotal)}</span></div>
-                <div className="flex justify-between"><span>Shipping</span><span className="text-[#00d2ff]">Calculated at checkout</span></div>
-                <div className="border-t border-neutral-900 pt-4 flex justify-between text-sm text-white font-bold">
+                <div className="flex justify-between"><span>Shipping</span><span className="text-[#00D2FF] font-bold">{subtotal >= 200 ? "EXPRESS FREE" : "Calculated at checkout"}</span></div>
+                <div className="border-t border-white/10 pt-4 flex justify-between text-base text-white font-extrabold">
                   <span>Total</span>
-                  <span className="text-[#00d2ff]">{formatPrice(subtotal)}</span>
+                  <span className="text-[#00D2FF]">{formatPrice(subtotal)}</span>
                 </div>
               </div>
               <Link
                 href="/checkout"
-                className="mt-8 w-full py-4 rounded-lg bg-[#00d2ff] text-black hover:bg-cyan-400 font-bold transition-all text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(0,210,255,0.2)]"
+                className="mt-8 w-full py-4 rounded-xl bg-[#00D2FF] text-black hover:bg-cyan-400 font-extrabold transition-all text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95"
               >
                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
               </Link>

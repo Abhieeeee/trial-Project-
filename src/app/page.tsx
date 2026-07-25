@@ -157,7 +157,7 @@ export default function Home() {
             variants={hoodieScale}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-6 h-[50vh] sm:h-[60vh] lg:h-[80vh] w-full flex items-center justify-center relative"
+            className="lg:col-span-6 h-[40vh] sm:h-[50vh] lg:h-[70vh] w-full flex items-center justify-center relative"
           >
             {/* Soft subtle background glow behind the hoodie */}
             <div className="absolute w-[75%] h-[75%] rounded-full bg-[#00D2FF]/[0.04] blur-[140px] pointer-events-none select-none" />
@@ -179,7 +179,7 @@ export default function Home() {
                   key={c.id}
                   onClick={() => setActiveColor(c.id)}
                   title={c.label}
-                  className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center active:scale-95 ${c.color} ${
+                  className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center active:scale-95 focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${c.color} ${
                     activeColor === c.id ? "scale-110 border-[#00D2FF] ring-2 ring-[#00D2FF]/40 shadow-[0_0_12px_#00D2FF]" : "opacity-60 border-transparent hover:opacity-100"
                   }`}
                   aria-label={`Select ${c.label} colorway`}

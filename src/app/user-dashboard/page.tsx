@@ -65,7 +65,7 @@ const orders: Order[] = [
 
 const STATUS_STEPS = ["Confirmed", "Packed", "In Transit", "Delivered"];
 
-const statusConfig: Record<OrderStatus, { color: string; dot: string; label: string; icon: React.ElementType }> = {
+const statusConfig: Record<OrderStatus, { color: string; dot: string; label: string; icon: React.ComponentType<{ className?: string }> }> = {
   Pending:   { color: "text-amber-400",  dot: "bg-amber-400",  label: "Pending",   icon: Clock },
   Shipped:   { color: "text-[#00D2FF]",  dot: "bg-[#00D2FF]", label: "In Transit", icon: Truck },
   Delivered: { color: "text-emerald-400", dot: "bg-emerald-400", label: "Delivered", icon: CheckCircle2 },
@@ -118,9 +118,9 @@ export default function UserDashboard() {
                 </div>
                 <div className="shrink-0 text-right space-y-0.5">
                   <p className="text-sm font-bold text-white font-mono">{order.amount}</p>
-                  <div className={`inline-flex items-center gap-1 text-[9px] font-mono font-semibold ${cfg.color}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                    {cfg.label}
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono font-bold ${cfg.color}`}>
+                    <StatusIcon className="w-3 h-3" />
+                    <span>{cfg.label}</span>
                   </div>
                 </div>
               </div>

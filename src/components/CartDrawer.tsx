@@ -167,19 +167,21 @@ export function CartDrawer() {
 
                       {/* Quantity Controls */}
                       <div className="flex items-center gap-3 pt-1">
-                        <div className="inline-flex items-center rounded-lg border border-white/10 bg-black font-mono text-[9px] overflow-hidden">
+                        <div className="inline-flex items-center rounded-xl border border-white/15 bg-black font-mono text-xs overflow-hidden">
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            className="px-2.5 py-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                            aria-label={`Decrease quantity of ${item.name}`}
+                            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                           >
-                            <Minus className="w-3 h-3" />
+                            <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="px-2.5 py-1 font-bold text-white">{item.quantity}</span>
+                          <span className="px-3 py-1 font-bold text-white text-xs">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
-                            className="px-2.5 py-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                            aria-label={`Increase quantity of ${item.name}`}
+                            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                           >
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
 

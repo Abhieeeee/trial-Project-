@@ -334,10 +334,12 @@ export default function AccountPage() {
               <AnimatePresence>
                 {authFeedback && (
                   <motion.div
+                    role="alert"
+                    aria-live="polite"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-mono font-medium ${
+                    className={`p-3.5 rounded-xl flex items-center gap-2.5 text-xs font-mono font-bold ${
                       authFeedback.type === 'success'
                         ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
                         : 'bg-red-500/15 border border-red-500/40 text-red-300'

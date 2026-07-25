@@ -78,9 +78,9 @@ export default function StoreProductCard({ product }: { product: Product }) {
             <Heart className={`w-3.5 h-3.5 ${isSaved ? "fill-red-500 text-red-500" : ""}`} />
           </button>
 
-          {/* Hover action overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 gap-2.5 z-10 backdrop-blur-[2px]">
-            <span className="w-full py-3 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-extrabold rounded-xl hover:bg-[#00D2FF] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl cursor-pointer">
+          {/* Action overlay (persistent on mobile, hover-triggered on desktop) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-100 lg:opacity-0 lg:group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-3.5 sm:p-4 gap-2.5 z-10 backdrop-blur-[2px]">
+            <span className="w-full py-2.5 sm:py-3 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-extrabold rounded-xl hover:bg-[#00D2FF] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl cursor-pointer">
               <Eye className="w-3.5 h-3.5" />
               Quick View
             </span>
@@ -88,7 +88,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${product.name} to shopping bag`}
-              className="w-full py-3 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-xl hover:bg-white hover:text-black hover:border-white active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
+              className="w-full py-2.5 sm:py-3 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-xl hover:bg-white hover:text-black hover:border-white active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
             >
               <Plus className="w-3.5 h-3.5 text-[#00D2FF]" />
               Add to Bag
