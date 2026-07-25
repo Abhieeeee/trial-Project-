@@ -158,20 +158,20 @@ function CheckoutForm() {
         text="Support for Nepal Local Wallets (eSewa, Khalti, Fonepay QR, IME Pay, COD) and International Gateways (Card, PayPal, Apple Pay, Web3)."
       />
 
-      <section className="px-6 md:px-12 max-w-7xl mx-auto pb-28 grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10">
+      <section className="px-6 md:px-12 max-w-7xl mx-auto pb-20 grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10">
         
         {/* Left Entry Form */}
         <form id="checkoutForm" onSubmit={handlePlaceOrder} className="space-y-8">
           
           {/* Shipping Info Panel */}
           <Panel icon={Home} title="Customer & Shipping Information">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mt-4">
-              <UnderlineCheckoutInput placeholder="FULL NAME *" value={name} onChange={setName} required />
-              <UnderlineCheckoutInput placeholder="EMAIL ADDRESS *" value={email} onChange={setEmail} required />
-              <UnderlineCheckoutInput placeholder="PHONE NUMBER (OPTIONAL)" value={phone} onChange={setPhone} />
-              <UnderlineCheckoutInput placeholder="STREET ADDRESS" value={address} onChange={setAddress} />
-              <UnderlineCheckoutInput placeholder="CITY / DISTRICT" value={city} onChange={setCity} />
-              <UnderlineCheckoutInput placeholder="COUNTRY" value={country} onChange={setCountry} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+              <UnderlineCheckoutInput label="FULL NAME *" placeholder="e.g. Aarav Sharma" value={name} onChange={setName} required />
+              <UnderlineCheckoutInput label="EMAIL ADDRESS *" placeholder="e.g. aarav@aurastreet.com" value={email} onChange={setEmail} required />
+              <UnderlineCheckoutInput label="PHONE NUMBER (OPTIONAL)" placeholder="e.g. +977 9801234567" value={phone} onChange={setPhone} />
+              <UnderlineCheckoutInput label="STREET ADDRESS" placeholder="e.g. Durbar Marg, Ward 1" value={address} onChange={setAddress} />
+              <UnderlineCheckoutInput label="CITY / DISTRICT" placeholder="e.g. Kathmandu" value={city} onChange={setCity} />
+              <UnderlineCheckoutInput label="COUNTRY" placeholder="e.g. Nepal" value={country} onChange={setCountry} />
             </div>
           </Panel>
 
@@ -179,7 +179,7 @@ function CheckoutForm() {
           <Panel icon={CreditCard} title="Select Gateway & Payment Method">
             
             {/* Region Selector Tabs */}
-            <div className="flex border-b border-neutral-800 mb-6 font-mono text-[10px] uppercase tracking-[0.2em]">
+            <div className="flex border-b border-white/10 mb-6 font-mono text-[10px] uppercase tracking-[0.2em] bg-black/40 p-1 rounded-xl">
               <button
                 type="button"
                 onClick={() => {
@@ -187,10 +187,10 @@ function CheckoutForm() {
                   setPaymentMethod("esewa");
                   setCountry("Nepal");
                 }}
-                className={`flex-1 py-3 border-b-2 flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer ${
                   regionTab === "nepal"
-                    ? "border-emerald-400 text-emerald-400 font-bold bg-emerald-500/5"
-                    : "border-transparent text-neutral-500 hover:text-white"
+                    ? "bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                    : "text-neutral-400 hover:text-white"
                 }`}
               >
                 🇳🇵 Nepal Market Methods
@@ -203,10 +203,10 @@ function CheckoutForm() {
                   setPaymentMethod("stripe_card");
                   setCountry("International");
                 }}
-                className={`flex-1 py-3 border-b-2 flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer ${
                   regionTab === "international"
-                    ? "border-[#00d2ff] text-[#00d2ff] font-bold bg-[#00d2ff]/5"
-                    : "border-transparent text-neutral-500 hover:text-white"
+                    ? "bg-[#00D2FF]/10 border border-[#00D2FF]/40 text-[#00D2FF] font-bold shadow-[0_0_15px_rgba(0,210,255,0.15)]"
+                    : "text-neutral-400 hover:text-white"
                 }`}
               >
                 🌐 International Gateways
@@ -214,7 +214,7 @@ function CheckoutForm() {
             </div>
 
             {/* Methods Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6 font-mono">
               {(regionTab === "nepal" ? nepalMethods : intlMethods).map((method) => {
                 const isSelected = paymentMethod === method.id;
                 return (
@@ -222,10 +222,10 @@ function CheckoutForm() {
                     key={method.id}
                     type="button"
                     onClick={() => setPaymentMethod(method.id)}
-                    className={`p-4 border text-left text-[10px] uppercase tracking-[0.16em] transition-all flex items-center gap-3 cursor-pointer ${
+                    className={`p-4 rounded-xl border text-left text-[10px] uppercase tracking-[0.16em] active:scale-[0.98] transition-all flex items-center gap-3 cursor-pointer ${
                       isSelected
-                        ? method.tone + " font-bold shadow-lg"
-                        : "border-neutral-800 bg-neutral-950/60 text-neutral-400 hover:border-neutral-700 hover:text-white"
+                        ? method.tone + " font-bold shadow-lg ring-1 ring-white/20"
+                        : "border-white/10 bg-black/60 text-neutral-300 hover:border-white/20 hover:text-white"
                     }`}
                   >
                     <method.icon className="w-4 h-4 shrink-0" />
@@ -236,7 +236,7 @@ function CheckoutForm() {
             </div>
 
             {/* Gateway Specific Input & Details Box */}
-            <div className="p-5 border border-neutral-800 bg-black/60 font-mono text-xs space-y-4">
+            <div className="p-5 rounded-xl border border-white/10 bg-black/80 font-mono text-xs space-y-4 shadow-inner">
               
               {/* eSewa Wallet Inputs */}
               {paymentMethod === "esewa" && (
@@ -245,15 +245,16 @@ function CheckoutForm() {
                     <span>eSewa Direct Express Wallet</span>
                     <span>NPR {nprAmount.toLocaleString()}</span>
                   </div>
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                  <p className="text-[9px] text-neutral-300 uppercase tracking-widest leading-relaxed">
                     Enter your eSewa registered mobile number to receive payment authorization prompt.
                   </p>
                   <input
                     type="text"
                     placeholder="eSewa Mobile ID (e.g. 98XXXXXXXX)"
+                    aria-label="eSewa Mobile ID"
                     value={esewaPhone}
                     onChange={(e) => setEsewaPhone(e.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-emerald-400 text-[10px] uppercase"
+                    className="w-full bg-black/90 border border-white/15 focus:border-emerald-400 rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase tracking-wider font-mono"
                   />
                 </div>
               )}
@@ -269,16 +270,18 @@ function CheckoutForm() {
                     <input
                       type="text"
                       placeholder="Khalti Mobile Number"
+                      aria-label="Khalti Mobile Number"
                       value={khaltiPhone}
                       onChange={(e) => setKhaltiPhone(e.target.value)}
-                      className="bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-purple-400 text-[10px] uppercase"
+                      className="bg-black/90 border border-white/15 focus:border-purple-400 rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                     />
                     <input
                       type="password"
                       placeholder="Transaction PIN"
+                      aria-label="Transaction PIN"
                       value={khaltiPin}
                       onChange={(e) => setKhaltiPin(e.target.value)}
-                      className="bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-purple-400 text-[10px] uppercase"
+                      className="bg-black/90 border border-white/15 focus:border-purple-400 rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                     />
                   </div>
                 </div>
@@ -291,8 +294,8 @@ function CheckoutForm() {
                     <span>Fonepay Interbank QR Scanner</span>
                     <span>NPR {nprAmount.toLocaleString()}</span>
                   </div>
-                  <div className="flex flex-col sm:flex-row items-center gap-4 bg-neutral-900 p-4 border border-neutral-800">
-                    <div className="w-24 h-24 bg-white p-2 flex items-center justify-center border border-neutral-700 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 bg-black/90 p-4 rounded-xl border border-white/10">
+                    <div className="w-24 h-24 bg-white p-2 rounded-lg flex items-center justify-center border border-neutral-700 shrink-0">
                       <QrCode className="w-20 h-20 text-black" />
                     </div>
                     <div className="space-y-1.5 text-[9px] text-neutral-300 uppercase tracking-widest">
@@ -302,7 +305,7 @@ function CheckoutForm() {
                       <button
                         type="button"
                         onClick={copyBankDetails}
-                        className="mt-1 px-3 py-1 bg-neutral-800 hover:bg-neutral-700 text-white font-mono text-[8px] uppercase tracking-widest flex items-center gap-1.5 cursor-pointer"
+                        className="mt-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-mono text-[8px] uppercase tracking-widest rounded flex items-center gap-1.5 cursor-pointer transition-all"
                       >
                         {copiedAccount ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                         {copiedAccount ? "Bank Info Copied" : "Copy Fonepay Details"}
@@ -314,12 +317,12 @@ function CheckoutForm() {
 
               {/* IME Pay */}
               {paymentMethod === "imepay" && (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between text-amber-400 font-bold uppercase tracking-wider text-[10px]">
                     <span>IME Pay Digital Wallet</span>
                     <span>NPR {nprAmount.toLocaleString()}</span>
                   </div>
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                  <p className="text-[9px] text-neutral-300 uppercase tracking-widest leading-relaxed">
                     You will be redirected to IME Pay portal to confirm wallet balance transfer.
                   </p>
                 </div>
@@ -332,7 +335,7 @@ function CheckoutForm() {
                     <span>Domestic Cash on Delivery</span>
                     <span>Kathmandu & Major Cities</span>
                   </div>
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                  <p className="text-[9px] text-neutral-300 uppercase tracking-widest leading-relaxed">
                     Pay in Cash/NPR upon physical parcel inspection at your delivery address.
                   </p>
                 </div>
@@ -341,31 +344,34 @@ function CheckoutForm() {
               {/* Credit Card Inputs */}
               {paymentMethod === "stripe_card" && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-[#00d2ff] font-bold uppercase tracking-wider text-[10px]">
+                  <div className="flex items-center justify-between text-[#00D2FF] font-bold uppercase tracking-wider text-[10px]">
                     <span>Card Checkout (Visa, Mastercard, Amex)</span>
                     <Lock className="w-3.5 h-3.5" />
                   </div>
                   <input
                     type="text"
                     placeholder="CARD NUMBER (4000 0000 0000 0000)"
+                    aria-label="Card Number"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-[#00d2ff] text-[10px] uppercase"
+                    className="w-full bg-black/90 border border-white/15 focus:border-[#00D2FF] rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                   />
                   <div className="grid grid-cols-2 gap-3">
                     <input
                       type="text"
                       placeholder="EXPIRY (MM/YY)"
+                      aria-label="Card Expiry Date"
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(e.target.value)}
-                      className="bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-[#00d2ff] text-[10px] uppercase"
+                      className="bg-black/90 border border-white/15 focus:border-[#00D2FF] rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                     />
                     <input
                       type="text"
                       placeholder="CVC / CVV"
+                      aria-label="Card CVC Code"
                       value={cardCvc}
                       onChange={(e) => setCardCvc(e.target.value)}
-                      className="bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-[#00d2ff] text-[10px] uppercase"
+                      className="bg-black/90 border border-white/15 focus:border-[#00D2FF] rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                     />
                   </div>
                 </div>
@@ -381,9 +387,10 @@ function CheckoutForm() {
                   <input
                     type="email"
                     placeholder="PAYPAL ACCOUNT EMAIL"
+                    aria-label="PayPal Email Address"
                     value={paypalEmail}
                     onChange={(e) => setPaypalEmail(e.target.value)}
-                    className="w-full bg-neutral-900 border border-neutral-800 p-3 text-white focus:outline-none focus:border-sky-400 text-[10px] uppercase"
+                    className="w-full bg-black/90 border border-white/15 focus:border-sky-400 rounded-lg p-3.5 text-white focus:outline-none text-[10px] uppercase font-mono"
                   />
                 </div>
               )}
@@ -393,9 +400,9 @@ function CheckoutForm() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-white font-bold uppercase tracking-wider text-[10px]">
                     <span>Apple Pay / Google Pay</span>
-                    <Smartphone className="w-3.5 h-3.5 text-[#00d2ff]" />
+                    <Smartphone className="w-3.5 h-3.5 text-[#00D2FF]" />
                   </div>
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                  <p className="text-[9px] text-neutral-300 uppercase tracking-widest leading-relaxed">
                     Biometric 1-tap checkout enabled for supported browser sessions.
                   </p>
                 </div>
@@ -408,7 +415,7 @@ function CheckoutForm() {
                     <span>USDT / ETH / BTC Web3 Transfer</span>
                     <Wallet className="w-3.5 h-3.5" />
                   </div>
-                  <p className="text-[9px] text-neutral-400 uppercase tracking-widest">
+                  <p className="text-[9px] text-neutral-300 uppercase tracking-widest leading-relaxed">
                     Pay using USDT (TRC20/ERC20) or ETH. Web3 wallet prompt will execute on confirmation.
                   </p>
                 </div>
@@ -420,20 +427,20 @@ function CheckoutForm() {
         </form>
 
         {/* Right Summary View */}
-        <aside className="glass-panel-glow rounded-xl p-6 h-fit lg:sticky lg:top-28 font-mono">
-          <h2 className="flex items-center gap-3 text-sm font-display font-bold uppercase tracking-[0.15em] mb-6 text-white border-b border-neutral-900 pb-4">
-            <PackageCheck className="w-5 h-5 text-[#00d2ff]" />
+        <aside className="glass-panel-glow rounded-2xl p-6 sm:p-8 h-fit lg:sticky lg:top-28 font-mono bg-[#0a0a0c]/90 border border-white/15 shadow-2xl space-y-6 backdrop-blur-2xl">
+          <h2 className="flex items-center gap-3 text-sm font-display font-bold uppercase tracking-[0.18em] border-b border-white/10 pb-4 text-white">
+            <PackageCheck className="w-5 h-5 text-[#00D2FF]" />
             Order Summary
           </h2>
 
-          <div className="space-y-3 text-xs uppercase tracking-[0.18em] text-neutral-400">
+          <div className="space-y-3.5 text-xs uppercase tracking-[0.18em] text-neutral-300">
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span className="text-white font-bold">{formatPrice(subtotal)}</span>
             </div>
             
             {regionTab === "nepal" && (
-              <div className="flex justify-between text-[10px] text-emerald-400">
+              <div className="flex justify-between text-[10px] text-emerald-400 font-semibold">
                 <span>Nepal NPR Est.</span>
                 <span>NPR {nprAmount.toLocaleString()}</span>
               </div>
@@ -441,7 +448,7 @@ function CheckoutForm() {
 
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span className="text-[#00d2ff]">EXPRESS FREE</span>
+              <span className="text-[#00D2FF] font-bold">EXPRESS FREE</span>
             </div>
 
             <div className="flex justify-between">
@@ -449,9 +456,9 @@ function CheckoutForm() {
               <span className="text-white font-bold">{paymentMethod.toUpperCase().replace("_", " ")}</span>
             </div>
 
-            <div className="border-t border-neutral-900 pt-4 flex justify-between text-sm font-bold text-white">
+            <div className="border-t border-white/10 pt-4 flex justify-between text-base font-extrabold text-white">
               <span>Total Payable</span>
-              <span className="text-[#00d2ff]">{formatPrice(subtotal)}</span>
+              <span className="text-[#00D2FF]">{formatPrice(subtotal)}</span>
             </div>
           </div>
 
@@ -459,7 +466,7 @@ function CheckoutForm() {
             type="submit"
             form="checkoutForm"
             disabled={isSubmitting}
-            className="mt-8 w-full py-4 rounded-lg bg-[#00d2ff] text-black hover:bg-cyan-400 font-bold transition-all text-[10px] uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
+            className="mt-8 w-full py-4 rounded-xl bg-[#00D2FF] text-black hover:bg-cyan-400 font-extrabold transition-all text-xs uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-[0.98]"
           >
             {isSubmitting ? (
               <span>Authorizing Gateway...</span>
@@ -470,7 +477,7 @@ function CheckoutForm() {
             )}
           </button>
 
-          <div className="mt-6 flex items-center justify-center gap-2 text-[8px] uppercase tracking-widest text-neutral-500">
+          <div className="mt-6 flex items-center justify-center gap-2 text-[8px] uppercase tracking-widest text-neutral-400 font-bold">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> 256-BIT ENCRYPTED GATEWAY SESSION
           </div>
         </aside>
@@ -478,12 +485,12 @@ function CheckoutForm() {
       </section>
 
       {/* Checkout Guarantee Section */}
-      <section className="px-6 md:px-12 max-w-7xl mx-auto pb-28 grid grid-cols-1 md:grid-cols-4 gap-5 font-mono">
+      <section className="px-6 md:px-12 max-w-7xl mx-auto mb-20 md:mb-28 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 font-mono">
         {checkoutFeatures.map((item) => (
-          <div key={item.title} className="glass-panel rounded-xl border border-white/5 p-6 space-y-2">
-            <item.icon className="w-5 h-5 text-[#00d2ff]" />
+          <div key={item.title} className="glass-panel rounded-2xl border border-white/10 p-6 space-y-3 bg-[#0a0a0c]/60 hover:border-white/20 transition-all">
+            <item.icon className="w-5 h-5 text-[#00D2FF]" />
             <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-white">{item.title}</h3>
-            <p className="text-[10px] text-neutral-400 leading-relaxed uppercase">{item.text}</p>
+            <p className="text-[10px] text-neutral-300 leading-relaxed uppercase">{item.text}</p>
           </div>
         ))}
       </section>
@@ -491,27 +498,27 @@ function CheckoutForm() {
       {/* Order Success Modal */}
       {orderSuccess && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in font-mono">
-          <div className="w-full max-w-lg bg-neutral-950 border border-[#00d2ff]/40 p-8 space-y-6 text-center shadow-2xl relative overflow-hidden">
-            <div className="w-14 h-14 rounded-full bg-[#00d2ff]/10 border border-[#00d2ff]/40 flex items-center justify-center mx-auto text-[#00d2ff]">
+          <div className="w-full max-w-lg bg-neutral-950 border border-[#00D2FF]/40 rounded-2xl p-8 space-y-6 text-center shadow-2xl relative overflow-hidden">
+            <div className="w-14 h-14 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/40 flex items-center justify-center mx-auto text-[#00D2FF]">
               <Sparkles className="w-7 h-7" />
             </div>
 
             <div className="space-y-2">
-              <span className="text-[9px] uppercase tracking-[0.25em] text-[#00d2ff] font-bold">
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[#00D2FF] font-bold">
                 PAYMENT AUTHORIZED // DISPATCH INITIATED
               </span>
               <h2 className="font-display text-2xl font-bold uppercase tracking-[0.15em] text-white">
                 Order Confirmed!
               </h2>
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-neutral-300 leading-relaxed">
                 Thank you for your order, <strong className="text-white">{name}</strong>. A confirmation receipt has been dispatched to <strong className="text-white">{email}</strong>.
               </p>
             </div>
 
-            <div className="p-4 border border-neutral-800 bg-black text-left text-[10px] uppercase space-y-2">
+            <div className="p-4 rounded-xl border border-white/10 bg-black text-left text-[10px] uppercase space-y-2.5">
               <div className="flex justify-between text-neutral-400">
                 <span>Order Reference Code</span>
-                <span className="text-[#00d2ff] font-bold">{orderSuccess.orderCode}</span>
+                <span className="text-[#00D2FF] font-bold">{orderSuccess.orderCode}</span>
               </div>
               <div className="flex justify-between text-neutral-400">
                 <span>Gateway Paid Via</span>
@@ -523,20 +530,20 @@ function CheckoutForm() {
               </div>
               <div className="flex justify-between text-neutral-400">
                 <span>Timestamp</span>
-                <span className="text-neutral-500">{orderSuccess.timestamp}</span>
+                <span className="text-neutral-300">{orderSuccess.timestamp}</span>
               </div>
             </div>
 
             <div className="flex gap-3">
               <button
                 onClick={() => router.push("/shop")}
-                className="flex-1 py-3 border border-neutral-800 text-neutral-400 hover:text-white uppercase tracking-widest text-[9px] cursor-pointer"
+                className="flex-1 py-3.5 border border-white/10 rounded-xl text-neutral-300 hover:text-white active:scale-95 uppercase tracking-widest text-[9px] cursor-pointer transition-all"
               >
                 Continue Shopping
               </button>
               <button
                 onClick={() => router.push("/user-dashboard")}
-                className="flex-1 py-3 bg-[#00d2ff] text-black font-bold uppercase tracking-widest text-[9px] hover:bg-cyan-400 cursor-pointer"
+                className="flex-1 py-3.5 bg-[#00D2FF] text-black font-bold uppercase tracking-widest text-[9px] hover:bg-cyan-400 active:scale-95 rounded-xl cursor-pointer transition-all"
               >
                 Track Order
               </button>
@@ -550,9 +557,11 @@ function CheckoutForm() {
 
 function Panel({ icon: Icon, title, children }: { icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode }) {
   return (
-    <section className="glass-panel-glow rounded-xl p-6">
-      <h2 className="flex items-center gap-3 text-sm font-display font-bold uppercase tracking-[0.2em] text-white mb-4 border-b border-neutral-900 pb-3">
-        <Icon className="w-5 h-5 text-[#00d2ff]" />
+    <section className="glass-panel-glow rounded-2xl p-6 sm:p-8 bg-[#0a0a0c]/90 border border-white/10 shadow-2xl backdrop-blur-2xl space-y-6">
+      <h2 className="flex items-center gap-3 text-sm sm:text-base font-display font-bold uppercase tracking-[0.2em] text-white border-b border-white/10 pb-4">
+        <div className="p-2 rounded-lg bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF]">
+          <Icon className="w-4 h-4" />
+        </div>
         {title}
       </h2>
       {children}
@@ -561,36 +570,40 @@ function Panel({ icon: Icon, title, children }: { icon: React.ComponentType<{ cl
 }
 
 function UnderlineCheckoutInput({
+  label,
   placeholder,
   value,
   onChange,
   required = false,
 }: {
+  label?: string;
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
   required?: boolean;
 }) {
   const [focused, setFocused] = useState(false);
+  const displayLabel = label || placeholder;
+
   return (
-    <div className="relative w-full mb-6 font-mono">
-      <input
-        required={required}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className="w-full bg-transparent border-none py-3 px-1 text-[10px] uppercase tracking-[0.2em] focus:outline-none text-white placeholder:text-neutral-600"
-      />
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-neutral-900" />
-      <motion.div
-        className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00d2ff] shadow-[0_0_8px_#00d2ff]"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: focused ? 1 : 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        style={{ transformOrigin: "left" }}
-      />
+    <div className="relative w-full font-mono mb-2">
+      <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-300 font-semibold mb-1.5">
+        {displayLabel}
+      </label>
+      <div className={`relative rounded-xl bg-white/[0.03] border transition-all duration-300 ${
+        focused ? "border-[#00D2FF] bg-white/[0.06] shadow-[0_0_15px_rgba(0,210,255,0.15)]" : "border-white/10 hover:border-white/20"
+      }`}>
+        <input
+          required={required}
+          placeholder={placeholder}
+          aria-label={displayLabel}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className="w-full bg-transparent py-3.5 px-4 text-xs uppercase tracking-[0.15em] focus:outline-none text-white placeholder:text-neutral-500"
+        />
+      </div>
     </div>
   );
 }
