@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Globe, Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCurrency, CurrencyCode } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
@@ -18,6 +19,7 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currency, setCurrency, currencies } = useCurrency();
@@ -48,9 +50,10 @@ export default function Header() {
             <div className="relative">
               <button 
                 onClick={() => setCurrencyMenuOpen(!currencyMenuOpen)}
-                className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 hover:border-white/25 hover:text-white transition-all cursor-pointer font-mono text-[10px]"
+                className="flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-full bg-white/[0.03] border border-white/10 hover:border-white/25 hover:text-white active:scale-95 transition-all cursor-pointer font-mono text-[10px]"
                 data-magnetic
                 title="Select store currency"
+                aria-label="Select store currency"
               >
                 <Globe className="w-3.5 h-3.5 text-[#00D2FF]" />
                 <span>{currencies[currency]?.flag || "🌐"} {currencies[currency]?.symbol} {currency}</span>
@@ -80,7 +83,7 @@ export default function Header() {
                             setCurrency(code);
                             setCurrencyMenuOpen(false);
                           }}
-                          className={`w-full text-left px-3.5 py-2 hover:bg-white/5 transition-colors tracking-wider flex items-center justify-between cursor-pointer ${
+                          className={`w-full text-left px-3.5 py-2.5 hover:bg-white/5 transition-colors tracking-wider flex items-center justify-between cursor-pointer ${
                             currency === code ? "text-[#00D2FF] font-bold bg-[#00D2FF]/5" : "text-neutral-300"
                           }`}
                         >
@@ -97,7 +100,7 @@ export default function Header() {
               </AnimatePresence>
             </div>
             <span className="hidden sm:inline text-neutral-800">|</span>
-            <span className="hidden sm:inline text-neutral-500 font-mono text-[9px] tracking-widest">Global Store</span>
+            <span className="hidden sm:inline text-neutral-400 font-mono text-[9px] tracking-widest">Global Store</span>
           </div>
  
           {/* Wordmark AURA.STREET */}
@@ -109,7 +112,7 @@ export default function Header() {
           >
             <Link
               href="/"
-              className="text-base md:text-lg font-bold tracking-[0.35em] uppercase font-display select-none hover:text-[#00D2FF] transition-colors duration-200 text-white"
+              className="text-base md:text-lg font-bold tracking-[0.35em] uppercase font-display select-none hover:text-[#00D2FF] active:scale-95 transition-all duration-200 text-white"
             >
               AURA<span className="text-[#00D2FF]">.</span>STREET
             </Link>
@@ -118,55 +121,75 @@ export default function Header() {
           {/* Dynamic Nav Links */}
           <nav className="hidden md:flex items-center">
             <div className="flex items-center gap-8 py-1.5 px-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="relative text-[10px] uppercase tracking-[0.25em] font-medium text-neutral-400 hover:text-white transition-colors duration-200 group py-1"
-                >
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`relative text-[10px] uppercase tracking-[0.25em] font-medium transition-colors duration-200 group py-1 ${
+                      isActive ? "text-[#00D2FF] font-bold" : "text-neutral-300 hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    <span className={`absolute bottom-0 left-0 w-full h-[1px] bg-[#00D2FF] transition-transform duration-200 origin-left ${
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`} />
+                  </Link>
+                );
+              })}
             </div>
           </nav>
 
-          {/* Action Icons */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link className="p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Search products" href="/shop" data-magnetic>
+          {/* Action Icons with 44px Minimum Touch Hit Areas */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link 
+              className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer rounded-lg hover:bg-white/5" 
+              aria-label="Search products" 
+              href="/shop" 
+              data-magnetic
+            >
               <Search className="w-4 h-4" />
             </Link>
 
-            <Link className="hidden sm:flex p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer" aria-label="Account" href="/account" data-magnetic>
+            <Link 
+              className="hidden sm:flex p-3 min-w-[44px] min-h-[44px] items-center justify-center text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer rounded-lg hover:bg-white/5" 
+              aria-label="Account" 
+              href="/account" 
+              data-magnetic
+            >
               <UserRound className="w-4 h-4" />
             </Link>
+
             {/* Wishlist Trigger Button */}
             <button
               type="button"
               onClick={openWishlist}
-              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1 cursor-pointer font-mono"
+              className="p-3 min-w-[44px] min-h-[44px] text-neutral-300 hover:text-white active:scale-95 transition-all relative flex items-center justify-center gap-1 cursor-pointer font-mono rounded-lg hover:bg-white/5"
               aria-label="Saved wishlist"
               title="Saved Wishlist"
             >
-              <Heart className={`w-4 h-4 ${totalWishlist > 0 ? "text-red-400 fill-red-400" : "text-neutral-400 hover:text-red-400"}`} />
-              <span className="text-[10px] font-semibold text-neutral-400">({totalWishlist})</span>
+              <Heart className={`w-4 h-4 ${totalWishlist > 0 ? "text-red-400 fill-red-400" : "text-neutral-300 hover:text-red-400"}`} />
+              <span className="text-[10px] font-semibold text-neutral-300">({totalWishlist})</span>
             </button>
 
             {/* Shopping Bag Quick Cart Trigger */}
             <button
               type="button"
               onClick={openCart}
-              className="p-2 text-neutral-400 hover:text-white transition-colors relative flex items-center gap-1.5 cursor-pointer font-mono"
+              className="p-3 min-w-[44px] min-h-[44px] text-neutral-300 hover:text-white active:scale-95 transition-all relative flex items-center justify-center gap-1.5 cursor-pointer font-mono rounded-lg hover:bg-white/5"
               aria-label="Shopping bag"
             >
               <ShoppingBag className="w-4 h-4 text-[#00D2FF]" />
               {totalItems > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#00D2FF] rounded-full shadow-[0_0_6px_#00D2FF]" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-[#00D2FF] rounded-full shadow-[0_0_6px_#00D2FF]" />
               )}
-              <span className="hidden lg:inline text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-300">({totalItems})</span>
+              <span className="hidden lg:inline text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-200">({totalItems})</span>
             </button>
+
             <button
-              className="md:hidden p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer rounded-lg hover:bg-white/5"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
             >

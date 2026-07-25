@@ -36,15 +36,16 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="ENTER EMAIL ADDRESS"
+                aria-label="Enter email address for drop notifications"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full py-3.5 bg-black border border-white/10 focus:border-[#00D2FF] rounded-lg px-4 text-[10px] tracking-[0.2em] font-mono font-medium text-white placeholder-neutral-600 outline-none transition-colors duration-300"
+                className="w-full py-3.5 bg-black border border-white/10 focus:border-[#00D2FF] rounded-lg px-4 text-[10px] tracking-[0.2em] font-mono font-medium text-white placeholder-neutral-500 outline-none transition-colors duration-300"
                 required
                 data-hover
               />
               <button
                 type="submit"
-                className="absolute right-2 p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                className="absolute right-2 p-2 text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer"
                 data-magnetic
                 aria-label="Subscribe"
               >
@@ -79,7 +80,7 @@ export default function Footer() {
             />
             <div className="flex flex-col gap-6 col-span-2 sm:col-span-1">
               <h4 className="text-[10px] uppercase tracking-[0.25em] font-bold text-white">Socials</h4>
-              <ul className="flex flex-col gap-3.5 text-[10px] uppercase tracking-[0.2em] font-mono text-neutral-400">
+              <ul className="flex flex-col gap-3.5 text-[10px] uppercase tracking-[0.2em] font-mono text-neutral-300">
                 {["Instagram", "TikTok", "Discord", "Pinterest"].map((item) => (
                   <li key={item} className="flex items-center gap-1.5 group">
                     <a href="#" className="hover:text-white transition-colors duration-300">{item}</a>
@@ -91,7 +92,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-mono">
           <div className="flex flex-wrap justify-center sm:justify-start gap-x-8 gap-y-2">
             <span>© {new Date().getFullYear()} AURA STREET LTD.</span>
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
@@ -101,7 +102,8 @@ export default function Footer() {
 
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors cursor-pointer border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg"
+            aria-label="Back to top of page"
+            className="flex items-center gap-2 text-neutral-300 hover:text-white active:scale-95 transition-all cursor-pointer border border-white/10 hover:border-white/30 px-4 py-2 rounded-lg"
             data-magnetic
           >
             <span>Back to Top</span>
@@ -117,7 +119,7 @@ function FooterColumn({ title, links }: { title: string; links: [string, string]
   return (
     <div className="flex flex-col gap-6">
       <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white">{title}</h4>
-      <ul className="flex flex-col gap-4 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-500">
+      <ul className="flex flex-col gap-4 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-300">
         {links.map(([label, href]) => (
           <li key={href}>
             <Link href={href} className="hover:text-white transition-colors duration-300">

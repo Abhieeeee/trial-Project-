@@ -70,6 +70,15 @@ export default function AiAssistant() {
     }
   }, [messages, loading, isOpen]);
 
+  // Close AI Assistant on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const handleSendMessage = async (text: string) => {
     if (!text.trim() || loading) return;
 
@@ -146,7 +155,9 @@ export default function AiAssistant() {
       <div className="fixed bottom-6 right-6 z-[9999]">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative group p-4 bg-black hover:bg-neutral-950 border border-white/15 hover:border-[#00d2ff] rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.9)] focus:outline-none cursor-pointer"
+          aria-label={isOpen ? "Close AI Stylist Assistant" : "Open AI Stylist Assistant"}
+          aria-expanded={isOpen}
+          className="relative group p-4 min-w-[48px] min-h-[48px] bg-black hover:bg-neutral-950 border border-white/15 hover:border-[#00d2ff] active:scale-95 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.9)] focus:outline-none cursor-pointer flex items-center justify-center"
           title="Toggle AI Stylist"
         >
           {/* Outer Pulsating Ring */}
@@ -166,6 +177,9 @@ export default function AiAssistant() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-stylist-title"
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
@@ -180,10 +194,10 @@ export default function AiAssistant() {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-[#00d2ff]"></span>
                 </div>
                 <div>
-                  <h3 className="text-[10px] tracking-[0.25em] font-bold uppercase text-white font-display">
+                  <h3 id="ai-stylist-title" className="text-[10px] tracking-[0.25em] font-bold uppercase text-white font-display">
                     AURA STYLIST // AI CORE
                   </h3>
-                  <span className="text-[8px] uppercase tracking-widest text-neutral-500 font-mono">
+                  <span className="text-[8px] uppercase tracking-widest text-neutral-300 font-mono">
                     {profile ? `${profile.name} (${profile.role.toUpperCase()})` : "Neural Network Active"}
                   </span>
                 </div>
@@ -192,14 +206,16 @@ export default function AiAssistant() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleClearChat}
-                  className="p-1.5 text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
+                  className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-neutral-400 hover:text-neutral-200 active:scale-95 transition-all cursor-pointer rounded"
                   title="Clear chat"
+                  aria-label="Clear chat session"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 text-neutral-500 hover:text-white transition-colors cursor-pointer"
+                  className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded"
+                  aria-label="Close AI Assistant"
                 >
                   <X className="w-4 h-4" />
                 </button>

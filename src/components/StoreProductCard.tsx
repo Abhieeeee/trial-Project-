@@ -66,10 +66,10 @@ export default function StoreProductCard({ product }: { product: Product }) {
             type="button"
             onClick={handleToggleWishlist}
             aria-label={isSaved ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-            className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-md transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${
+            className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-md active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${
               isSaved
                 ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                : "bg-black/50 text-neutral-400 hover:text-white hover:bg-black/80"
+                : "bg-black/50 text-neutral-300 hover:text-white hover:bg-black/80"
             }`}
             title={isSaved ? "Saved to wishlist" : "Save to wishlist"}
           >
@@ -78,7 +78,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
 
           {/* Hover action overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 gap-2 z-10">
-            <span className="w-full py-2.5 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 shadow-lg">
+            <span className="w-full py-2.5 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-neutral-200 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg">
               <Eye className="w-3.5 h-3.5" />
               Quick View
             </span>
@@ -86,7 +86,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${product.name} to shopping bag`}
-              className="w-full py-2.5 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-white hover:text-black hover:border-white transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
+              className="w-full py-2.5 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-white hover:text-black hover:border-white active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
             >
               <Plus className="w-3.5 h-3.5" />
               Add to Bag
@@ -99,11 +99,11 @@ export default function StoreProductCard({ product }: { product: Product }) {
             <h3 className="text-sm font-semibold tracking-wide mb-1 text-white group-hover:text-[#00D2FF] transition-colors font-display">
               {product.name}
             </h3>
-            <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-mono">{product.material}</p>
+            <p className="text-[10px] uppercase tracking-widest text-neutral-300 font-mono">{product.material}</p>
           </div>
           <span className="text-sm text-white font-mono font-bold whitespace-nowrap">{formatPrice(rawPrice)}</span>
         </div>
-        <div className="mt-1.5 text-[9px] uppercase tracking-widest text-neutral-500 font-mono">
+        <div className="mt-1.5 text-[9px] uppercase tracking-widest text-neutral-400 font-mono">
           {product.colorways} Colorways • {product.stock} In Stock
         </div>
       </Link>

@@ -122,17 +122,18 @@ function ShopContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
         >
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-neutral-500 mb-8 font-mono">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-neutral-300 mb-8 font-mono">
             <div className="flex items-center gap-2">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <span>/</span>
-              <span className="text-white">Shop</span>
+              <span className="text-white font-bold">Shop</span>
             </div>
             
             <button
               onClick={handleShareLink}
-              className="flex items-center gap-1.5 hover:text-[#00d2ff] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 hover:text-[#00d2ff] active:scale-95 transition-all cursor-pointer"
               title="Copy shareable URL link"
+              aria-label="Share view link"
             >
               {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
               <span>{copiedLink ? "Link Copied!" : "Share View"}</span>
@@ -142,19 +143,20 @@ function ShopContent() {
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.18em] font-display text-white mb-10">
             SHOP ALL
           </h1>
-          <p className="text-xs text-neutral-400 max-w-2xl leading-relaxed tracking-widest mb-12 font-mono">
+          <p className="text-xs text-neutral-300 max-w-2xl leading-relaxed tracking-widest mb-12 font-mono">
             FILTER PREMIUM HOODIES, JACKETS, PANTS, SNEAKERS, AND ACCESSORIES. EACH PIECE INCORPORATES OUR SIGNATURE FASHION GEOMETRY AND CYBER-LUXURY COMPOSITION.
           </p>
 
           <div className="glass-panel-glow rounded-xl p-4 mb-10 grid gap-4 lg:grid-cols-[1fr_auto_auto] items-center">
             {/* Search Input */}
             <label className="relative block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="SEARCH SPECIFICATIONS"
-                className="w-full bg-black border border-neutral-800 rounded-lg py-3.5 pl-12 pr-4 text-[10px] uppercase tracking-[0.2em] focus:outline-none focus:border-brand-sky focus:shadow-[0_0_12px_rgba(125,211,252,0.15)] transition-all text-white placeholder:text-neutral-700 font-mono"
+                aria-label="Search specifications"
+                className="w-full bg-black border border-neutral-800 rounded-lg py-3.5 pl-12 pr-4 text-[10px] uppercase tracking-[0.2em] focus:outline-none focus:border-brand-sky focus:shadow-[0_0_12px_rgba(125,211,252,0.15)] transition-all text-white placeholder:text-neutral-500 font-mono"
               />
             </label>
 
@@ -163,10 +165,10 @@ function ShopContent() {
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-full lg:w-56 bg-black border border-neutral-800 rounded-lg py-3.5 px-4 text-[10px] uppercase tracking-[0.2em] text-neutral-400 focus:outline-none focus:border-brand-sky focus:text-white transition-all flex items-center justify-between cursor-pointer"
+                className="w-full lg:w-56 bg-black border border-neutral-800 rounded-lg py-3.5 px-4 text-[10px] uppercase tracking-[0.2em] text-neutral-300 hover:text-white focus:outline-none focus:border-brand-sky active:scale-95 transition-all flex items-center justify-between cursor-pointer"
               >
                 <span>SORT: {sortLabels[sort]}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-neutral-500" />
+                <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
               </button>
 
               <AnimatePresence>
@@ -176,7 +178,7 @@ function ShopContent() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 w-full mt-2 bg-neutral-950 border border-neutral-900 rounded-lg overflow-hidden z-20 shadow-2xl"
+                    className="absolute top-full left-0 w-full mt-2 bg-neutral-950 border border-neutral-800 rounded-lg overflow-hidden z-20 shadow-2xl"
                   >
                     {Object.entries(sortLabels).map(([key, value]) => (
                       <button
@@ -189,7 +191,7 @@ function ShopContent() {
                         className={`w-full px-4 py-3 text-left text-[10px] uppercase tracking-[0.2em] font-mono transition-colors cursor-pointer ${
                           sort === key
                             ? "bg-brand-sky/10 text-brand-sky font-bold"
-                            : "text-neutral-400 hover:bg-neutral-900 hover:text-white"
+                            : "text-neutral-300 hover:bg-neutral-900 hover:text-white"
                         }`}
                       >
                         {value}
@@ -203,7 +205,7 @@ function ShopContent() {
             {/* Reset Filters Trigger */}
             <button
               onClick={clearFilters}
-              className="flex items-center justify-center gap-2 px-5 py-3.5 bg-black border border-neutral-800 hover:border-neutral-700 text-neutral-400 hover:text-white text-[10px] uppercase tracking-[0.2em] font-mono rounded-lg transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-2 px-5 py-3.5 bg-black border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white active:scale-95 text-[10px] uppercase tracking-[0.2em] font-mono rounded-lg transition-all cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5 text-[#00d2ff]" /> RESET
             </button>
@@ -216,10 +218,10 @@ function ShopContent() {
                 key={category}
                 type="button"
                 onClick={() => setActiveCategory(category)}
-                className={`px-5 py-2.5 rounded-full text-[9px] uppercase tracking-[0.25em] font-mono transition-all duration-220 border cursor-pointer ${
+                className={`px-5 py-2.5 rounded-full text-[9px] uppercase tracking-[0.25em] font-mono active:scale-95 transition-all duration-220 border cursor-pointer ${
                   activeCategory === category
                     ? "bg-white text-black font-bold border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                    : "bg-black/60 text-neutral-400 border-neutral-800 hover:border-neutral-700 hover:text-white"
+                    : "bg-black/60 text-neutral-300 border-neutral-800 hover:border-neutral-700 hover:text-white"
                 }`}
               >
                 {category}

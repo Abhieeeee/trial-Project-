@@ -88,9 +88,9 @@ export default function UserDashboard() {
       <div className="flex items-center justify-between pb-4 border-b border-white/10">
         <div>
           <h1 className="text-base font-bold text-white font-display tracking-wide">My Orders</h1>
-          <p className="text-[11px] text-neutral-500 mt-0.5">Track your active & past shipments</p>
+          <p className="text-[11px] text-neutral-400 mt-0.5">Track your active & past shipments</p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400">
+        <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-300">
           <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] animate-pulse" />
           {orders.filter(o => o.status !== "Delivered").length} active
         </div>
@@ -114,7 +114,7 @@ export default function UserDashboard() {
               <div className="px-4 pt-4 pb-3 flex items-start justify-between gap-3">
                 <div className="space-y-0.5 min-w-0">
                   <p className="text-[11px] font-semibold text-white font-sans truncate">{order.item}</p>
-                  <p className="text-[10px] text-neutral-500 font-mono">{order.id} · {order.customer}</p>
+                  <p className="text-[10px] text-neutral-400 font-mono">{order.id} · {order.customer}</p>
                 </div>
                 <div className="shrink-0 text-right space-y-0.5">
                   <p className="text-sm font-bold text-white font-mono">{order.amount}</p>
@@ -149,9 +149,9 @@ export default function UserDashboard() {
                     );
                   })}
                 </div>
-                <div className="flex items-center justify-between text-[9px] text-neutral-500 font-mono">
+                <div className="flex items-center justify-between text-[9px] text-neutral-400 font-mono">
                   <span>{STATUS_STEPS[order.step - 1]}</span>
-                  <span className={order.status === "Delivered" ? "text-emerald-400 font-semibold" : "text-neutral-300 font-semibold"}>
+                  <span className={order.status === "Delivered" ? "text-emerald-400 font-semibold" : "text-neutral-200 font-semibold"}>
                     {order.status === "Delivered" ? "✓ Delivered" : `ETA: ${order.eta}`}
                   </span>
                 </div>
@@ -159,14 +159,15 @@ export default function UserDashboard() {
 
               {/* Bottom Meta Bar */}
               <div className="px-4 py-2.5 border-t border-white/5 flex items-center justify-between gap-2 bg-white/[0.01]">
-                <div className="text-[9px] text-neutral-500 font-mono truncate">
-                  <span className="text-neutral-400">{order.carrier}</span>
-                  <span className="mx-1.5 text-neutral-700">·</span>
+                <div className="text-[9px] text-neutral-400 font-mono truncate">
+                  <span className="text-neutral-300 font-semibold">{order.carrier}</span>
+                  <span className="mx-1.5 text-neutral-600">·</span>
                   <span>{order.address}</span>
                 </div>
                 <button
                   onClick={() => copyTracking(order.trackingCode)}
-                  className="shrink-0 flex items-center gap-1 px-2 py-1 rounded bg-black border border-white/10 hover:border-white/25 text-[9px] text-[#00D2FF] font-mono cursor-pointer transition-colors"
+                  aria-label={`Copy tracking code ${order.trackingCode}`}
+                  className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded bg-black border border-white/10 hover:border-white/25 active:scale-95 text-[9px] text-[#00D2FF] font-mono cursor-pointer transition-all min-h-[32px]"
                 >
                   {copiedId === order.trackingCode
                     ? <><Check className="w-2.5 h-2.5 text-emerald-400" /> Copied</>

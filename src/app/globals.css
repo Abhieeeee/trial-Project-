@@ -5,6 +5,9 @@
   --color-brand-dark: #0a0a0a;
   --color-brand-gray: #1a1a1a;
   --color-brand-sky: #00D2FF;
+  --color-surface-base: #030303;
+  --color-surface-card: #0a0a0c;
+  --color-surface-elevated: #121216;
   --font-sans: var(--font-sans, Inter, sans-serif);
   --font-mono: var(--font-mono, "JetBrains Mono", monospace);
   --font-display: var(--font-display, Syne, sans-serif);
@@ -34,8 +37,9 @@
 }
 
 *:focus-visible {
-  outline: 1.5px solid var(--color-brand-sky) !important;
-  outline-offset: 4px;
+  outline: 2px solid #00D2FF;
+  outline-offset: 3px;
+  border-radius: inherit;
 }
 
 html,

@@ -114,15 +114,17 @@ export default function CustomCursor() {
   if (!isVisible) return null;
 
   return (
-    <>
+    <div aria-hidden="true" className="pointer-events-none">
       {/* 1. Center Dot */}
       <motion.div
+        aria-hidden="true"
         className="fixed top-0 left-0 w-2 h-2 bg-[#00d2ff] rounded-full pointer-events-none z-[999999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
         style={{ x: cursorX, y: cursorY }}
       />
 
       {/* 2. Glowing Spring Ring */}
       <motion.div
+        aria-hidden="true"
         className="fixed top-0 left-0 rounded-full border border-white pointer-events-none z-[999999] -translate-x-1/2 -translate-y-1/2 mix-blend-difference"
         style={{
           x: ringX,
@@ -144,6 +146,6 @@ export default function CustomCursor() {
           borderColor: { duration: 0.15 },
         }}
       />
-    </>
+    </div>
   );
 }
