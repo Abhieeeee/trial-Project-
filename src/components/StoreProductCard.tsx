@@ -45,18 +45,20 @@ export default function StoreProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <article className="group relative font-sans">
+    <article className="group relative font-sans glow-card">
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="aspect-[3/4] w-full bg-neutral-950 rounded-xl overflow-hidden relative mb-4 border border-white/5 group-hover:border-white/20 transition-all duration-300">
+        <div className="aspect-[3/4] w-full bg-[#0a0a0e] rounded-2xl overflow-hidden relative mb-4 border border-white/10 group-hover:border-[#00D2FF]/40 transition-all duration-500 shadow-xl">
           <Image
             src={product.image}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           />
+
+          {/* Badge */}
           {product.badge && (
-            <span className="absolute top-3 left-3 z-20 rounded-full border border-white/10 bg-black/70 backdrop-blur-md px-2.5 py-0.5 text-[9px] uppercase tracking-widest font-mono font-medium text-white">
+            <span className="absolute top-3.5 left-3.5 z-20 rounded-full border border-white/15 bg-black/80 backdrop-blur-md px-3 py-1 text-[9px] uppercase tracking-widest font-mono font-bold text-white shadow-md">
               {product.badge}
             </span>
           )}
@@ -66,10 +68,10 @@ export default function StoreProductCard({ product }: { product: Product }) {
             type="button"
             onClick={handleToggleWishlist}
             aria-label={isSaved ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-            className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-md active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${
+            className={`absolute top-3.5 right-3.5 z-20 p-2.5 rounded-full backdrop-blur-md active:scale-95 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${
               isSaved
-                ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                : "bg-black/50 text-neutral-300 hover:text-white hover:bg-black/80"
+                ? "bg-red-500/20 text-red-400 border border-red-500/40 shadow-[0_0_12px_rgba(239,68,68,0.3)]"
+                : "bg-black/60 text-neutral-300 hover:text-white hover:bg-black/90 border border-white/10"
             }`}
             title={isSaved ? "Saved to wishlist" : "Save to wishlist"}
           >
@@ -77,8 +79,8 @@ export default function StoreProductCard({ product }: { product: Product }) {
           </button>
 
           {/* Hover action overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 gap-2 z-10">
-            <span className="w-full py-2.5 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-neutral-200 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-4 gap-2.5 z-10 backdrop-blur-[2px]">
+            <span className="w-full py-3 bg-white text-black text-[10px] uppercase tracking-[0.2em] font-mono font-extrabold rounded-xl hover:bg-[#00D2FF] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl cursor-pointer">
               <Eye className="w-3.5 h-3.5" />
               Quick View
             </span>
@@ -86,25 +88,27 @@ export default function StoreProductCard({ product }: { product: Product }) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${product.name} to shopping bag`}
-              className="w-full py-2.5 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-lg hover:bg-white hover:text-black hover:border-white active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
+              className="w-full py-3 bg-black/80 border border-white/20 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-xl hover:bg-white hover:text-black hover:border-white active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md focus-visible:ring-2 focus-visible:ring-[#00D2FF]"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5 text-[#00D2FF]" />
               Add to Bag
             </button>
           </div>
         </div>
 
-        <div className="flex justify-between items-start gap-3">
+        <div className="flex justify-between items-start gap-3 px-1">
           <div>
-            <h3 className="text-sm font-semibold tracking-wide mb-1 text-white group-hover:text-[#00D2FF] transition-colors font-display">
+            <h3 className="text-sm font-bold tracking-wide mb-1 text-white group-hover:text-[#00D2FF] transition-colors font-display">
               {product.name}
             </h3>
-            <p className="text-[10px] uppercase tracking-widest text-neutral-300 font-mono">{product.material}</p>
+            <p className="text-[10px] uppercase tracking-widest text-neutral-300 font-mono font-medium">{product.material}</p>
           </div>
-          <span className="text-sm text-white font-mono font-bold whitespace-nowrap">{formatPrice(rawPrice)}</span>
+          <span className="text-sm text-white font-mono font-extrabold whitespace-nowrap bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
+            {formatPrice(rawPrice)}
+          </span>
         </div>
-        <div className="mt-1.5 text-[9px] uppercase tracking-widest text-neutral-400 font-mono">
-          {product.colorways} Colorways • {product.stock} In Stock
+        <div className="mt-2 text-[9px] uppercase tracking-widest text-neutral-400 font-mono font-semibold px-1">
+          {product.colorways} Colorways • <span className="text-emerald-400">{product.stock} In Stock</span>
         </div>
       </Link>
     </article>

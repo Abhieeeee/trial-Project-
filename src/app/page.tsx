@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { ArrowDown, ChevronRight, Compass } from "lucide-react";
+import { ArrowDown, ChevronRight, Compass, Sparkles } from "lucide-react";
 import Link from "next/link";
 import DynamicBg from "@/components/DynamicBg";
 import Header from "@/components/Header";
@@ -15,7 +15,7 @@ import HeroWaveCanvas from "@/components/HeroWaveCanvas";
 
 export default function Home() {
   const [activeColor, setActiveColor] = useState("black");
-  // Animation Orchestration Variants
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -47,7 +47,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-black text-white w-full overflow-hidden">
+    <main className="relative min-h-screen bg-[#030305] text-white w-full overflow-hidden">
       
       {/* 2. Global Immersive Atmospheric Background */}
       <DynamicBg />
@@ -56,19 +56,19 @@ export default function Home() {
       <Header />
 
       {/* 4. Full-Screen Interactive Hero Section */}
-      <section className="relative w-full min-h-screen flex items-center px-6 md:px-12 pt-24 md:pt-0">
+      <section className="relative w-full min-h-screen flex items-center px-6 md:px-12 pt-28 md:pt-0">
         {/* Premium Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero-editorial.png"
             alt="AURA STREET Hero"
             fill
-            className="object-cover opacity-30 mix-blend-luminosity"
+            className="object-cover opacity-25 mix-blend-luminosity"
             priority
           />
           <HeroWaveCanvas />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/25 to-black z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030305] via-[#030305]/85 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#030305]/30 to-[#030305] z-10" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
@@ -78,23 +78,24 @@ export default function Home() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-6 flex flex-col justify-center text-left"
+            className="lg:col-span-6 flex flex-col justify-center text-left pt-12 md:pt-0"
           >
-            {/* Tagline label */}
+            {/* Drop Status Tagline */}
             <motion.div variants={itemFadeUp} className="flex items-center gap-3 mb-6">
-              <span className="w-8 h-[1px] bg-brand-sky text-glow-sky" />
-              <span className="text-[10px] uppercase tracking-[0.35em] text-brand-sky text-glow-sky font-bold">
+              <span className="w-8 h-[1px] bg-[#00D2FF] text-glow-sky" />
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[9px] uppercase tracking-[0.3em] text-[#00D2FF] font-mono font-bold shadow-[0_0_12px_rgba(0,210,255,0.2)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] animate-pulse" />
                 Drop 01 // Now Available
               </span>
             </motion.div>
 
-            {/* Giant Title */}
+            {/* Title Header */}
             <motion.h1 
               variants={itemFadeUp}
-              className="text-4xl sm:text-5xl md:text-7xl font-extrabold uppercase tracking-wider leading-[1.05] font-display mb-6 text-white"
+              className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.12em] leading-[1.02] font-display mb-6 text-white text-glow-white"
             >
               AURA <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-100 to-neutral-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">
                 STREET
               </span>
             </motion.h1>
@@ -102,9 +103,9 @@ export default function Home() {
             {/* Description */}
             <motion.p
               variants={itemFadeUp}
-              className="text-xs md:text-sm text-neutral-400 max-w-md tracking-wide leading-relaxed mb-10"
+              className="text-xs sm:text-sm text-neutral-300 max-w-md tracking-wider leading-relaxed mb-10 font-mono"
             >
-              A blend of structural geometry and high-end fabric engineering. Explore our signature 450GSM matte black hoodie, featuring physical wrinkle styling and dynamic studio lighting.
+              A synthesis of structural geometry and high-end fabric engineering. Experience our signature 450GSM matte streetwear hoodie with physical wrinkle styling and dynamic PBR studio lighting.
             </motion.p>
 
             {/* CTAs */}
@@ -114,19 +115,19 @@ export default function Home() {
             >
               <Link
                 href="/shop"
-                className="px-8 py-3.5 bg-white text-black hover:bg-[#00D2FF] hover:text-black rounded-lg text-[10px] uppercase tracking-[0.25em] font-extrabold flex items-center gap-2 group transition-all duration-300 shadow-xl shadow-white/5"
+                className="px-8 py-4 bg-white text-black hover:bg-[#00D2FF] hover:text-black rounded-xl text-[10px] uppercase tracking-[0.25em] font-extrabold flex items-center gap-2 group active:scale-95 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(0,210,255,0.4)]"
                 data-magnetic
               >
                 <span>Shop Collection</span>
-                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
 
               <Link
                 href="/editorial"
-                className="px-8 py-3.5 rounded-lg border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.05] text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-300 hover:text-white transition-all duration-300 flex items-center gap-2"
+                className="px-8 py-4 rounded-xl border border-white/15 bg-white/[0.03] hover:border-[#00D2FF]/50 hover:bg-white/[0.08] text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-200 hover:text-white active:scale-95 transition-all duration-300 flex items-center gap-2 backdrop-blur-md"
                 data-magnetic
               >
-                <Compass className="w-3.5 h-3.5 text-[#00D2FF]" />
+                <Compass className="w-4 h-4 text-[#00D2FF]" />
                 <span>View Editorial</span>
               </Link>
             </motion.div>
@@ -134,19 +135,19 @@ export default function Home() {
             {/* Technical Specifications highlights */}
             <motion.div
               variants={itemFadeUp}
-              className="grid grid-cols-3 gap-6 pt-8 border-t border-white/5 max-w-lg text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-medium"
+              className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-lg text-[9px] uppercase tracking-[0.2em] font-mono"
             >
-              <div>
-                <span className="block text-white font-semibold mb-1">Heavy Weave</span>
-                <span>450GSM Cotton</span>
+              <div className="glass-panel p-3.5 rounded-xl border border-white/10">
+                <span className="block text-white font-bold mb-1">Heavy Weave</span>
+                <span className="text-neutral-400">450GSM Cotton</span>
               </div>
-              <div>
-                <span className="block text-white font-semibold mb-1">Tailored Fit</span>
-                <span>Oversized Cut</span>
+              <div className="glass-panel p-3.5 rounded-xl border border-white/10">
+                <span className="block text-white font-bold mb-1">Tailored Fit</span>
+                <span className="text-neutral-400">Oversized Cut</span>
               </div>
-              <div>
-                <span className="block text-white font-semibold mb-1">Studio Lighting</span>
-                <span>PBR Materials</span>
+              <div className="glass-panel p-3.5 rounded-xl border border-white/10">
+                <span className="block text-white font-bold mb-1">Studio Light</span>
+                <span className="text-neutral-400">PBR Shading</span>
               </div>
             </motion.div>
           </motion.div>
@@ -159,13 +160,15 @@ export default function Home() {
             className="lg:col-span-6 h-[50vh] sm:h-[60vh] lg:h-[80vh] w-full flex items-center justify-center relative"
           >
             {/* Soft subtle background glow behind the hoodie */}
-            <div className="absolute w-[70%] h-[70%] rounded-full bg-[#00D2FF]/[0.03] blur-[120px] pointer-events-none select-none" />
+            <div className="absolute w-[75%] h-[75%] rounded-full bg-[#00D2FF]/[0.04] blur-[140px] pointer-events-none select-none" />
             
             <ProductCanvas color={activeColor} />
 
             {/* Color Configurator floating pill panel */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-neutral-950/80 border border-white/10 backdrop-blur-xl rounded-full px-4 py-2 z-20 shadow-2xl">
-              <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-neutral-400 mr-1 font-mono">SPEC:</span>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3.5 bg-[#0a0a0e]/90 border border-white/15 backdrop-blur-2xl rounded-full px-5 py-2.5 z-20 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+              <span className="text-[9px] uppercase tracking-[0.25em] font-bold text-neutral-400 mr-1 font-mono flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3 text-[#00D2FF]" /> SPEC:
+              </span>
               {[
                 { id: "black", label: "Jet Black", color: "bg-[#111111] border-neutral-700" },
                 { id: "white", label: "Arctic White", color: "bg-[#dfdfdf] border-neutral-300" },
@@ -176,8 +179,8 @@ export default function Home() {
                   key={c.id}
                   onClick={() => setActiveColor(c.id)}
                   title={c.label}
-                  className={`w-5 h-5 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center ${c.color} ${
-                    activeColor === c.id ? "scale-110 border-[#00D2FF] ring-2 ring-[#00D2FF]/30" : "opacity-60 border-transparent hover:opacity-100"
+                  className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center active:scale-95 ${c.color} ${
+                    activeColor === c.id ? "scale-110 border-[#00D2FF] ring-2 ring-[#00D2FF]/40 shadow-[0_0_12px_#00D2FF]" : "opacity-60 border-transparent hover:opacity-100"
                   }`}
                   aria-label={`Select ${c.label} colorway`}
                 >
@@ -192,8 +195,8 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator (Bottom Center) */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 text-neutral-500">
-          <span className="text-[8px] uppercase tracking-[0.3em] font-semibold">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 text-neutral-400">
+          <span className="text-[8px] uppercase tracking-[0.3em] font-bold font-mono">
             Scroll to Explore
           </span>
           <motion.div
@@ -205,14 +208,14 @@ export default function Home() {
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className="p-1.5 border border-neutral-900 rounded-full hover:border-brand-sky/20 transition-colors cursor-pointer"
+            className="p-2 border border-white/10 rounded-full hover:border-[#00D2FF] active:scale-95 transition-all cursor-pointer bg-white/[0.02]"
             data-magnetic
             onClick={() => {
               const el = document.getElementById("shop");
               el?.scrollIntoView({ behavior: "smooth" });
             }}
           >
-            <ArrowDown className="w-3.5 h-3.5" />
+            <ArrowDown className="w-3.5 h-3.5 text-[#00D2FF]" />
           </motion.div>
         </div>
       </section>

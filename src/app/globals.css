@@ -43,7 +43,7 @@
 }
 
 html,
-body {
+abody {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -53,6 +53,7 @@ body {
 
 /* Hide default cursor on desktop devices when custom cursor is active */
 @media (pointer: fine) {
+
   .custom-cursor-active,
   .custom-cursor-active *,
   .custom-cursor-active a,
@@ -69,13 +70,16 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #000000;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #1f2937;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #374151;
 }
@@ -137,5 +141,3 @@ html.lenis body {
 .glow-btn:hover::after {
   opacity: 1;
 }
-
-
