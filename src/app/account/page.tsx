@@ -250,69 +250,70 @@ export default function AccountPage() {
 
         {/* UNAUTHENTICATED STATE: Perfectly Centered, High-Contrast Luxury Login Portal */}
         {!user && !loading && (
-          <div className="min-h-[calc(100vh-140px)] w-full flex items-center justify-center px-4 sm:px-6 py-12 relative my-auto">
+          <div className="w-full min-h-[85vh] flex items-center justify-center px-4 sm:px-6 pt-24 pb-16 relative">
             {/* Ambient Dual Backlight Glow */}
-            <div className="absolute w-[380px] h-[380px] bg-gradient-to-tr from-[#00D2FF]/25 via-blue-600/20 to-purple-600/25 rounded-full blur-[110px] pointer-events-none animate-pulse" />
-            <div className="absolute w-[250px] h-[250px] bg-[#00D2FF]/15 rounded-full blur-[90px] pointer-events-none" />
+            <div className="absolute w-[450px] h-[450px] bg-gradient-to-tr from-[#00D2FF]/20 via-blue-600/15 to-purple-600/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-md sm:max-w-lg bg-neutral-950/95 border border-white/20 rounded-[2rem] sm:rounded-[2.5rem] p-7 sm:p-11 shadow-[0_25px_80px_rgba(0,0,0,0.9)] backdrop-blur-3xl space-y-7 relative z-10 my-auto"
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-lg glass-panel-glow bg-[#0a0a0e]/95 border border-white/20 rounded-3xl p-8 sm:p-12 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl relative z-10 my-auto"
             >
               {/* Portal Header */}
-              <div className="text-center space-y-3">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#00D2FF]/20 to-white/5 border border-[#00D2FF]/40 flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(0,210,255,0.2)] text-[#00D2FF]">
-                  <Sparkles className="w-7 h-7 text-[#00D2FF]" />
+              <div className="text-center space-y-4 mb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-[#00D2FF]/20 to-white/5 border border-[#00D2FF]/40 flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(0,210,255,0.25)] text-[#00D2FF]">
+                  <Sparkles className="w-8 h-8 text-[#00D2FF]" />
                 </div>
 
                 <div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] font-mono mb-2">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] text-[10px] font-bold uppercase tracking-[0.25em] font-mono mb-3">
                     <UserCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
                     AURA STREET // PRIVATE PORTAL
                   </span>
-                  <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white font-sans mt-1">
+                  <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-white font-display mt-1">
                     Customer Sign In
                   </h1>
-                  <p className="text-xs sm:text-sm text-neutral-200 font-sans leading-relaxed mt-2.5 max-w-sm mx-auto font-medium">
+                  <p className="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed mt-3 max-w-md mx-auto">
                     Sign in to track orders, manage saved items, and receive drop access.
                   </p>
                 </div>
               </div>
 
               {/* 1-Click Google Sign In Button */}
-              <motion.button
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.985 }}
-                onClick={handleGoogleLogin}
-                disabled={signingIn}
-                className="w-full py-4 px-6 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-3.5 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.2)] font-mono group border border-white"
-              >
-                <GoogleIcon className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
-                <span className="font-extrabold text-black">
-                  {signingIn ? 'Authenticating...' : 'Continue with Google'}
-                </span>
-              </motion.button>
+              <div className="mb-6">
+                <motion.button
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  onClick={handleGoogleLogin}
+                  disabled={signingIn}
+                  className="w-full py-4 px-6 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-3 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.25)] font-mono border border-white"
+                >
+                  <GoogleIcon className="w-5 h-5 shrink-0" />
+                  <span className="font-extrabold text-black">
+                    {signingIn ? 'Authenticating...' : 'Continue with Google'}
+                  </span>
+                </motion.button>
+              </div>
 
               {/* Styled High-Contrast Or Divider */}
-              <div className="flex items-center gap-4 py-1">
-                <div className="h-[1px] flex-1 bg-white/20" />
-                <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-neutral-300 font-mono font-bold px-3 py-0.5 bg-white/5 rounded-full border border-white/10">
+              <div className="flex items-center gap-4 my-6">
+                <div className="h-[1px] flex-1 bg-white/15" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono font-bold px-3 py-1 bg-white/[0.04] rounded-full border border-white/10">
                   OR SIGN IN WITH EMAIL
                 </span>
-                <div className="h-[1px] flex-1 bg-white/20" />
+                <div className="h-[1px] flex-1 bg-white/15" />
               </div>
 
               {/* Auth Mode Toggle Tabs (Magic Link vs Password) */}
-              <div className="grid grid-cols-2 p-1 bg-white/5 border border-white/10 rounded-xl font-mono text-xs">
+              <div className="grid grid-cols-2 p-1.5 bg-white/[0.04] border border-white/15 rounded-2xl font-mono text-xs mb-6">
                 <button
                   type="button"
                   onClick={() => setAuthMode('magic')}
-                  className={`py-2 px-3 rounded-lg font-bold transition-all text-center cursor-pointer ${
+                  className={`py-3 px-4 rounded-xl font-bold transition-all text-center cursor-pointer ${
                     authMode === 'magic'
-                      ? 'bg-[#00D2FF] text-black shadow-md'
-                      : 'text-neutral-300 hover:text-white'
+                      ? 'bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]'
+                      : 'text-neutral-400 hover:text-white'
                   }`}
                 >
                   Magic Access
@@ -320,10 +321,10 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => setAuthMode('password')}
-                  className={`py-2 px-3 rounded-lg font-bold transition-all text-center cursor-pointer ${
+                  className={`py-3 px-4 rounded-xl font-bold transition-all text-center cursor-pointer ${
                     authMode === 'password'
-                      ? 'bg-[#00D2FF] text-black shadow-md'
-                      : 'text-neutral-300 hover:text-white'
+                      ? 'bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]'
+                      : 'text-neutral-400 hover:text-white'
                   }`}
                 >
                   Password Login
@@ -339,16 +340,16 @@ export default function AccountPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={`p-3.5 rounded-xl flex items-center gap-2.5 text-xs font-mono font-bold ${
+                    className={`p-4 rounded-2xl flex items-center gap-3 text-xs font-mono font-bold mb-6 ${
                       authFeedback.type === 'success'
                         ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
                         : 'bg-red-500/15 border border-red-500/40 text-red-300'
                     }`}
                   >
                     {authFeedback.type === 'success' ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
                     )}
                     <span>{authFeedback.message}</span>
                   </motion.div>
@@ -356,11 +357,11 @@ export default function AccountPage() {
               </AnimatePresence>
 
               {/* High-Contrast Email / Password Sign In Form */}
-              <form onSubmit={handleEmailSignIn} className="space-y-4 font-mono">
-                <div className="space-y-1.5 text-left">
+              <form onSubmit={handleEmailSignIn} className="space-y-5 font-mono">
+                <div className="space-y-2 text-left">
                   <label
                     htmlFor="customer-email"
-                    className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                    className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-300"
                   >
                     <Mail className="w-3.5 h-3.5 text-[#00D2FF]" />
                     <span>Email Address</span>
@@ -373,16 +374,16 @@ export default function AccountPage() {
                     placeholder="name@example.com"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 px-4 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                    className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:bg-black rounded-2xl py-4 px-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-sans font-medium"
                   />
                 </div>
 
                 {authMode === 'password' && (
-                  <div className="space-y-1.5 text-left">
+                  <div className="space-y-2 text-left">
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="customer-password"
-                        className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-200"
+                        className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-300"
                       >
                         <Lock className="w-3.5 h-3.5 text-[#00D2FF]" />
                         <span>Password</span>
@@ -400,12 +401,12 @@ export default function AccountPage() {
                         placeholder="••••••••••••"
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
-                        className="w-full bg-neutral-900 border border-white/25 focus:border-[#00D2FF] focus:bg-black rounded-xl py-3.5 pl-4 pr-11 text-sm text-white placeholder:text-neutral-400 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                        className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:bg-black rounded-2xl py-4 pl-4 pr-12 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-sans font-medium"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer p-1"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer p-1.5"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
                         {showPassword ? (
@@ -418,42 +419,41 @@ export default function AccountPage() {
                   </div>
                 )}
 
-                {/* Primary High-Contrast Glow Action Button */}
                 <motion.button
-                  whileHover={{ scale: 1.015 }}
-                  whileTap={{ scale: 0.985 }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={signingIn}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-[#00D2FF] via-[#00B8FF] to-blue-600 hover:from-[#33E0FF] hover:to-blue-500 text-black text-xs sm:text-sm font-extrabold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-[0_0_25px_rgba(0,210,255,0.4)] group border border-cyan-300/40"
+                  className="w-full py-4 px-6 bg-[#00D2FF] hover:bg-cyan-400 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-2 text-xs sm:text-sm uppercase tracking-widest cursor-pointer shadow-[0_0_30px_rgba(0,210,255,0.35)] font-mono mt-6"
                 >
                   <span>
                     {signingIn
                       ? 'Authenticating...'
                       : authMode === 'magic'
-                      ? 'Continue with Email'
+                      ? 'Send Magic Access Link'
                       : 'Sign In to Account'}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1.5 transition-transform" />
+                  <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </form>
 
-              {/* Quick Instant Demo Login Button */}
+              {/* Quick Instant Demo Sign In Button */}
               <div className="pt-2">
                 <button
                   type="button"
                   onClick={handleDemoSignIn}
                   disabled={signingIn}
-                  className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 border border-white/20 hover:border-[#00D2FF] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/15 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Zap className="w-3.5 h-3.5 text-[#00D2FF]" />
+                  <Zap className="w-4 h-4 text-[#00D2FF]" />
                   <span>Quick Instant Demo Sign In</span>
                 </button>
               </div>
 
-              {/* Security Footer Badge */}
-              <div className="pt-5 border-t border-white/15 flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-neutral-300 font-mono">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="font-semibold text-neutral-200">256-Bit SSL Encrypted Customer Auth</span>
+              {/* 256-Bit SSL Encrypted Footer */}
+              <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono border-t border-white/10 pt-6">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
+                <span>256-Bit SSL Encrypted Customer Auth</span>
               </div>
             </motion.div>
           </div>
