@@ -1,10 +1,10 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Heart, PackageCheck, Ruler, ShieldCheck, ShoppingBag, Star, Truck } from "lucide-react";
+import { ArrowRight, Heart, PackageCheck, Ruler, ShieldCheck, ShoppingBag, Star, Truck, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import PageShell from "@/components/PageShell";
@@ -13,6 +13,7 @@ import ProductReviews from "@/components/ProductReviews";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
+import { useWishlist } from "@/lib/wishlistContext";
 import { createClient } from "@/lib/supabase/client";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -66,10 +67,25 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   const { formatPrice } = useCurrency();
   const { addItem } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
+  const isWishlistSaved = isInWishlist(product.id);
 
   const [activeImage, setActiveImage] = useState(product.image);
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "M");
+  const [addedToast, setAddedToast] = useState(false);
+
+  // AI Fit Calculator state
+  const [showFitCalculator, setShowFitCalculator] = useState(false);
+  const [userHeight, setUserHeight] = useState(175);
+  const [userWeight, setUserWeight] = useState(70);
+
+  const calculatedFitSize = useMemo(() => {
+    if (userHeight > 182 || userWeight > 85) return "XL";
+    if (userHeight > 175 || userWeight > 73) return "L";
+    if (userHeight > 165 || userWeight > 60) return "M";
+    return "S";
+  }, [userHeight, userWeight]);
 
   const related = fallbackProducts.filter((item) => item.slug !== product.slug).slice(0, 4);
 
@@ -152,10 +168,14 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <div className="mt-10">
               <div className="flex items-center justify-between mb-3 font-mono">
                 <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-300">Select Size</span>
-                <Link href="/sizing" className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#00D2FF] hover:text-white transition-colors">
+                <button 
+                  type="button"
+                  onClick={() => setShowFitCalculator(true)}
+                  className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#00D2FF] hover:text-white transition-colors cursor-pointer"
+                >
                   <Ruler className="w-3.5 h-3.5" />
-                  Size Guide
-                </Link>
+                  AI Fit Calculator
+                </button>
               </div>
               <div role="radiogroup" aria-label="Select Garment Size" className="flex flex-wrap gap-3">
                 {product.sizes.map((size) => {
@@ -196,48 +216,88 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
                   addItem({
+                    id: `${product.id}-${selectedSize}`,
+                    name: `${product.name} (${selectedSize})`,
+                    price: product.price,
+                    numericPrice: product.numericPrice || rawPrice,
+                    category: product.category,
+                    image: product.image,
+                    quantity: 1,
+                  });
+                  setAddedToast(true);
+                  setTimeout(() => setAddedToast(false), 2000);
+                }}
+                className={`h-14 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] cursor-pointer font-mono active:scale-95 ${
+                  addedToast
+                    ? "bg-emerald-500 text-black border border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                    : "bg-[#00d2ff] text-black hover:bg-cyan-400 shadow-[0_0_20px_rgba(0,210,255,0.2)]"
+                }`}
+              >
+                {addedToast ? (
+                  <>
+                    <PackageCheck className="w-4 h-4" />
+                    Added ({selectedSize})
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-4 h-4" />
+                    Add to Bag ({formatPrice(rawPrice)})
+                  </>
+                )}
+              </button>
+              <button 
+                type="button"
+                onClick={() =>
+                  toggleWishlist({
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     numericPrice: product.numericPrice || rawPrice,
                     category: product.category,
                     image: product.image,
-                    quantity: 1,
+                    slug: product.slug,
                   })
                 }
-                className="h-14 rounded bg-[#00d2ff] text-black hover:bg-cyan-400 font-bold transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.25em] cursor-pointer shadow-[0_0_20px_rgba(0,210,255,0.2)] font-mono"
+                className={`h-14 rounded-xl border px-5 transition-all cursor-pointer active:scale-95 flex items-center justify-center ${
+                  isWishlistSaved
+                    ? "border-red-500/40 bg-red-500/20 text-red-400 shadow-[0_0_12px_rgba(239,68,68,0.3)]"
+                    : "border-white/10 bg-white/[0.03] text-neutral-300 hover:border-[#00D2FF]/50 hover:text-white"
+                }`} 
+                aria-label="Add to wishlist"
               >
-                <ShoppingBag className="w-4 h-4" />
-                Add to Bag ({formatPrice(rawPrice)})
-              </button>
-              <button className="h-14 rounded border border-neutral-800 px-5 text-neutral-300 hover:border-brand-sky hover:text-white transition-colors cursor-pointer" aria-label="Add to wishlist">
-                <Heart className="w-4 h-4" />
+                <Heart className={`w-4 h-4 ${isWishlistSaved ? "fill-red-500 text-red-500" : ""}`} />
               </button>
             </div>
 
             {/* Metadata Rows */}
             <div className="mt-10 grid gap-3 font-mono">
               {[
-                { icon: Truck, title: "Free shipping over EUR 200" },
-                { icon: ShieldCheck, title: "Secure payment states ready" },
-                { icon: PackageCheck, title: `${product.stock} units available` },
+                { icon: Truck, title: "Complimentary Global Express Shipping" },
+                { icon: ShieldCheck, title: "Authenticity Guaranteed // 450GSM Cotton" },
+                { icon: PackageCheck, title: `${product.stock} Units Remaining in Limited Allocation` },
               ].map((item) => (
-                <div key={item.title} className="flex items-center gap-3 rounded-lg border border-neutral-900 bg-neutral-950/60 p-4">
-                  <item.icon className="w-4 h-4 text-brand-sky" />
-                  <span className="text-[9px] uppercase tracking-[0.2em] text-neutral-400">{item.title}</span>
+                <div key={item.title} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <item.icon className="w-4 h-4 text-[#00D2FF]" />
+                  <span className="text-[9px] uppercase tracking-[0.2em] text-neutral-300 font-medium">{item.title}</span>
                 </div>
               ))}
             </div>
 
-            {/* Specifications lists */}
-            <div className="mt-10 border-t border-neutral-900 pt-8">
-              <h2 className="text-xs uppercase tracking-[0.25em] font-bold mb-5 font-mono text-neutral-300">Product Details</h2>
-              <ul className="grid gap-3 text-sm text-neutral-400">
-                {product.details.map((detail) => (
-                  <li key={detail} className="flex items-center gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-sky shadow-[0_0_8px_#7dd3fc]" />
+            {/* Specifications Technical Breakdown */}
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <h2 className="text-xs uppercase tracking-[0.25em] font-bold mb-5 font-mono text-neutral-200">
+                Technical Specifications & Engineering
+              </h2>
+              <ul className="grid gap-3 text-xs text-neutral-300 font-mono">
+                {product.details.concat([
+                  "450GSM Heavyweight French Terry Cotton",
+                  "Double-Needle Coverstitched Seams",
+                  "Preshrunk Organic Garment Finish",
+                ]).map((detail, idx) => (
+                  <li key={`${detail}-${idx}`} className="flex items-center gap-3 bg-white/[0.02] p-3 rounded-lg border border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] shadow-[0_0_8px_#00D2FF]" />
                     {detail}
                   </li>
                 ))}
@@ -273,6 +333,90 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           ))}
         </div>
       </section>
+
+      {/* AI Sizing Fit Recommendation Calculator Modal */}
+      <AnimatePresence>
+        {showFitCalculator && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFitCalculator(false)}
+              className="fixed inset-0 z-[9990] bg-black/80 backdrop-blur-md cursor-pointer"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9995] w-full max-w-md bg-[#0a0a0e] border border-white/15 p-6 rounded-2xl shadow-2xl backdrop-blur-2xl font-mono"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
+                <div className="flex items-center gap-2 text-[#00D2FF]">
+                  <Sparkles className="w-4 h-4" />
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-white">AI Fit Recommendation</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFitCalculator(false)}
+                  className="p-1 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1 font-bold">
+                    Height: {userHeight} cm
+                  </label>
+                  <input
+                    type="range"
+                    min="150"
+                    max="205"
+                    value={userHeight}
+                    onChange={(e) => setUserHeight(Number(e.target.value))}
+                    className="w-full accent-[#00D2FF] cursor-pointer"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] text-neutral-400 uppercase tracking-widest mb-1 font-bold">
+                    Weight: {userWeight} kg
+                  </label>
+                  <input
+                    type="range"
+                    min="45"
+                    max="120"
+                    value={userWeight}
+                    onChange={(e) => setUserWeight(Number(e.target.value))}
+                    className="w-full accent-[#00D2FF] cursor-pointer"
+                  />
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-center space-y-2 mt-6">
+                  <span className="block text-[9px] uppercase tracking-widest text-neutral-400 font-bold">Recommended Cut</span>
+                  <span className="block text-2xl font-extrabold text-[#00D2FF] font-display">{calculatedFitSize} (Oversized Cut)</span>
+                  <p className="text-[9px] text-neutral-300">
+                    Engineered for standard street drape. Select {calculatedFitSize} for classic 450GSM boxy fit.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedSize(calculatedFitSize);
+                    setShowFitCalculator(false);
+                  }}
+                  className="w-full py-3 bg-[#00D2FF] text-black font-bold uppercase tracking-widest text-[10px] rounded-xl hover:bg-cyan-400 transition-all active:scale-95 cursor-pointer mt-4"
+                >
+                  Apply {calculatedFitSize} to Selection
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </PageShell>
   );
 }

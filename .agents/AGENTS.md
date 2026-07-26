@@ -27,3 +27,11 @@
 - Always verify TypeScript compilation: `npx tsc --noEmit`
 - Always verify Next.js build: `npm run build`
 - Production target: `git push origin main` -> Vercel Production (`https://trial-project-bice.vercel.app`)
+
+## ⚡ Mandatory Execution Workflows (Always Active)
+- **GSD (Get Shit Done)**: Structure all tasks into explicit phases (Discuss & Align -> Plan & Decompose -> Autonomous Execution -> Nyquist Verification).
+- **UI/UX Pro Max**: Enforce elite dark high-fashion aesthetics, glassmorphic surfaces, HSL/OKLCH color scales, custom typography, dynamic micro-animations, and zero layout shift.
+- **Ralph Loop**: Perform continuous test-fix-verify iterations autonomously until `npx tsc --noEmit` and `npm run build` succeed with 0 errors.
+- **CodeRabbit AI Reviewer**: Perform automated line-by-line code reviews, diff impact analysis, anti-slop checks, and security scans on all new or modified code before final verification.
+
+
