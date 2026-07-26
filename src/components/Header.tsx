@@ -46,64 +46,63 @@ export default function Header() {
 
   return (
     <>
-      {/* ── Announcement Bar ── */}
-      <AnimatePresence>
-        {announcementVisible && (
-          <motion.div
-            initial={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="announcement-bar fixed top-0 left-0 w-full z-50 overflow-hidden"
-          >
-            <div className="relative flex items-center justify-center py-2 px-6">
-              <div className="overflow-hidden w-full max-w-3xl">
-                <div className="flex whitespace-nowrap animate-ticker">
-                  {[0, 1].map((i) => (
-                    <span
-                      key={i}
-                      className="text-[9px] uppercase tracking-[0.28em] font-mono font-semibold text-neutral-300 flex items-center gap-6 mr-0"
-                      aria-hidden={i > 0}
-                    >
-                      <span className="text-[#00D2FF]">✦</span>
-                      Free shipping on orders over NPR 5,000 &nbsp;
-                      <span className="text-[#00D2FF]">✦</span>
-                      &nbsp;Drop 01 Now Live → &nbsp;
-                      <span className="text-[#00D2FF]">✦</span>
-                      &nbsp;450GSM Premium Streetwear &nbsp;
-                      <span className="text-[#00D2FF]">✦</span>
-                      &nbsp;Paris-Originated Designs &nbsp;
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={() => setAnnouncementVisible(false)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-neutral-500 hover:text-white transition-colors rounded-md hover:bg-white/5 cursor-pointer"
-                aria-label="Dismiss announcement"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Main Header ── */}
       <header
-        className="fixed left-0 w-full z-40 transition-all duration-300 py-4"
+        className="fixed top-0 left-0 w-full z-40 transition-all duration-300"
         style={{
-          top: announcementVisible ? "34px" : "0px",
-          transition: "top 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease",
-          backgroundColor: isScrolled ? "rgba(3, 3, 5, 0.92)" : "transparent",
+          backgroundColor: isScrolled ? "rgba(3, 3, 5, 0.94)" : "transparent",
           backdropFilter: isScrolled ? "blur(28px) saturate(180%)" : "none",
           WebkitBackdropFilter: isScrolled ? "blur(28px) saturate(180%)" : "none",
           borderBottom: isScrolled
-            ? "1px solid rgba(0, 210, 255, 0.06)"
+            ? "1px solid rgba(0, 210, 255, 0.08)"
             : "1px solid transparent",
-          boxShadow: isScrolled ? "0 4px 40px rgba(0,0,0,0.7)" : "none",
+          boxShadow: isScrolled ? "0 8px 40px rgba(0,0,0,0.85)" : "none",
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+        {/* ── Announcement Bar ── */}
+        <AnimatePresence>
+          {announcementVisible && (
+            <motion.div
+              initial={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="announcement-bar w-full overflow-hidden border-b border-[#00D2FF]/10 bg-[#030305]"
+            >
+              <div className="relative flex items-center justify-center py-2 px-6">
+                <div className="overflow-hidden w-full max-w-3xl">
+                  <div className="flex whitespace-nowrap animate-ticker">
+                    {[0, 1].map((i) => (
+                      <span
+                        key={i}
+                        className="text-[9px] uppercase tracking-[0.28em] font-mono font-semibold text-neutral-300 flex items-center gap-6 mr-0"
+                        aria-hidden={i > 0}
+                      >
+                        <span className="text-[#00D2FF]">✦</span>
+                        Free shipping on orders over NPR 5,000 &nbsp;
+                        <span className="text-[#00D2FF]">✦</span>
+                        &nbsp;Drop 01 Now Live → &nbsp;
+                        <span className="text-[#00D2FF]">✦</span>
+                        &nbsp;450GSM Premium Streetwear &nbsp;
+                        <span className="text-[#00D2FF]">✦</span>
+                        &nbsp;Paris-Originated Designs &nbsp;
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setAnnouncementVisible(false)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-neutral-500 hover:text-white transition-colors rounded-md hover:bg-white/5 cursor-pointer"
+                  aria-label="Dismiss announcement"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Main Navigation Bar ── */}
+        <div className="py-3.5">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
 
           {/* Currency Selector */}
           <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-400 relative">
@@ -271,7 +270,8 @@ export default function Header() {
             </button>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
 
       {/* ── Mobile Full-Screen Drawer ── */}
       <AnimatePresence>

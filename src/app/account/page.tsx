@@ -21,6 +21,13 @@ import {
   AlertCircle,
   Zap,
   UserCheck,
+  Truck,
+  Clock,
+  Copy,
+  Check,
+  Crown,
+  Tag,
+  Key,
 } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import PageIntro from '@/components/PageIntro';
@@ -53,33 +60,56 @@ function GoogleIcon({ className = "w-5 h-5" }: { className?: string }) {
 const menuItems = [
   {
     icon: Package,
-    title: 'Order History',
-    description: 'Track active shipments & order progress',
+    title: 'Order History & Tracking',
+    description: 'Track active shipments & delivery progress',
     href: '/user-dashboard',
   },
   {
     icon: Heart,
     title: 'Saved Wishlist',
-    description: 'View your saved techwear garments',
+    description: 'View saved 450GSM streetwear garments',
     href: '/shop',
   },
   {
     icon: MapPin,
     title: 'Shipping Destinations',
-    description: 'Manage delivery addresses',
+    description: 'Manage Nepal & international delivery addresses',
     href: '/checkout',
   },
   {
     icon: CreditCard,
-    title: 'Payment Preferences',
+    title: 'Payment Methods',
     description: 'Cards, eSewa, Khalti & Apple Pay',
     href: '/checkout',
   },
   {
     icon: Shield,
-    title: 'Portal Security',
-    description: 'Account settings & authentication',
-    href: '/admin/login',
+    title: 'Portal Security & Access',
+    description: 'Account settings, MFA & credentials',
+    href: '/account',
+  },
+];
+
+const mockOrders = [
+  {
+    id: "AUR-NP8492",
+    item: "Moto Techwear Leather Jacket",
+    amount: "€680",
+    status: "In Transit",
+    step: 3,
+    trackingCode: "NP-KT-9048201",
+    carrier: "Express Nepal Air",
+    eta: "Jul 27, 2026",
+  },
+  {
+    id: "AUR-INT2049",
+    item: "Essential Geometry Hoodie 450GSM",
+    amount: "€245",
+    status: "Packed",
+    step: 2,
+    trackingCode: "DHL-EX-4920194",
+    carrier: "DHL Express",
+    eta: "Aug 1, 2026",
   },
 ];
 
@@ -91,6 +121,7 @@ export default function AccountPage() {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [authFeedback, setAuthFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const { totalWishlist } = useWishlist();
 
@@ -153,7 +184,7 @@ export default function AccountPage() {
         setUser(googleSession);
         setAuthFeedback({ type: 'success', message: 'Google Authentication Successful!' });
       }
-    } catch (err: any) {
+    } catch {
       const googleSession = {
         id: `goog-user-${Date.now()}`,
         email: 'collector.aura@gmail.com',
@@ -199,9 +230,9 @@ export default function AccountPage() {
     setTimeout(() => {
       const demoUser = {
         id: `usr-demo-${Date.now()}`,
-        email: 'customer.aura@street.com',
+        email: 'collector.aura@gmail.com',
         user_metadata: {
-          full_name: 'Aura VIP Customer',
+          full_name: 'Aura VIP Collector',
           avatar_url: '',
         },
         app_metadata: { provider: 'demo' },
@@ -209,7 +240,7 @@ export default function AccountPage() {
       localStorage.setItem('aura_user_session', JSON.stringify(demoUser));
       setUser(demoUser);
       setSigningIn(false);
-      setAuthFeedback({ type: 'success', message: 'Authenticated as VIP Customer!' });
+      setAuthFeedback({ type: 'success', message: 'Authenticated as VIP Collector!' });
     }, 400);
   };
 
@@ -222,18 +253,24 @@ export default function AccountPage() {
     setAuthFeedback(null);
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCode(text);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Maya Rivera';
   const displayEmail = user?.email || 'collector.aura@gmail.com';
   const isGoogleUser = user?.app_metadata?.provider === 'google' || user?.id?.startsWith('goog-');
 
   return (
     <PageShell>
-      {/* If Authenticated: Render PageIntro Hero */}
+      {/* Authenticated State Header */}
       {user && (
         <PageIntro
-          eyebrow="Customer Account"
-          title={`Welcome, ${displayName}`}
-          text="Access your saved wishlist, active order shipments, and customer privileges."
+          eyebrow="Customer Account // VIP Terminal"
+          title={`Welcome back, ${displayName}`}
+          text="Access active shipments, saved streetwear garments, and 450GSM Drop 01 privileges."
         />
       )}
 
@@ -248,11 +285,12 @@ export default function AccountPage() {
           </div>
         )}
 
-        {/* UNAUTHENTICATED STATE: Perfectly Centered, High-Contrast Luxury Login Portal */}
+        {/* ── UNAUTHENTICATED STATE: Luxury Dark Cyberpunk Login Portal ── */}
         {!user && !loading && (
-          <div className="w-full min-h-[85vh] flex items-center justify-center px-4 sm:px-6 pt-24 pb-16 relative">
-            {/* Ambient Dual Backlight Glow */}
-            <div className="absolute w-[450px] h-[450px] bg-gradient-to-tr from-[#00D2FF]/20 via-blue-600/15 to-purple-600/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
+          <div className="w-full min-h-[85vh] flex items-center justify-center px-4 sm:px-6 pt-12 pb-20 relative">
+            {/* Ambient Dual Backlight Glow Orbs */}
+            <div className="absolute w-[500px] h-[500px] bg-gradient-to-tr from-[#00D2FF]/20 via-blue-600/15 to-purple-600/20 rounded-full blur-[140px] pointer-events-none animate-pulse" />
+            <div className="absolute w-[300px] h-[300px] bg-[#00D2FF]/10 rounded-full blur-[100px] pointer-events-none" />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
@@ -271,10 +309,10 @@ export default function AccountPage() {
                     <UserCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
                     AURA STREET // PRIVATE PORTAL
                   </span>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-white font-display mt-1">
+                  <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white font-display mt-1">
                     Customer Sign In
                   </h1>
-                  <p className="text-xs sm:text-sm text-neutral-300 font-sans leading-relaxed mt-3 max-w-md mx-auto">
+                  <p className="text-xs sm:text-sm text-neutral-300 font-mono leading-relaxed mt-3 max-w-md mx-auto">
                     Sign in to track orders, manage saved items, and receive drop access.
                   </p>
                 </div>
@@ -296,7 +334,7 @@ export default function AccountPage() {
                 </motion.button>
               </div>
 
-              {/* Styled High-Contrast Or Divider */}
+              {/* High-Contrast Or Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="h-[1px] flex-1 bg-white/15" />
                 <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono font-bold px-3 py-1 bg-white/[0.04] rounded-full border border-white/10">
@@ -374,7 +412,7 @@ export default function AccountPage() {
                     placeholder="name@example.com"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:bg-black rounded-2xl py-4 px-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                    className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:ring-1 focus:ring-[#00D2FF]/40 rounded-2xl py-4 px-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-mono font-medium"
                   />
                 </div>
 
@@ -401,7 +439,7 @@ export default function AccountPage() {
                         placeholder="••••••••••••"
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
-                        className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:bg-black rounded-2xl py-4 pl-4 pr-12 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-sans font-medium"
+                        className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:ring-1 focus:ring-[#00D2FF]/40 rounded-2xl py-4 pl-4 pr-12 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-mono font-medium"
                       />
                       <button
                         type="button"
@@ -437,16 +475,16 @@ export default function AccountPage() {
                 </motion.button>
               </form>
 
-              {/* Quick Instant Demo Sign In Button */}
+              {/* Quick Instant VIP Demo Sign In Button */}
               <div className="pt-2">
                 <button
                   type="button"
                   onClick={handleDemoSignIn}
                   disabled={signingIn}
-                  className="w-full py-3.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/15 text-neutral-300 hover:text-white font-mono text-xs uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/20 text-neutral-200 hover:text-white font-mono text-xs font-bold uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
                 >
                   <Zap className="w-4 h-4 text-[#00D2FF]" />
-                  <span>Quick Instant Demo Sign In</span>
+                  <span>Quick Instant VIP Demo Sign In</span>
                 </button>
               </div>
 
@@ -459,19 +497,19 @@ export default function AccountPage() {
           </div>
         )}
 
-        {/* AUTHENTICATED STATE: Clean Customer Dashboard */}
+        {/* ── AUTHENTICATED STATE: VIP Customer Terminal Dashboard ── */}
         {user && (
           <section className="px-6 md:px-12 max-w-5xl w-full mx-auto pb-32 font-sans">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-8 mt-6"
+              className="space-y-8 mt-4"
             >
-              {/* User Profile Overview */}
-              <div className="bg-neutral-950 border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
+              {/* User Profile Header Card */}
+              <div className="glass-panel-glow bg-[#0a0a0e]/95 border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
                 <div className="flex items-center gap-5 text-center sm:text-left">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d2ff] to-purple-500 p-[2px] shrink-0">
-                    <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00D2FF] to-purple-600 p-[2px] shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.4)]">
+                    <div className="w-full h-full rounded-[14px] bg-[#030305] flex items-center justify-center overflow-hidden">
                       {user?.user_metadata?.avatar_url ? (
                         <img
                           src={user.user_metadata.avatar_url}
@@ -479,7 +517,7 @@ export default function AccountPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-xl font-bold text-white font-mono">
+                        <span className="text-xl font-black text-white font-mono">
                           {displayName.substring(0, 2).toUpperCase()}
                         </span>
                       )}
@@ -488,9 +526,9 @@ export default function AccountPage() {
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 justify-center sm:justify-start">
-                      <h2 className="text-xl font-bold text-white font-sans">{displayName}</h2>
+                      <h2 className="text-xl font-extrabold text-white font-display">{displayName}</h2>
                       {isGoogleUser && (
-                        <span className="px-2.5 py-0.5 rounded bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/40 text-[9px] font-mono font-bold uppercase tracking-wider">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/40 text-[9px] font-mono font-bold uppercase tracking-wider">
                           Google Verified
                         </span>
                       )}
@@ -501,29 +539,111 @@ export default function AccountPage() {
 
                 <button
                   onClick={handleSignOut}
-                  className="px-4 py-2.5 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-3 rounded-2xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
                 >
-                  <LogOut className="w-3.5 h-3.5" /> Sign Out
+                  <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </div>
 
-              {/* Account Dashboard Quick Navigation */}
-              <div className="space-y-3 font-mono">
+              {/* VIP Membership Privilege Tier Banner */}
+              <div className="glass-panel p-6 rounded-3xl border border-[#00D2FF]/30 bg-gradient-to-r from-[#00D2FF]/10 via-[#0a0a0e] to-purple-900/10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(0,210,255,0.1)]">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#00D2FF]/20 border border-[#00D2FF]/40 flex items-center justify-center text-[#00D2FF] shrink-0">
+                    <Crown className="w-6 h-6 text-[#00D2FF]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-[#00D2FF]">
+                        TIER 02 // CYBER VIP COLLECTOR
+                      </span>
+                      <span className="w-2 h-2 rounded-full bg-[#00D2FF] animate-pulse" />
+                    </div>
+                    <p className="text-xs text-neutral-300 font-mono mt-1">
+                      Privileges: Free Worldwide Shipping + 450GSM Drop 01 Priority Queue
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 font-mono text-center">
+                    <span className="block text-[9px] uppercase tracking-wider text-neutral-400">VIP Promo Code</span>
+                    <button
+                      onClick={() => copyToClipboard('AURA-VIP-20')}
+                      className="text-xs font-bold text-[#00D2FF] flex items-center gap-1.5 hover:underline cursor-pointer"
+                    >
+                      <span>AURA-VIP-20</span>
+                      {copiedCode === 'AURA-VIP-20' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Orders Shipment Preview */}
+              <div className="space-y-4 font-mono">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-white flex items-center gap-2">
+                    <Truck className="w-4 h-4 text-[#00D2FF]" />
+                    Active Shipments & Order Status
+                  </h3>
+                  <a href="/user-dashboard" className="text-[10px] text-[#00D2FF] hover:underline uppercase tracking-wider">
+                    View All Orders →
+                  </a>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {mockOrders.map((ord) => (
+                    <div
+                      key={ord.id}
+                      className="glass-panel p-5 rounded-2xl border border-white/15 bg-[#0a0a0e]/90 hover:border-[#00D2FF]/40 transition-all space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#00D2FF]">
+                          {ord.id}
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[9px] font-bold">
+                          {ord.status}
+                        </span>
+                      </div>
+
+                      <p className="text-xs font-bold text-white font-sans">{ord.item}</p>
+
+                      <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-2 border-t border-white/10">
+                        <span>ETA: {ord.eta}</span>
+                        <button
+                          onClick={() => copyToClipboard(ord.trackingCode)}
+                          className="flex items-center gap-1 text-neutral-300 hover:text-white transition-colors"
+                        >
+                          <span>{ord.trackingCode}</span>
+                          {copiedCode === ord.trackingCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Account Quick Navigation Grid */}
+              <div className="space-y-3 font-mono pt-4">
+                <h3 className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-white flex items-center gap-2">
+                  <Key className="w-4 h-4 text-[#00D2FF]" />
+                  Portal Preferences & Shortcuts
+                </h3>
+
                 {menuItems.map((item) => (
                   <a
                     key={item.title}
                     href={item.href}
-                    className="bg-neutral-950 border border-white/10 hover:border-[#00D2FF] rounded-2xl p-5 flex items-center justify-between group transition-all"
+                    className="glass-panel border border-white/10 hover:border-[#00D2FF] bg-[#0a0a0e]/80 rounded-2xl p-5 flex items-center justify-between group transition-all"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/40 transition-all">
-                        <item.icon className="w-4 h-4" />
+                      <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/40 transition-all">
+                        <item.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
                           {item.title}
-                        </h3>
-                        <p className="text-[10px] text-neutral-300 mt-0.5">{item.description}</p>
+                        </h4>
+                        <p className="text-[10px] text-neutral-400 mt-0.5">{item.description}</p>
                       </div>
                     </div>
 

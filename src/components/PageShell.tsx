@@ -11,7 +11,7 @@ export default function PageShell({
   return (
     <main className={`relative min-h-screen bg-black text-white w-full overflow-x-hidden ${className}`}>
       <Header />
-      <div className="pt-[80px] md:pt-[100px]">
+      <div className="pt-[90px] md:pt-[110px]">
         {children}
       </div>
       <Footer />
