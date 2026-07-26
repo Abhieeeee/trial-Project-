@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 import StoreProductCard from "@/components/StoreProductCard";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
@@ -50,58 +51,98 @@ export default function ProductGrid() {
   const containerVariants = {
     hidden: {},
     visible: {
-      transition: {
-        staggerChildren: 0.15,
-      },
+      transition: { staggerChildren: 0.14 },
     },
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0, y: 48 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
   return (
-    <section id="shop" className="py-28 bg-black relative z-10 px-6 md:px-12 font-sans border-t border-white/5">
+    <section id="shop" className="py-32 bg-[#030305] relative z-10 px-6 md:px-12 font-sans border-t border-white/[0.05]">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-[#00D2FF] mb-3 font-semibold font-mono">
-              Drop 01 // Collection Catalog
-            </p>
-            <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-wider font-display text-white">
-              The Collection
+            {/* Decorative line + label */}
+            <div className="flex items-center gap-3 mb-5">
+              <span className="w-8 h-[1px] bg-[#00D2FF]" />
+              <p className="text-[9px] uppercase tracking-[0.32em] text-[#00D2FF] font-bold font-mono">
+                Drop 01 // Collection Catalog
+              </p>
+            </div>
+
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-[0.08em] font-display text-white text-glow-white">
+              The <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-500">Collection</span>
             </h2>
           </div>
-          <p className="text-xs text-neutral-400 max-w-sm tracking-wide leading-relaxed font-sans">
-            Constructed using heavy-cotton blends, waterproof tech fabrics, and luxury hardware. Tailored for modern silhouettes.
-          </p>
+
+          <div className="flex flex-col gap-3 max-w-xs">
+            <p className="text-xs text-neutral-400 tracking-wide leading-relaxed font-mono">
+              Constructed using heavy-cotton blends, waterproof tech fabrics, and luxury hardware. Tailored for modern silhouettes.
+            </p>
+            {/* Stat badges */}
+            <div className="flex gap-3">
+              {[
+                { val: "450", unit: "GSM" },
+                { val: "4", unit: "Colorways" },
+                { val: "S–XL", unit: "Sizing" },
+              ].map(({ val, unit }) => (
+                <div key={unit} className="glass-panel px-3 py-2 rounded-xl border border-white/8 text-center">
+                  <span className="block text-white font-black text-sm font-display">{val}</span>
+                  <span className="block text-neutral-500 text-[7px] uppercase tracking-[0.2em] font-mono">{unit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
+        {/* Product Cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
-          {items.map((product) => (
-            <motion.div key={product.id} variants={cardVariants}>
-              <StoreProductCard product={product} />
+          {items.map((product, index) => (
+            <motion.div
+              key={product.id}
+              variants={cardVariants}
+              className="tilt-card-wrap"
+            >
+              <div className="tilt-card-inner">
+                {/* NEW DROP ribbon on first item */}
+                {index === 0 && (
+                  <div className="relative">
+                    <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00D2FF] text-black text-[7px] uppercase tracking-[0.22em] font-black font-mono shadow-[0_0_12px_rgba(0,210,255,0.5)]">
+                      <span className="w-1 h-1 rounded-full bg-black animate-pulse" />
+                      New Drop
+                    </div>
+                    <StoreProductCard product={product} />
+                  </div>
+                )}
+                {index !== 0 && <StoreProductCard product={product} />}
+              </div>
             </motion.div>
           ))}
         </motion.div>
 
-        <div className="mt-16 text-center">
+        {/* Explore All CTA */}
+        <div className="mt-20 text-center">
           <Link
             href="/shop"
-            className="inline-flex px-8 py-3.5 rounded-lg border border-white/10 text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-300 hover:text-white hover:border-white/30 hover:bg-white/[0.03] transition-all duration-300 font-mono"
+            className="group inline-flex items-center gap-3 px-10 py-4 rounded-2xl border border-white/12 text-[10px] uppercase tracking-[0.28em] font-bold text-neutral-300 hover:text-white hover:border-[#00D2FF]/40 hover:bg-[#00D2FF]/[0.04] transition-all duration-300 font-mono backdrop-blur-sm shadow-[0_0_0_1px_rgba(255,255,255,0.03)]"
           >
-            Explore All Garments
+            <span>Explore All Garments</span>
+            <ArrowUpRight className="w-4 h-4 text-[#00D2FF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
           </Link>
         </div>
       </div>
