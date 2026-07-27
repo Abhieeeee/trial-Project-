@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CreditCard,
   Heart,
@@ -22,17 +22,15 @@ import {
   Zap,
   UserCheck,
   Truck,
-  Clock,
   Copy,
   Check,
   Crown,
-  Tag,
   Key,
-} from 'lucide-react';
-import PageShell from '@/components/PageShell';
-import PageIntro from '@/components/PageIntro';
-import { createClient } from '@/lib/supabase/client';
-import { useWishlist } from '@/lib/wishlistContext';
+} from "lucide-react";
+import PageShell from "@/components/PageShell";
+import PageIntro from "@/components/PageIntro";
+import { createClient } from "@/lib/supabase/client";
+import { useWishlist } from "@/lib/wishlistContext";
 
 function GoogleIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -60,33 +58,33 @@ function GoogleIcon({ className = "w-5 h-5" }: { className?: string }) {
 const menuItems = [
   {
     icon: Package,
-    title: 'Order History & Tracking',
-    description: 'Track active shipments & delivery progress',
-    href: '/user-dashboard',
+    title: "Order History & Tracking",
+    description: "Track active shipments & delivery progress",
+    href: "/user-dashboard",
   },
   {
     icon: Heart,
-    title: 'Saved Wishlist',
-    description: 'View saved 450GSM streetwear garments',
-    href: '/shop',
+    title: "Saved Wishlist",
+    description: "View saved 450GSM streetwear garments",
+    href: "/shop",
   },
   {
     icon: MapPin,
-    title: 'Shipping Destinations',
-    description: 'Manage Nepal & international delivery addresses',
-    href: '/checkout',
+    title: "Shipping Destinations",
+    description: "Manage Nepal & international delivery addresses",
+    href: "/checkout",
   },
   {
     icon: CreditCard,
-    title: 'Payment Methods',
-    description: 'Cards, eSewa, Khalti & Apple Pay',
-    href: '/checkout',
+    title: "Payment Methods",
+    description: "Cards, eSewa, Khalti & Apple Pay",
+    href: "/checkout",
   },
   {
     icon: Shield,
-    title: 'Portal Security & Access',
-    description: 'Account settings, MFA & credentials',
-    href: '/account',
+    title: "Portal Security & Access",
+    description: "Account settings, MFA & credentials",
+    href: "/account",
   },
 ];
 
@@ -96,9 +94,7 @@ const mockOrders = [
     item: "Moto Techwear Leather Jacket",
     amount: "€680",
     status: "In Transit",
-    step: 3,
     trackingCode: "NP-KT-9048201",
-    carrier: "Express Nepal Air",
     eta: "Jul 27, 2026",
   },
   {
@@ -106,9 +102,7 @@ const mockOrders = [
     item: "Essential Geometry Hoodie 450GSM",
     amount: "€245",
     status: "Packed",
-    step: 2,
     trackingCode: "DHL-EX-4920194",
-    carrier: "DHL Express",
     eta: "Aug 1, 2026",
   },
 ];
@@ -117,12 +111,12 @@ export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [signingIn, setSigningIn] = useState(false);
-  const [authMode, setAuthMode] = useState<'magic' | 'password'>('magic');
-  const [emailInput, setEmailInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
+  const [authMode, setAuthMode] = useState<"magic" | "password">("magic");
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [authFeedback, setAuthFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [authFeedback, setAuthFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const { totalWishlist } = useWishlist();
 
   const supabase = createClient();
@@ -134,13 +128,13 @@ export default function AccountPage() {
         if (data.user) {
           setUser(data.user);
         } else {
-          const savedSession = localStorage.getItem('aura_user_session');
+          const savedSession = localStorage.getItem("aura_user_session");
           if (savedSession) {
             setUser(JSON.parse(savedSession));
           }
         }
       } catch (err) {
-        console.error('User check error:', err);
+        console.error("User check error:", err);
       } finally {
         setLoading(false);
       }
@@ -162,9 +156,9 @@ export default function AccountPage() {
     setAuthFeedback(null);
 
     try {
-      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${origin}/auth/callback`,
         },
@@ -173,28 +167,28 @@ export default function AccountPage() {
       if (error) {
         const googleSession = {
           id: `goog-user-${Date.now()}`,
-          email: 'collector.aura@gmail.com',
+          email: "collector.aura@gmail.com",
           user_metadata: {
-            full_name: 'Google Verified Collector',
-            avatar_url: '',
+            full_name: "Google Verified Collector",
+            avatar_url: "",
           },
-          app_metadata: { provider: 'google' },
+          app_metadata: { provider: "google" },
         };
-        localStorage.setItem('aura_user_session', JSON.stringify(googleSession));
+        localStorage.setItem("aura_user_session", JSON.stringify(googleSession));
         setUser(googleSession);
-        setAuthFeedback({ type: 'success', message: 'Google Authentication Successful!' });
+        setAuthFeedback({ type: "success", message: "Google Authentication Successful!" });
       }
     } catch {
       const googleSession = {
         id: `goog-user-${Date.now()}`,
-        email: 'collector.aura@gmail.com',
+        email: "collector.aura@gmail.com",
         user_metadata: {
-          full_name: 'Google Verified Collector',
-          avatar_url: '',
+          full_name: "Google Verified Collector",
+          avatar_url: "",
         },
-        app_metadata: { provider: 'google' },
+        app_metadata: { provider: "google" },
       };
-      localStorage.setItem('aura_user_session', JSON.stringify(googleSession));
+      localStorage.setItem("aura_user_session", JSON.stringify(googleSession));
       setUser(googleSession);
     } finally {
       setSigningIn(false);
@@ -212,16 +206,16 @@ export default function AccountPage() {
         id: `usr-${Date.now()}`,
         email: emailInput,
         user_metadata: {
-          full_name: emailInput.split('@')[0],
-          avatar_url: '',
+          full_name: emailInput.split("@")[0],
+          avatar_url: "",
         },
-        app_metadata: { provider: 'email' },
+        app_metadata: { provider: "email" },
       };
-      localStorage.setItem('aura_user_session', JSON.stringify(simulatedUser));
+      localStorage.setItem("aura_user_session", JSON.stringify(simulatedUser));
       setUser(simulatedUser);
       setSigningIn(false);
-      setAuthFeedback({ type: 'success', message: 'Signed in successfully!' });
-    }, 500);
+      setAuthFeedback({ type: "success", message: "Signed in successfully!" });
+    }, 400);
   };
 
   const handleDemoSignIn = () => {
@@ -230,25 +224,25 @@ export default function AccountPage() {
     setTimeout(() => {
       const demoUser = {
         id: `usr-demo-${Date.now()}`,
-        email: 'collector.aura@gmail.com',
+        email: "collector.aura@gmail.com",
         user_metadata: {
-          full_name: 'Aura VIP Collector',
-          avatar_url: '',
+          full_name: "Aura VIP Collector",
+          avatar_url: "",
         },
-        app_metadata: { provider: 'demo' },
+        app_metadata: { provider: "demo" },
       };
-      localStorage.setItem('aura_user_session', JSON.stringify(demoUser));
+      localStorage.setItem("aura_user_session", JSON.stringify(demoUser));
       setUser(demoUser);
       setSigningIn(false);
-      setAuthFeedback({ type: 'success', message: 'Authenticated as VIP Collector!' });
-    }, 400);
+      setAuthFeedback({ type: "success", message: "Authenticated as VIP Collector!" });
+    }, 350);
   };
 
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
     } catch {}
-    localStorage.removeItem('aura_user_session');
+    localStorage.removeItem("aura_user_session");
     setUser(null);
     setAuthFeedback(null);
   };
@@ -259,13 +253,12 @@ export default function AccountPage() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Maya Rivera';
-  const displayEmail = user?.email || 'collector.aura@gmail.com';
-  const isGoogleUser = user?.app_metadata?.provider === 'google' || user?.id?.startsWith('goog-');
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Maya Rivera";
+  const displayEmail = user?.email || "collector.aura@gmail.com";
+  const isGoogleUser = user?.app_metadata?.provider === "google" || user?.id?.startsWith("goog-");
 
   return (
     <PageShell>
-      {/* Authenticated State Header */}
       {user && (
         <PageIntro
           eyebrow="Customer Account // VIP Terminal"
@@ -275,318 +268,258 @@ export default function AccountPage() {
       )}
 
       <div className="w-full flex flex-col items-center justify-center font-sans">
-        {/* Loading State Skeleton */}
         {loading && (
-          <div className="min-h-[70vh] flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 rounded-full border-2 border-[#00D2FF] border-t-transparent animate-spin mb-4" />
-            <p className="text-xs font-mono text-neutral-300 uppercase tracking-widest animate-pulse">
-              Verifying Customer Credentials...
+          <div className="min-h-[60vh] flex flex-col items-center justify-center py-16">
+            <div className="w-10 h-10 rounded-full border-2 border-[#00D2FF] border-t-transparent animate-spin mb-4" />
+            <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-[0.25em] animate-pulse">
+              Verifying Credentials...
             </p>
           </div>
         )}
 
-        {/* ── UNAUTHENTICATED STATE: Luxury Dark Cyberpunk Login Portal ── */}
+        {/* ── UNAUTHENTICATED STATE: Minimalist Floating Glass Card ── */}
         {!user && !loading && (
-          <div className="w-full min-h-[85vh] flex items-center justify-center px-4 sm:px-6 pt-12 pb-20 relative">
-            {/* Ambient Dual Backlight Glow Orbs */}
-            <div className="absolute w-[500px] h-[500px] bg-gradient-to-tr from-[#00D2FF]/20 via-blue-600/15 to-purple-600/20 rounded-full blur-[140px] pointer-events-none animate-pulse" />
-            <div className="absolute w-[300px] h-[300px] bg-[#00D2FF]/10 rounded-full blur-[100px] pointer-events-none" />
-
+          <div className="w-full min-h-[80vh] flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 relative">
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              initial={{ opacity: 0, scale: 0.97, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-lg glass-panel-glow bg-[#0a0a0e]/95 border border-white/20 rounded-3xl p-8 sm:p-12 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl relative z-10 my-auto"
+              className="w-full max-w-md glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-3xl p-8 sm:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative z-10 my-auto space-y-6"
             >
-              {/* Portal Header */}
-              <div className="text-center space-y-4 mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-[#00D2FF]/20 to-white/5 border border-[#00D2FF]/40 flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(0,210,255,0.25)] text-[#00D2FF]">
-                  <Sparkles className="w-8 h-8 text-[#00D2FF]" />
+              {/* Card Header */}
+              <div className="text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#00D2FF]/10 border border-[#00D2FF]/30 flex items-center justify-center mx-auto text-[#00D2FF] shadow-[0_0_20px_rgba(0,210,255,0.2)]">
+                  <Sparkles className="w-6 h-6 text-[#00D2FF]" />
                 </div>
-
                 <div>
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00D2FF]/10 border border-[#00D2FF]/30 text-[#00D2FF] text-[10px] font-bold uppercase tracking-[0.25em] font-mono mb-3">
-                    <UserCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
-                    AURA STREET // PRIVATE PORTAL
+                  <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#00D2FF] mb-1">
+                    Customer Portal
                   </span>
-                  <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white font-display mt-1">
-                    Customer Sign In
+                  <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-display">
+                    Sign In
                   </h1>
-                  <p className="text-xs sm:text-sm text-neutral-300 font-mono leading-relaxed mt-3 max-w-md mx-auto">
-                    Sign in to track orders, manage saved items, and receive drop access.
+                  <p className="text-xs text-neutral-400 font-mono mt-1">
+                    Access orders, saved garments & drop access.
                   </p>
                 </div>
               </div>
 
-              {/* 1-Click Google Sign In Button */}
-              <div className="mb-6">
-                <motion.button
-                  whileHover={{ scale: 1.015 }}
-                  whileTap={{ scale: 0.985 }}
-                  onClick={handleGoogleLogin}
-                  disabled={signingIn}
-                  className="w-full py-4 px-6 bg-white hover:bg-neutral-100 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-3 text-xs sm:text-sm uppercase tracking-wider cursor-pointer shadow-[0_4px_25px_rgba(255,255,255,0.25)] font-mono border border-white"
-                >
-                  <GoogleIcon className="w-5 h-5 shrink-0" />
-                  <span className="font-extrabold text-black">
-                    {signingIn ? 'Authenticating...' : 'Continue with Google'}
-                  </span>
-                </motion.button>
-              </div>
+              {/* 1-Click Google Sign In */}
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={signingIn}
+                className="w-full py-3.5 px-5 bg-white hover:bg-neutral-100 text-black font-mono font-bold rounded-xl transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-wider cursor-pointer active:scale-95 shadow-md"
+              >
+                <GoogleIcon className="w-4 h-4 shrink-0" />
+                <span>{signingIn ? "Authenticating..." : "Continue with Google"}</span>
+              </button>
 
-              {/* High-Contrast Or Divider */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="h-[1px] flex-1 bg-white/15" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono font-bold px-3 py-1 bg-white/[0.04] rounded-full border border-white/10">
-                  OR SIGN IN WITH EMAIL
+              {/* Minimal Divider */}
+              <div className="flex items-center gap-4">
+                <div className="h-[1px] flex-1 bg-white/10" />
+                <span className="text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
+                  OR EMAIL
                 </span>
-                <div className="h-[1px] flex-1 bg-white/15" />
+                <div className="h-[1px] flex-1 bg-white/10" />
               </div>
 
-              {/* Auth Mode Toggle Tabs (Magic Link vs Password) */}
-              <div className="grid grid-cols-2 p-1.5 bg-white/[0.04] border border-white/15 rounded-2xl font-mono text-xs mb-6">
+              {/* Auth Mode Selector */}
+              <div className="grid grid-cols-2 p-1 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-[10px] uppercase tracking-wider">
                 <button
                   type="button"
-                  onClick={() => setAuthMode('magic')}
-                  className={`py-3 px-4 rounded-xl font-bold transition-all text-center cursor-pointer ${
-                    authMode === 'magic'
-                      ? 'bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]'
-                      : 'text-neutral-400 hover:text-white'
+                  onClick={() => setAuthMode("magic")}
+                  className={`py-2.5 px-3 rounded-lg font-bold transition-all text-center cursor-pointer active:scale-95 ${
+                    authMode === "magic"
+                      ? "bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]"
+                      : "text-neutral-400 hover:text-white"
                   }`}
                 >
                   Magic Access
                 </button>
                 <button
                   type="button"
-                  onClick={() => setAuthMode('password')}
-                  className={`py-3 px-4 rounded-xl font-bold transition-all text-center cursor-pointer ${
-                    authMode === 'password'
-                      ? 'bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]'
-                      : 'text-neutral-400 hover:text-white'
+                  onClick={() => setAuthMode("password")}
+                  className={`py-2.5 px-3 rounded-lg font-bold transition-all text-center cursor-pointer active:scale-95 ${
+                    authMode === "password"
+                      ? "bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]"
+                      : "text-neutral-400 hover:text-white"
                   }`}
                 >
-                  Password Login
+                  Password
                 </button>
               </div>
 
-              {/* Feedback Message */}
+              {/* Feedback Banner */}
               <AnimatePresence>
                 {authFeedback && (
                   <motion.div
-                    role="alert"
-                    aria-live="polite"
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                    animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={`p-4 rounded-2xl flex items-center gap-3 text-xs font-mono font-bold mb-6 ${
-                      authFeedback.type === 'success'
-                        ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
-                        : 'bg-red-500/15 border border-red-500/40 text-red-300'
+                    className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-mono font-bold ${
+                      authFeedback.type === "success"
+                        ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
+                        : "bg-red-500/10 border border-red-500/30 text-red-400"
                     }`}
                   >
-                    {authFeedback.type === 'success' ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    {authFeedback.type === "success" ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                     ) : (
-                      <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                     )}
                     <span>{authFeedback.message}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* High-Contrast Email / Password Sign In Form */}
-              <form onSubmit={handleEmailSignIn} className="space-y-5 font-mono">
-                <div className="space-y-2 text-left">
-                  <label
-                    htmlFor="customer-email"
-                    className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-300"
-                  >
-                    <Mail className="w-3.5 h-3.5 text-[#00D2FF]" />
-                    <span>Email Address</span>
+              {/* Minimal Form Inputs */}
+              <form onSubmit={handleEmailSignIn} className="space-y-4 font-mono">
+                <div className="space-y-1 text-left">
+                  <label htmlFor="customer-email" className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-semibold">
+                    Email Address *
                   </label>
-                  <input
-                    id="customer-email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="name@example.com"
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:ring-1 focus:ring-[#00D2FF]/40 rounded-2xl py-4 px-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-mono font-medium"
-                  />
+                  <div className="relative rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                    <input
+                      id="customer-email"
+                      type="email"
+                      required
+                      placeholder="name@aurastreet.com"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className="w-full bg-transparent py-3 px-4 text-xs uppercase tracking-wider focus:outline-none text-white placeholder:text-neutral-600"
+                    />
+                  </div>
                 </div>
 
-                {authMode === 'password' && (
-                  <div className="space-y-2 text-left">
-                    <div className="flex items-center justify-between">
-                      <label
-                        htmlFor="customer-password"
-                        className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-300"
-                      >
-                        <Lock className="w-3.5 h-3.5 text-[#00D2FF]" />
-                        <span>Password</span>
+                {authMode === "password" && (
+                  <div className="space-y-1 text-left">
+                    <div className="flex justify-between items-center">
+                      <label htmlFor="customer-password" className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-semibold">
+                        Password *
                       </label>
-                      <span className="text-[10px] text-[#00D2FF] hover:underline cursor-pointer">
-                        Forgot?
-                      </span>
+                      <span className="text-[9px] text-[#00D2FF] hover:underline cursor-pointer">Forgot?</span>
                     </div>
-                    <div className="relative">
+                    <div className="relative rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
                       <input
                         id="customer-password"
-                        type={showPassword ? 'text' : 'password'}
+                        type={showPassword ? "text" : "password"}
                         required
-                        autoComplete="current-password"
                         placeholder="••••••••••••"
                         value={passwordInput}
                         onChange={(e) => setPasswordInput(e.target.value)}
-                        className="w-full bg-white/[0.04] border border-white/20 focus:border-[#00D2FF] focus:ring-1 focus:ring-[#00D2FF]/40 rounded-2xl py-4 pl-4 pr-12 text-sm text-white placeholder:text-neutral-500 focus:outline-none transition-all shadow-inner font-mono font-medium"
+                        className="w-full bg-transparent py-3 pl-4 pr-10 text-xs focus:outline-none text-white placeholder:text-neutral-600"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer p-1.5"
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
                       >
-                        {showPassword ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       </button>
                     </div>
                   </div>
                 )}
 
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
+                <button
                   type="submit"
                   disabled={signingIn}
-                  className="w-full py-4 px-6 bg-[#00D2FF] hover:bg-cyan-400 text-black font-extrabold rounded-2xl transition-all flex items-center justify-center gap-2 text-xs sm:text-sm uppercase tracking-widest cursor-pointer shadow-[0_0_30px_rgba(0,210,255,0.35)] font-mono mt-6"
+                  className="w-full py-3.5 px-5 bg-[#00D2FF] hover:bg-cyan-400 text-black font-extrabold rounded-xl transition-all text-xs uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
                 >
-                  <span>
-                    {signingIn
-                      ? 'Authenticating...'
-                      : authMode === 'magic'
-                      ? 'Send Magic Access Link'
-                      : 'Sign In to Account'}
-                  </span>
+                  <span>{signingIn ? "Authorizing..." : authMode === "magic" ? "Send Magic Link" : "Sign In"}</span>
                   <ArrowRight className="w-4 h-4" />
-                </motion.button>
+                </button>
               </form>
 
-              {/* Quick Instant VIP Demo Sign In Button */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={handleDemoSignIn}
-                  disabled={signingIn}
-                  className="w-full py-3.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/20 text-neutral-200 hover:text-white font-mono text-xs font-bold uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-                >
-                  <Zap className="w-4 h-4 text-[#00D2FF]" />
-                  <span>Quick Instant VIP Demo Sign In</span>
-                </button>
-              </div>
+              {/* Instant VIP Demo Button */}
+              <button
+                type="button"
+                onClick={handleDemoSignIn}
+                disabled={signingIn}
+                className="w-full py-3 px-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 text-neutral-300 font-mono text-[10px] uppercase tracking-[0.18em] rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              >
+                <Zap className="w-3.5 h-3.5 text-[#00D2FF]" />
+                <span>Instant Demo Sign In</span>
+              </button>
 
-              {/* 256-Bit SSL Encrypted Footer */}
-              <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono border-t border-white/10 pt-6">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#00D2FF]" />
-                <span>256-Bit SSL Encrypted Customer Auth</span>
+              <div className="flex items-center justify-center gap-2 text-[8px] uppercase tracking-widest text-neutral-500 font-mono pt-2 border-t border-white/5">
+                <ShieldCheck className="w-3 h-3 text-[#00D2FF]" /> 256-BIT SSL ENCRYPTED SESSION
               </div>
             </motion.div>
           </div>
         )}
 
-        {/* ── AUTHENTICATED STATE: VIP Customer Terminal Dashboard ── */}
+        {/* ── AUTHENTICATED STATE: Minimalist Customer Portal ── */}
         {user && (
-          <section className="px-6 md:px-12 max-w-5xl w-full mx-auto pb-32 font-sans">
+          <section className="px-6 md:px-12 max-w-5xl w-full mx-auto pb-28 font-sans">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-8 mt-4"
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="space-y-8 mt-2"
             >
-              {/* User Profile Header Card */}
-              <div className="glass-panel-glow bg-[#0a0a0e]/95 border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
+              {/* Customer Profile Header */}
+              <div className="glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
                 <div className="flex items-center gap-5 text-center sm:text-left">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00D2FF] to-purple-600 p-[2px] shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.4)]">
-                    <div className="w-full h-full rounded-[14px] bg-[#030305] flex items-center justify-center overflow-hidden">
-                      {user?.user_metadata?.avatar_url ? (
-                        <img
-                          src={user.user_metadata.avatar_url}
-                          alt={displayName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-xl font-black text-white font-mono">
-                          {displayName.substring(0, 2).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
+                  <div className="w-14 h-14 rounded-xl bg-[#00D2FF]/20 border border-[#00D2FF]/40 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
+                    <span className="text-lg font-black text-[#00D2FF] font-mono">
+                      {displayName.substring(0, 2).toUpperCase()}
+                    </span>
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 justify-center sm:justify-start">
-                      <h2 className="text-xl font-extrabold text-white font-display">{displayName}</h2>
+                      <h2 className="text-lg font-bold text-white font-display uppercase tracking-wider">{displayName}</h2>
                       {isGoogleUser && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#00D2FF]/15 text-[#00D2FF] border border-[#00D2FF]/40 text-[9px] font-mono font-bold uppercase tracking-wider">
-                          Google Verified
+                        <span className="px-2 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase tracking-widest">
+                          Verified
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-neutral-300 font-mono">{displayEmail}</p>
+                    <p className="text-xs text-neutral-400 font-mono">{displayEmail}</p>
                   </div>
                 </div>
 
                 <button
                   onClick={handleSignOut}
-                  className="px-5 py-3 rounded-2xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+                  className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
-                  <LogOut className="w-4 h-4" /> Sign Out
+                  <LogOut className="w-3.5 h-3.5" /> Sign Out
                 </button>
               </div>
 
-              {/* VIP Membership Privilege Tier Banner */}
-              <div className="glass-panel p-6 rounded-3xl border border-[#00D2FF]/30 bg-gradient-to-r from-[#00D2FF]/10 via-[#0a0a0e] to-purple-900/10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(0,210,255,0.1)]">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#00D2FF]/20 border border-[#00D2FF]/40 flex items-center justify-center text-[#00D2FF] shrink-0">
-                    <Crown className="w-6 h-6 text-[#00D2FF]" />
-                  </div>
+              {/* VIP Member Privileges */}
+              <div className="glass-panel p-6 rounded-2xl border border-white/10 bg-[#0a0a0e]/70 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <Crown className="w-5 h-5 text-[#00D2FF]" />
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-[#00D2FF]">
-                        TIER 02 // CYBER VIP COLLECTOR
-                      </span>
-                      <span className="w-2 h-2 rounded-full bg-[#00D2FF] animate-pulse" />
-                    </div>
-                    <p className="text-xs text-neutral-300 font-mono mt-1">
-                      Privileges: Free Worldwide Shipping + 450GSM Drop 01 Priority Queue
+                    <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#00D2FF]">
+                      CYBER VIP COLLECTOR // TIER 02
+                    </span>
+                    <p className="text-[10px] text-neutral-400 font-mono mt-0.5">
+                      Free Worldwide Express Shipping + Drop 01 Priority Dispatch
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/10 font-mono text-center">
-                    <span className="block text-[9px] uppercase tracking-wider text-neutral-400">VIP Promo Code</span>
-                    <button
-                      onClick={() => copyToClipboard('AURA-VIP-20')}
-                      className="text-xs font-bold text-[#00D2FF] flex items-center gap-1.5 hover:underline cursor-pointer"
-                    >
-                      <span>AURA-VIP-20</span>
-                      {copiedCode === 'AURA-VIP-20' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    </button>
-                  </div>
-                </div>
+                <button
+                  onClick={() => copyToClipboard("AURA-VIP-20")}
+                  className="px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#00D2FF]/40 text-[#00D2FF] text-[9px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                >
+                  <span>Code: AURA-VIP-20</span>
+                  {copiedCode === "AURA-VIP-20" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                </button>
               </div>
 
-              {/* Active Orders Shipment Preview */}
+              {/* Active Shipments */}
               <div className="space-y-4 font-mono">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-white flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white flex items-center gap-2">
                     <Truck className="w-4 h-4 text-[#00D2FF]" />
-                    Active Shipments & Order Status
+                    Active Shipments
                   </h3>
-                  <a href="/user-dashboard" className="text-[10px] text-[#00D2FF] hover:underline uppercase tracking-wider">
-                    View All Orders →
+                  <a href="/user-dashboard" className="text-[9px] text-[#00D2FF] hover:underline uppercase tracking-wider">
+                    View All →
                   </a>
                 </div>
 
@@ -594,20 +527,20 @@ export default function AccountPage() {
                   {mockOrders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="glass-panel p-5 rounded-2xl border border-white/15 bg-[#0a0a0e]/90 hover:border-[#00D2FF]/40 transition-all space-y-3"
+                      className="glass-panel p-5 rounded-2xl border border-white/10 bg-[#0a0a0e]/80 hover:border-[#00D2FF]/30 transition-all space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-[#00D2FF]">
                           {ord.id}
                         </span>
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[9px] font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-bold uppercase">
                           {ord.status}
                         </span>
                       </div>
 
-                      <p className="text-xs font-bold text-white font-sans">{ord.item}</p>
+                      <p className="text-xs font-semibold text-white font-sans">{ord.item}</p>
 
-                      <div className="flex items-center justify-between text-[10px] text-neutral-400 pt-2 border-t border-white/10">
+                      <div className="flex items-center justify-between text-[9px] text-neutral-400 pt-2 border-t border-white/5">
                         <span>ETA: {ord.eta}</span>
                         <button
                           onClick={() => copyToClipboard(ord.trackingCode)}
@@ -622,34 +555,33 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Account Quick Navigation Grid */}
-              <div className="space-y-3 font-mono pt-4">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-[0.25em] text-white flex items-center gap-2">
+              {/* Portal Shortcuts */}
+              <div className="space-y-3 font-mono pt-2">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white flex items-center gap-2 border-b border-white/10 pb-3">
                   <Key className="w-4 h-4 text-[#00D2FF]" />
-                  Portal Preferences & Shortcuts
+                  Portal Shortcuts
                 </h3>
 
-                {menuItems.map((item) => (
-                  <a
-                    key={item.title}
-                    href={item.href}
-                    className="glass-panel border border-white/10 hover:border-[#00D2FF] bg-[#0a0a0e]/80 rounded-2xl p-5 flex items-center justify-between group transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 group-hover:text-[#00D2FF] group-hover:border-[#00D2FF]/40 transition-all">
-                        <item.icon className="w-5 h-5" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {menuItems.map((item) => (
+                    <a
+                      key={item.title}
+                      href={item.href}
+                      className="glass-panel border border-white/10 hover:border-[#00D2FF]/40 bg-[#0a0a0e]/70 rounded-xl p-4 flex items-center justify-between group transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <item.icon className="w-4 h-4 text-neutral-400 group-hover:text-[#00D2FF] transition-colors" />
+                        <div>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
+                            {item.title}
+                          </h4>
+                          <p className="text-[9px] text-neutral-500">{item.description}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider font-sans group-hover:text-[#00D2FF] transition-colors">
-                          {item.title}
-                        </h4>
-                        <p className="text-[10px] text-neutral-400 mt-0.5">{item.description}</p>
-                      </div>
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                  </a>
-                ))}
+                      <ChevronRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    </a>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </section>

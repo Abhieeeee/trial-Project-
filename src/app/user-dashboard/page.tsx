@@ -66,10 +66,10 @@ const orders: Order[] = [
 const STATUS_STEPS = ["Confirmed", "Packed", "In Transit", "Delivered"];
 
 const statusConfig: Record<OrderStatus, { color: string; dot: string; label: string; icon: React.ComponentType<{ className?: string }> }> = {
-  Pending:   { color: "text-amber-400",  dot: "bg-amber-400",  label: "Pending",   icon: Clock },
-  Shipped:   { color: "text-[#00D2FF]",  dot: "bg-[#00D2FF]", label: "In Transit", icon: Truck },
-  Delivered: { color: "text-emerald-400", dot: "bg-emerald-400", label: "Delivered", icon: CheckCircle2 },
-  Cancelled: { color: "text-red-400",    dot: "bg-red-400",   label: "Cancelled",  icon: Clock },
+  Pending:   { color: "text-amber-400 border-amber-500/30 bg-amber-500/10",  dot: "bg-amber-400",  label: "Pending",   icon: Clock },
+  Shipped:   { color: "text-[#00D2FF] border-[#00D2FF]/30 bg-[#00D2FF]/10",  dot: "bg-[#00D2FF]", label: "In Transit", icon: Truck },
+  Delivered: { color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10", dot: "bg-emerald-400", label: "Delivered", icon: CheckCircle2 },
+  Cancelled: { color: "text-red-400 border-red-500/30 bg-red-500/10",    dot: "bg-red-400",   label: "Cancelled",  icon: Clock },
 };
 
 export default function UserDashboard() {
@@ -82,22 +82,22 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5 font-sans">
+    <div className="max-w-3xl mx-auto space-y-6 font-sans">
 
-      {/* Minimal Page Header */}
+      {/* Minimal Header */}
       <div className="flex items-center justify-between pb-4 border-b border-white/10">
         <div>
-          <h1 className="text-base font-bold text-white font-display tracking-wide">My Orders</h1>
-          <p className="text-[11px] text-neutral-400 mt-0.5">Track your active & past shipments</p>
+          <h1 className="text-lg font-bold text-white font-display uppercase tracking-wider">Order History</h1>
+          <p className="text-xs text-neutral-400 font-mono mt-0.5">Track active & past shipments</p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-300">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-300">
           <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF] animate-pulse" />
-          {orders.filter(o => o.status !== "Delivered").length} active
+          <span>{orders.filter(o => o.status !== "Delivered").length} active shipments</span>
         </div>
       </div>
 
       {/* Order Cards */}
-      <div className="space-y-3">
+      <div className="space-y-4 font-mono">
         {orders.map((order, i) => {
           const cfg = statusConfig[order.status];
           const StatusIcon = cfg.icon;
@@ -105,28 +105,30 @@ export default function UserDashboard() {
           return (
             <motion.div
               key={order.id}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-colors overflow-hidden"
+              transition={{ delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="glass-panel rounded-2xl border border-white/10 bg-[#0a0a0e]/80 hover:border-[#00D2FF]/30 transition-all overflow-hidden"
             >
-              {/* Top Row */}
-              <div className="px-4 pt-4 pb-3 flex items-start justify-between gap-3">
-                <div className="space-y-0.5 min-w-0">
-                  <p className="text-[11px] font-semibold text-white font-sans truncate">{order.item}</p>
-                  <p className="text-[10px] text-neutral-400 font-mono">{order.id} · {order.customer}</p>
+              {/* Header Info */}
+              <div className="p-5 flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-[#00D2FF] uppercase tracking-wider block font-mono">
+                    {order.id} · {order.customer}
+                  </span>
+                  <p className="text-xs font-semibold text-white font-sans">{order.item}</p>
                 </div>
-                <div className="shrink-0 text-right space-y-0.5">
+                <div className="shrink-0 text-right space-y-1">
                   <p className="text-sm font-bold text-white font-mono">{order.amount}</p>
-                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono font-bold ${cfg.color}`}>
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-mono font-bold uppercase border ${cfg.color}`}>
                     <StatusIcon className="w-3 h-3" />
                     <span>{cfg.label}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Delivery Progress — 4 Dot Track */}
-              <div className="px-4 pb-3">
+              {/* Progress Bar */}
+              <div className="px-5 pb-4">
                 <div className="flex items-center gap-1 mb-2">
                   {STATUS_STEPS.map((s, idx) => {
                     const done = order.step > idx + 1;
@@ -138,27 +140,20 @@ export default function UserDashboard() {
                             done ? "bg-emerald-400" : active ? "bg-[#00D2FF]" : "bg-neutral-800"
                           }`}
                         />
-                        {idx < STATUS_STEPS.length - 1 && (
-                          <div
-                            className={`w-1.5 h-1.5 rounded-full mx-0.5 transition-all ${
-                              done ? "bg-emerald-400" : active ? "bg-[#00D2FF] shadow-[0_0_6px_rgba(0,210,255,0.8)]" : "bg-neutral-700"
-                            }`}
-                          />
-                        )}
                       </div>
                     );
                   })}
                 </div>
                 <div className="flex items-center justify-between text-[9px] text-neutral-400 font-mono">
-                  <span>{STATUS_STEPS[order.step - 1]}</span>
-                  <span className={order.status === "Delivered" ? "text-emerald-400 font-semibold" : "text-neutral-200 font-semibold"}>
+                  <span>Step: {STATUS_STEPS[order.step - 1]}</span>
+                  <span className={order.status === "Delivered" ? "text-emerald-400 font-semibold" : "text-neutral-300 font-semibold"}>
                     {order.status === "Delivered" ? "✓ Delivered" : `ETA: ${order.eta}`}
                   </span>
                 </div>
               </div>
 
-              {/* Bottom Meta Bar */}
-              <div className="px-4 py-2.5 border-t border-white/5 flex items-center justify-between gap-2 bg-white/[0.01]">
+              {/* Meta Bar */}
+              <div className="px-5 py-3 border-t border-white/5 flex items-center justify-between gap-3 bg-white/[0.01]">
                 <div className="text-[9px] text-neutral-400 font-mono truncate">
                   <span className="text-neutral-300 font-semibold">{order.carrier}</span>
                   <span className="mx-1.5 text-neutral-600">·</span>
@@ -167,12 +162,13 @@ export default function UserDashboard() {
                 <button
                   onClick={() => copyTracking(order.trackingCode)}
                   aria-label={`Copy tracking code ${order.trackingCode}`}
-                  className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded bg-black border border-white/10 hover:border-white/25 active:scale-95 text-[9px] text-[#00D2FF] font-mono cursor-pointer transition-all min-h-[32px]"
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 hover:border-[#00D2FF]/40 active:scale-95 text-[9px] text-[#00D2FF] font-mono cursor-pointer transition-all min-h-[32px]"
                 >
-                  {copiedId === order.trackingCode
-                    ? <><Check className="w-2.5 h-2.5 text-emerald-400" /> Copied</>
-                    : <><Copy className="w-2.5 h-2.5" /> {order.trackingCode}</>
-                  }
+                  {copiedId === order.trackingCode ? (
+                    <><Check className="w-3 h-3 text-emerald-400" /> Copied</>
+                  ) : (
+                    <><Copy className="w-3 h-3" /> {order.trackingCode}</>
+                  )}
                 </button>
               </div>
             </motion.div>
