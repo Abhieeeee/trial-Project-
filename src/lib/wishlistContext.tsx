@@ -29,6 +29,7 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Initialize wishlist from localStorage
   useEffect(() => {
@@ -38,14 +39,16 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         setItems(JSON.parse(saved));
       }
     } catch {}
+    setIsHydrated(true);
   }, []);
 
   // Save to localStorage on change
   useEffect(() => {
+    if (!isHydrated) return;
     try {
       localStorage.setItem("aura_street_wishlist", JSON.stringify(items));
     } catch {}
-  }, [items]);
+  }, [items, isHydrated]);
 
   const openWishlist = () => setIsOpen(true);
   const closeWishlist = () => setIsOpen(false);
@@ -89,7 +92,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         toggleWishlist,
         removeItem,
         isInWishlist,
-        totalWishlist: items.length,
+        totalWishlist: isHydrated ? items.length : 0,
       }}
     >
       {children}

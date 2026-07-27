@@ -43,6 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const freeShippingThreshold = 200;
 
@@ -52,18 +53,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem("aura_street_cart");
       if (saved) {
         setItems(JSON.parse(saved));
-      } else {
-        setItems([]);
       }
     } catch {}
+    setIsHydrated(true);
   }, []);
 
   // Save to localStorage on change
   useEffect(() => {
+    if (!isHydrated) return;
     try {
       localStorage.setItem("aura_street_cart", JSON.stringify(items));
     } catch {}
-  }, [items]);
+  }, [items, isHydrated]);
 
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
@@ -142,7 +143,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setDiscountPercent(0);
   };
 
-  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
+  const totalItems = isHydrated ? items.reduce((sum, i) => sum + i.quantity, 0) : 0;
   const subtotal = items.reduce((sum, i) => sum + i.numericPrice * i.quantity, 0);
   const discountAmount = (subtotal * discountPercent) / 100;
   const finalTotal = Math.max(0, subtotal - discountAmount);
