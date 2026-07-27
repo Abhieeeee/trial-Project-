@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Send, CheckCircle2, MessageSquarePlus, Sliders, ShieldCheck, Heart } from "lucide-react";
+import { Sparkles, Send, CheckCircle2, Sliders, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 
@@ -22,24 +22,18 @@ export default function PersonalTouchForm() {
   const categories = [
     {
       id: "BESPOKE_CUSTOMIZATION",
-      label: "Bespoke Personal Touch",
-      desc: "Custom sizing, tailored embroidery, or personalized initials",
+      label: "Personal Touch",
       icon: Sparkles,
-      tone: "border-[#00d2ff]/40 bg-[#00d2ff]/10 text-[#00d2ff]",
     },
     {
       id: "STORE_IMPROVEMENT",
-      label: "Website & UX Improvement",
-      desc: "Feature request, UI polish, or store optimization idea",
+      label: "UI Polish",
       icon: Sliders,
-      tone: "border-purple-500/40 bg-purple-500/10 text-purple-400",
     },
     {
       id: "NEPAL_REGIONAL",
-      label: "Nepal & Regional Market Wish",
-      desc: "Local pickup hub, payment integration, or regional drops",
+      label: "Regional Drop",
       icon: Heart,
-      tone: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
     },
   ];
 
@@ -55,7 +49,6 @@ export default function PersonalTouchForm() {
     try {
       const generatedId = `AURA-TOUCH-${Math.floor(10000 + Math.random() * 90000)}`;
 
-      // Store in Supabase audit / orders notes table if available
       await supabase.from("audit_logs").insert([
         {
           action: "PERSONAL_TOUCH_SUBMISSION",
@@ -68,9 +61,7 @@ export default function PersonalTouchForm() {
         id: generatedId,
         timestamp: new Date().toLocaleString(),
       });
-    } catch (err) {
-      console.error("Personal touch submission error:", err);
-      // Fallback local receipt
+    } catch {
       setReceipt({
         id: `AURA-TOUCH-${Math.floor(10000 + Math.random() * 90000)}`,
         timestamp: new Date().toLocaleString(),
@@ -90,15 +81,16 @@ export default function PersonalTouchForm() {
   };
 
   return (
-    <section className="rounded-xl p-5 sm:p-6 font-sans border border-white/10 bg-white/[0.01] backdrop-blur-xl relative overflow-hidden">
+    <section className="glass-panel-glow rounded-2xl p-6 sm:p-8 font-sans bg-[#0a0a0e]/90 border border-white/15 shadow-2xl backdrop-blur-2xl relative overflow-hidden">
       
-      <div className="mb-5 font-mono">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-white font-display flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#00D2FF]" /> Bespoke Customization & Store Feedback
+      <div className="mb-6 font-mono border-b border-white/10 pb-4 flex items-center justify-between">
+        <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-white flex items-center gap-2 font-display">
+          <Sparkles className="w-4 h-4 text-[#00D2FF]" />
+          Bespoke Customization & Feedback
         </h2>
-        <p className="text-[11px] text-neutral-400 mt-1">
-          Tell us your custom sizing requirements, embroidery initials, or store optimization ideas.
-        </p>
+        <span className="text-[9px] uppercase tracking-widest text-[#00D2FF] font-mono">
+          Co-Creation Atelier
+        </span>
       </div>
 
       <AnimatePresence mode="wait">
@@ -109,14 +101,14 @@ export default function PersonalTouchForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="space-y-8 font-mono"
+            className="space-y-6 font-mono"
           >
             {/* Category Selector Cards */}
-            <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-bold mb-3">
-                1. Select Category *
+            <div className="space-y-2">
+              <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
+                Select Category *
               </label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {categories.map((cat) => {
                   const isSelected = category === cat.id;
                   return (
@@ -124,20 +116,17 @@ export default function PersonalTouchForm() {
                       key={cat.id}
                       type="button"
                       onClick={() => setCategory(cat.id)}
-                      className={`p-4 border text-left rounded-xl transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                      className={`p-3.5 border rounded-xl transition-all cursor-pointer flex items-center justify-between active:scale-95 ${
                         isSelected
-                          ? "border-[#00D2FF]/40 bg-[#00D2FF]/10 text-white font-bold"
-                          : "border-white/5 bg-black/40 text-neutral-400 hover:border-white/20 hover:text-white"
+                          ? "border-[#00D2FF]/40 bg-[#00D2FF]/10 text-white font-bold shadow-[0_0_15px_rgba(0,210,255,0.15)]"
+                          : "border-white/10 bg-black/60 text-neutral-400 hover:border-white/20 hover:text-white"
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <cat.icon className="w-5 h-5 shrink-0 text-[#00D2FF]" />
-                        {isSelected && <span className="w-2 h-2 rounded-full bg-[#00D2FF]" />}
-                      </div>
-                      <div>
-                        <h4 className="text-xs uppercase font-bold text-white mb-1">{cat.label}</h4>
-                        <p className="text-[9px] text-neutral-400 leading-normal normal-case">{cat.desc}</p>
-                      </div>
+                      <span className="flex items-center gap-2 text-xs uppercase tracking-wider">
+                        <cat.icon className={`w-4 h-4 ${isSelected ? "text-[#00D2FF]" : "text-neutral-400"}`} />
+                        <span>{cat.label}</span>
+                      </span>
+                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#00D2FF]" />}
                     </button>
                   );
                 })}
@@ -145,90 +134,100 @@ export default function PersonalTouchForm() {
             </div>
 
             {/* Input Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
                   Full Name *
                 </label>
-                <input
-                  required
-                  type="text"
-                  placeholder="E.G. AARAV SHARMA"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
-                />
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                  <input
+                    required
+                    type="text"
+                    placeholder="Aarav Sharma"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
                   Email Address *
                 </label>
-                <input
-                  required
-                  type="email"
-                  placeholder="E.G. AARAV@AURASTREET.COM"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
-                />
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                  <input
+                    required
+                    type="email"
+                    placeholder="aarav@aurastreet.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
-                  Phone / WhatsApp (Optional)
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
+                  Phone / WhatsApp
                 </label>
-                <input
-                  type="text"
-                  placeholder="E.G. +977 9801234567"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
-                />
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                  <input
+                    type="text"
+                    placeholder="+977 9801234567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
-                  Feedback Title / Topic
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
+                  Topic Title
                 </label>
-                <input
-                  type="text"
-                  placeholder="E.G. CUSTOM INITIALS EMBROIDERY ON HOODIE"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg"
-                />
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                  <input
+                    type="text"
+                    placeholder="Custom initials embroidery"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
+                  />
+                </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
-                  Personal Touch Request & Improvement Notes *
+              <div className="sm:col-span-2 space-y-1">
+                <label className="block text-[11px] uppercase tracking-widest text-neutral-400 font-mono">
+                  Request Details *
                 </label>
-                <textarea
-                  required
-                  rows={5}
-                  placeholder="Describe your personal touch request (e.g., custom chest emblem, sleeve length adjustment) or your suggestions to improve Aura Street storefront..."
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3.5 text-white text-[10px] uppercase focus:outline-none focus:border-[#00D2FF] rounded-lg resize-none"
-                />
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
+                  <textarea
+                    required
+                    rows={4}
+                    placeholder="Describe custom sizing measurements, chest emblem placement, or feature requests..."
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none resize-none"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Preferred Channel & Submit */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-4 text-[9px] uppercase tracking-wider text-neutral-400">
-                <span>Preferred Contact:</span>
-                <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-neutral-400">
+                <span>Contact via:</span>
+                <div className="flex gap-1.5">
                   {["EMAIL", "WHATSAPP", "PHONE"].map((pref) => (
                     <button
                       key={pref}
                       type="button"
                       onClick={() => setContactPref(pref)}
-                      className={`px-3 py-1 border rounded-lg cursor-pointer transition-colors ${
+                      className={`px-2.5 py-1 border rounded-lg cursor-pointer transition-colors text-[9px] active:scale-95 ${
                         contactPref === pref
                           ? "border-[#00D2FF] text-[#00D2FF] font-bold bg-[#00D2FF]/10"
-                          : "border-white/10 text-neutral-500 hover:text-white"
+                          : "border-white/10 text-neutral-400 hover:text-white"
                       }`}
                     >
                       {pref}
@@ -240,13 +239,13 @@ export default function PersonalTouchForm() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-8 py-3.5 bg-white text-black font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-[#00D2FF] transition-colors flex items-center justify-center gap-2 cursor-pointer rounded-lg shadow-lg"
+                className="w-full sm:w-auto px-6 py-3 bg-[#00D2FF] hover:bg-cyan-400 text-black font-extrabold text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 cursor-pointer rounded-xl active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
               >
                 {submitting ? (
-                  <span>Transmitting Notes...</span>
+                  <span>Transmitting...</span>
                 ) : (
                   <>
-                    Submit Notes <Send className="w-3.5 h-3.5" />
+                    Submit Request <Send className="w-3.5 h-3.5" />
                   </>
                 )}
               </button>
@@ -255,27 +254,27 @@ export default function PersonalTouchForm() {
         ) : (
           <motion.div
             key="touch-receipt"
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="py-12 text-center space-y-6 font-mono max-w-lg mx-auto"
+            className="py-10 text-center space-y-5 font-mono max-w-md mx-auto"
           >
-            <div className="w-16 h-16 rounded-full bg-[#00d2ff]/10 border border-[#00d2ff]/40 text-[#00d2ff] flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-2xl bg-[#00d2ff]/10 border border-[#00d2ff]/40 text-[#00d2ff] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(0,210,255,0.2)]">
+              <CheckCircle2 className="w-7 h-7" />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <span className="text-[9px] uppercase tracking-[0.25em] text-[#00d2ff] font-bold">
-                FEEDBACK LOGGED // DISPATCH TICKET CREATED
+                TICKET DISPATCHED // RECORD LOGGED
               </span>
-              <h3 className="text-2xl font-bold uppercase tracking-wider text-white font-display">
-                Thank You for Your Personal Touch!
+              <h3 className="text-xl font-bold uppercase tracking-wider text-white font-display">
+                Notes Registered
               </h3>
               <p className="text-xs text-neutral-400">
-                Your co-creation notes have been registered with our design atelier team. We will contact you via <strong className="text-white">{contactPref}</strong>.
+                Our atelier team will contact you via <strong className="text-white">{contactPref}</strong>.
               </p>
             </div>
 
-            <div className="p-4 border border-neutral-800 bg-black text-left text-[10px] uppercase space-y-2">
+            <div className="p-4 border border-white/10 bg-black/80 rounded-xl text-left text-[10px] uppercase space-y-2">
               <div className="flex justify-between text-neutral-400">
                 <span>Reference Ticket ID</span>
                 <span className="text-[#00d2ff] font-bold">{receipt.id}</span>
@@ -292,9 +291,9 @@ export default function PersonalTouchForm() {
 
             <button
               onClick={handleReset}
-              className="px-8 py-3.5 bg-neutral-900 border border-neutral-700 hover:border-white text-white text-[9px] uppercase tracking-widest font-bold rounded cursor-pointer"
+              className="px-6 py-3 bg-white/[0.04] border border-white/10 hover:border-white/20 text-white text-[10px] uppercase tracking-widest font-bold rounded-xl cursor-pointer active:scale-95 transition-all"
             >
-              Submit Another Suggestion
+              Submit Another Request
             </button>
           </motion.div>
         )}
