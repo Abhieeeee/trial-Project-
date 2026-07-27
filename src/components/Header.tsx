@@ -49,13 +49,15 @@ export default function Header() {
       <header
         className="fixed top-0 left-0 w-full z-40 transition-all duration-300"
         style={{
-          backgroundColor: isScrolled ? "rgba(3, 3, 5, 0.94)" : "transparent",
-          backdropFilter: isScrolled ? "blur(28px) saturate(180%)" : "none",
-          WebkitBackdropFilter: isScrolled ? "blur(28px) saturate(180%)" : "none",
+          backgroundColor: isScrolled ? "rgba(3, 3, 5, 0.92)" : "transparent",
+          backdropFilter: isScrolled ? "blur(28px) saturate(200%)" : "none",
+          WebkitBackdropFilter: isScrolled ? "blur(28px) saturate(200%)" : "none",
           borderBottom: isScrolled
-            ? "1px solid rgba(0, 210, 255, 0.08)"
+            ? "1px solid rgba(0, 210, 255, 0.15)"
             : "1px solid transparent",
-          boxShadow: isScrolled ? "0 8px 40px rgba(0,0,0,0.85)" : "none",
+          boxShadow: isScrolled
+            ? "0 16px 50px -10px rgba(0, 0, 0, 0.95), inset 0 -1px 0 0 rgba(0, 210, 255, 0.12)"
+            : "none",
         }}
       >
         {/* ── Announcement Bar ── */}
