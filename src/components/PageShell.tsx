@@ -9,9 +9,9 @@ export default function PageShell({
   className?: string;
 }) {
   return (
-    <main className={`relative min-h-screen bg-black text-white w-full overflow-x-hidden ${className}`}>
+    <main className={`relative min-h-screen bg-[#030305] text-white w-full overflow-x-hidden ${className}`}>
       <Header />
-      <div className="pt-[90px] md:pt-[110px]">
+      <div className="pt-[96px] sm:pt-[110px] md:pt-[120px]">
         {children}
       </div>
       <Footer />

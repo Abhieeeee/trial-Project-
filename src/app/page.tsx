@@ -283,6 +283,15 @@ export default function Home() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="p-2 border border-white/10 rounded-full hover:border-[#00D2FF] active:scale-95 transition-all cursor-pointer bg-white/[0.02]"
             data-magnetic
+            role="button"
+            tabIndex={0}
+            aria-label="Scroll down to featured collection"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                const el = document.getElementById("shop");
+                el?.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
             onClick={() => {
               const el = document.getElementById("shop");
               el?.scrollIntoView({ behavior: "smooth" });

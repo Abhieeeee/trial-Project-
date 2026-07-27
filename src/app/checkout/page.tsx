@@ -456,9 +456,18 @@ function CheckoutForm() {
               <span className="text-white font-bold">{paymentMethod.toUpperCase().replace("_", " ")}</span>
             </div>
 
-            <div className="border-t border-white/10 pt-4 flex justify-between text-base font-extrabold text-white">
-              <span>Total Payable</span>
-              <span className="text-[#00D2FF]">{formatPrice(subtotal)}</span>
+            <div className="border-t border-white/10 pt-4 flex flex-col gap-1">
+              <div className="flex justify-between text-base font-extrabold text-white">
+                <span>Total Payable</span>
+                <span className={regionTab === "nepal" ? "text-emerald-400 font-mono" : "text-[#00D2FF]"}>
+                  {regionTab === "nepal" ? `NPR ${nprAmount.toLocaleString()}` : formatPrice(subtotal)}
+                </span>
+              </div>
+              {regionTab === "nepal" && (
+                <span className="text-[9px] text-neutral-400 font-mono text-right uppercase tracking-wider">
+                  (Approx. {formatPrice(subtotal)})
+                </span>
+              )}
             </div>
           </div>
 
@@ -466,13 +475,17 @@ function CheckoutForm() {
             type="submit"
             form="checkoutForm"
             disabled={isSubmitting}
-            className="mt-8 w-full py-4 rounded-xl bg-[#00D2FF] text-black hover:bg-cyan-400 font-extrabold transition-all text-xs uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-[0.98]"
+            className={`mt-8 w-full py-4 rounded-xl font-extrabold transition-all text-xs uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98] ${
+              regionTab === "nepal"
+                ? "bg-emerald-400 text-black hover:bg-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.4)]"
+                : "bg-[#00D2FF] text-black hover:bg-cyan-400 shadow-[0_0_25px_rgba(0,210,255,0.4)]"
+            }`}
           >
             {isSubmitting ? (
               <span>Authorizing Gateway...</span>
             ) : (
               <>
-                Confirm & Pay ({formatPrice(subtotal)}) <ArrowRight className="w-4 h-4" />
+                Confirm & Pay ({regionTab === "nepal" ? `NPR ${nprAmount.toLocaleString()}` : formatPrice(subtotal)}) <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
