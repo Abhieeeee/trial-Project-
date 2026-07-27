@@ -87,7 +87,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
           </button>
 
           {/* Action overlay (persistent on mobile, hover-triggered on desktop) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-100 lg:opacity-0 lg:group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-3.5 sm:p-4 gap-2.5 z-10 backdrop-blur-[2px]">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 group-focus-within:opacity-100 transition-all duration-300 flex flex-col justify-end p-3.5 sm:p-4 gap-2.5 z-10 backdrop-blur-[2px]">
             {/* Quick Size Pills */}
             <div 
               className="flex items-center justify-center gap-1.5 bg-black/60 p-1 rounded-xl border border-white/10 backdrop-blur-md mb-1"
@@ -109,10 +109,13 @@ export default function StoreProductCard({ product }: { product: Product }) {
               ))}
             </div>
 
-            <span className="w-full py-2.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md">
+            <Link
+              href={`/product/${product.slug}`}
+              className="w-full py-2.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[10px] uppercase tracking-[0.2em] font-mono font-bold rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md"
+            >
               <Eye className="w-3.5 h-3.5 text-[#00D2FF]" />
               Quick View
-            </span>
+            </Link>
 
             <button
               type="button"
@@ -132,7 +135,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
               ) : (
                 <>
                   <Plus className="w-3.5 h-3.5" />
-                  Add Bag ({selectedSize})
+                  Add to Bag ({selectedSize})
                 </>
               )}
             </button>
@@ -152,7 +155,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
         </div>
         <div className="mt-2 text-[9px] uppercase tracking-widest text-neutral-400 font-mono font-semibold px-1 flex items-center justify-between">
           <span>{product.colorways} Colorways</span>
-          <span className="text-emerald-400 font-bold">{product.stock} In Stock</span>
+          <span className={`font-bold ${product.stock < 15 ? "text-amber-400" : "text-emerald-400"}`}>{product.stock} In Stock</span>
         </div>
       </Link>
     </article>

@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useCurrency, CurrencyCode } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
-import RoleSwitcher from "@/components/RoleSwitcher";
+
 
 const navLinks = [
   { label: "Collections", href: "/collections" },
@@ -92,10 +92,10 @@ export default function Header() {
                 </div>
                 <button
                   onClick={() => setAnnouncementVisible(false)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-neutral-500 hover:text-white transition-colors rounded-md hover:bg-white/5 cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-500 hover:text-white transition-colors rounded-md hover:bg-white/5 cursor-pointer z-10"
                   aria-label="Dismiss announcement"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
@@ -117,7 +117,7 @@ export default function Header() {
                 aria-label="Select store currency"
               >
                 <Globe className="w-3.5 h-3.5 text-[#00D2FF]" />
-                <span>{currencies[currency]?.flag || "🌐"} {currencies[currency]?.symbol} {currency}</span>
+                <span className="truncate max-w-[120px] sm:max-w-none">{currencies[currency]?.flag || "🌐"} {currencies[currency]?.symbol} <span className="hidden sm:inline">{currency}</span></span>
               </button>
 
               <AnimatePresence>
@@ -184,7 +184,7 @@ export default function Header() {
           </motion.div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center">
+          <nav className="hidden lg:flex items-center">
             <div className="flex items-center gap-8 py-1.5 px-6">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
@@ -193,7 +193,7 @@ export default function Header() {
                     key={link.href}
                     href={link.href}
                     aria-current={isActive ? "page" : undefined}
-                    className={`nav-glow-link relative text-[10px] uppercase tracking-[0.25em] font-medium transition-colors duration-200 py-1 ${
+                    className={`nav-glow-link relative text-[10px] uppercase tracking-[0.25em] font-medium transition-colors duration-200 py-1 rounded-md focus-visible:ring-2 focus-visible:ring-[#00D2FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#030305] outline-none ${
                       isActive ? "text-[#00D2FF] font-bold" : "text-neutral-300 hover:text-white"
                     }`}
                   >
@@ -216,7 +216,7 @@ export default function Header() {
             </Link>
 
             <Link
-              className="hidden sm:flex p-3 min-w-[44px] min-h-[44px] items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"
+              className="flex p-3 min-w-[44px] min-h-[44px] items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"
               aria-label="Account"
               href="/account"
               data-magnetic
@@ -253,7 +253,7 @@ export default function Header() {
             >
               <ShoppingBag className="w-4 h-4 text-[#00D2FF]" />
               {totalItems > 0 && (
-                <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#00D2FF] text-[8px] font-bold text-black flex items-center justify-center font-mono leading-none shadow-[0_0_8px_#00D2FF]">
+                <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-[#00D2FF] text-[8px] font-bold text-black flex items-center justify-center font-mono leading-none shadow-[0_0_8px_#00D2FF]" title={`${totalItems} items in bag`}>
                   {totalItems}
                 </span>
               )}
@@ -264,7 +264,7 @@ export default function Header() {
 
             {/* Mobile Hamburger */}
             <button
-              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"
+              className="lg:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open menu"
             >

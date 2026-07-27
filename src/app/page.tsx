@@ -35,7 +35,7 @@ function useCountdown() {
 }
 
 const MARQUEE_TEXT =
-  "// 450GSM MATTE COTTON // OVERSIZED SILHOUETTE // PBR STUDIO LIGHTING // PARIS-ORIGINATED // DROP 01 LIVE // ENZYME-WASHED FINISH // HEAVY WEAVE CONSTRUCTION // ARCHITECTURAL FIT // LUXURY HARDWARE // ";
+  "// 450GSM MATTE COTTON // OVERSIZED SILHOUETTE // PBR STUDIO LIGHTING // PARIS-ORIGINATED // DROP 01 LIVE // ENZYME-WASHED FINISH // HEAVY WEAVE CONSTRUCTION // ARCHITECTURAL FIT // LUXURY HARDWARE //\u00A0\u00A0";
 
 export default function Home() {
   const [activeColor, setActiveColor] = useState("black");
@@ -76,7 +76,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="relative min-h-screen bg-[#030305] text-white w-full overflow-hidden">
+    <main className="relative min-h-screen bg-[#030305] text-white w-full overflow-x-hidden">
 
       {/* Global Atmospheric Background */}
       <DynamicBg />
@@ -85,7 +85,7 @@ export default function Home() {
       <Header />
 
       {/* ── Hero Section ── */}
-      <section className="relative w-full min-h-screen flex items-center px-6 md:px-12 pt-28 md:pt-0">
+      <section className="relative w-full min-h-screen flex items-center px-6 md:px-12 pt-24 md:pt-[100px] lg:pt-0">
 
         {/* Premium Background Layer */}
         <div className="absolute inset-0 z-0">
@@ -122,7 +122,7 @@ export default function Home() {
             {/* Title */}
             <motion.h1
               variants={itemFadeUp}
-              className="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.12em] leading-[1.02] font-display mb-5 text-white text-glow-white"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black uppercase tracking-[0.12em] leading-[1.02] font-display mb-5 text-white text-glow-white"
             >
               AURA <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">
@@ -133,7 +133,7 @@ export default function Home() {
             {/* Description */}
             <motion.p
               variants={itemFadeUp}
-              className="text-xs sm:text-sm text-neutral-300 max-w-md tracking-wider leading-relaxed mb-7 font-mono"
+              className="text-xs sm:text-sm text-neutral-300 max-w-md tracking-wider leading-relaxed mb-7 font-sans"
             >
               A synthesis of structural geometry and high-end fabric engineering. 450GSM matte streetwear with physical wrinkle styling and dynamic PBR studio lighting.
             </motion.p>
@@ -151,7 +151,7 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <span className="text-[8px] uppercase tracking-[0.2em] text-neutral-600 font-mono">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 font-mono">
                 HH : MM : SS
               </span>
             </motion.div>
@@ -169,7 +169,7 @@ export default function Home() {
 
               <Link
                 href="/editorial"
-                className="px-8 py-4 rounded-xl border border-white/15 bg-white/[0.03] hover:border-[#00D2FF]/50 hover:bg-white/[0.07] text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-200 hover:text-white active:scale-95 transition-all duration-300 flex items-center gap-2 backdrop-blur-md"
+                className="px-8 py-4 rounded-xl border border-white/15 bg-white/[0.03] hover:border-[#00D2FF]/50 hover:bg-white/[0.07] text-[10px] uppercase tracking-[0.25em] font-bold text-neutral-200 hover:text-white active:scale-95 transition-all duration-300 flex items-center gap-2 backdrop-blur-md shadow-lg"
                 data-magnetic
               >
                 <Compass className="w-4 h-4 text-[#00D2FF]" />
@@ -180,7 +180,7 @@ export default function Home() {
             {/* Technical Spec Badges */}
             <motion.div
               variants={itemFadeUp}
-              className="grid grid-cols-3 gap-3 pt-6 border-t border-white/8 max-w-lg"
+              className="grid grid-cols-3 gap-3 pt-6 border-t border-white/10 max-w-lg"
             >
               {[
                 { label: "Heavy Weave", sub: "450GSM Cotton" },
@@ -194,7 +194,7 @@ export default function Home() {
                   <span className="block text-white font-bold mb-1 text-[9px] uppercase tracking-[0.2em] font-mono group-hover:text-[#00D2FF] transition-colors">
                     {label}
                   </span>
-                  <span className="text-neutral-400 text-[8px] uppercase tracking-[0.15em] font-mono">
+                  <span className="text-neutral-400 text-[9px] uppercase tracking-[0.15em] font-mono">
                     {sub}
                   </span>
                 </div>
@@ -207,7 +207,7 @@ export default function Home() {
             variants={hoodieScale}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-6 h-[40vh] sm:h-[50vh] lg:h-[72vh] w-full flex items-center justify-center relative"
+            className="lg:col-span-6 h-[50vh] sm:h-[55vh] lg:h-[72vh] w-full flex items-center justify-center relative"
           >
             {/* Stronger radial glow behind model */}
             <div className="absolute w-[80%] h-[80%] rounded-full bg-[#00D2FF]/[0.06] blur-[160px] pointer-events-none select-none animate-breathe" />
@@ -225,7 +225,7 @@ export default function Home() {
               <span className="block text-[8px] uppercase tracking-[0.25em] text-[#00D2FF] font-mono font-bold">
                 450 GSM
               </span>
-              <span className="block text-[7px] uppercase tracking-[0.15em] text-neutral-400 font-mono mt-0.5">
+              <span className="block text-[9px] uppercase tracking-[0.15em] text-neutral-400 font-mono mt-0.5">
                 Matte Cotton
               </span>
             </motion.div>
@@ -235,19 +235,19 @@ export default function Home() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 2.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-20 right-4 glass-panel border border-[#00D2FF]/20 rounded-lg px-3 py-2 pointer-events-none"
+              className="absolute bottom-24 sm:bottom-20 right-4 glass-panel border border-[#00D2FF]/20 rounded-lg px-3 py-2 pointer-events-none hidden sm:block"
             >
               <span className="block text-[8px] uppercase tracking-[0.25em] text-white font-mono font-bold">
                 DROP 01
               </span>
-              <span className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.15em] text-[#00D2FF] font-mono mt-0.5">
+              <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.15em] text-[#00D2FF] font-mono mt-0.5">
                 <span className="w-1 h-1 rounded-full bg-[#00D2FF] animate-pulse" />
                 Now Live
               </span>
             </motion.div>
 
             {/* Color Configurator Pill */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3.5 bg-[#0a0a0e]/90 border border-white/15 backdrop-blur-2xl rounded-full px-5 py-2.5 z-20 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+            <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3.5 bg-[#0a0a0e]/90 border border-white/15 backdrop-blur-2xl rounded-full px-5 py-2.5 z-20 shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
               <span className="text-[9px] uppercase tracking-[0.25em] font-bold text-neutral-400 mr-1 font-mono">
                 SPEC:
               </span>
@@ -258,7 +258,7 @@ export default function Home() {
                   title={c.label}
                   className={`w-6 h-6 rounded-full border transition-all duration-300 relative cursor-pointer flex items-center justify-center active:scale-95 focus-visible:ring-2 focus-visible:ring-[#00D2FF] ${c.color} ${
                     activeColor === c.id
-                      ? "scale-115 border-[#00D2FF] ring-2 ring-[#00D2FF]/40 shadow-[0_0_14px_#00D2FF]"
+                      ? "scale-[1.15] border-[#00D2FF] ring-2 ring-[#00D2FF]/40 shadow-[0_0_14px_#00D2FF]"
                       : "opacity-55 border-transparent hover:opacity-100 hover:scale-105"
                   }`}
                   aria-label={`Select ${c.label} colorway`}
@@ -274,7 +274,7 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-3 text-neutral-400">
+        <div className="absolute bottom-14 md:bottom-16 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-3 text-neutral-400">
           <span className="text-[8px] uppercase tracking-[0.3em] font-bold font-mono">
             Scroll to Explore
           </span>
@@ -308,7 +308,7 @@ export default function Home() {
           {[MARQUEE_TEXT, MARQUEE_TEXT].map((text, i) => (
             <span
               key={i}
-              className="text-[9px] uppercase tracking-[0.28em] font-mono font-bold text-neutral-500 mr-0"
+              className="text-[9px] uppercase tracking-[0.28em] font-mono font-bold text-neutral-400 mr-0"
               aria-hidden={i > 0}
             >
               {text}

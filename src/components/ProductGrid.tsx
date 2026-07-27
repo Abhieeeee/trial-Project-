@@ -95,9 +95,9 @@ export default function ProductGrid() {
                 { val: "4", unit: "Colorways" },
                 { val: "S–XL", unit: "Sizing" },
               ].map(({ val, unit }) => (
-                <div key={unit} className="glass-panel px-3 py-2 rounded-xl border border-white/8 text-center">
+                <div key={unit} className="glass-panel px-3 py-2 rounded-xl border border-white/10 text-center">
                   <span className="block text-white font-black text-sm font-display">{val}</span>
-                  <span className="block text-neutral-500 text-[7px] uppercase tracking-[0.2em] font-mono">{unit}</span>
+                  <span className="block text-neutral-500 text-[9px] uppercase tracking-[0.2em] font-mono">{unit}</span>
                 </div>
               ))}
             </div>
@@ -139,7 +139,7 @@ export default function ProductGrid() {
         <div className="mt-20 text-center">
           <Link
             href="/shop"
-            className="group inline-flex items-center gap-3 px-10 py-4 rounded-2xl border border-white/12 text-[10px] uppercase tracking-[0.28em] font-bold text-neutral-300 hover:text-white hover:border-[#00D2FF]/40 hover:bg-[#00D2FF]/[0.04] transition-all duration-300 font-mono backdrop-blur-sm shadow-[0_0_0_1px_rgba(255,255,255,0.03)]"
+            className="group inline-flex items-center gap-3 px-10 py-4 rounded-2xl border border-white/[0.12] text-[10px] uppercase tracking-[0.28em] font-bold text-neutral-300 hover:text-white hover:border-[#00D2FF]/40 hover:bg-[#00D2FF]/[0.04] transition-all duration-300 font-mono backdrop-blur-sm shadow-md"
           >
             <span>Explore All Garments</span>
             <ArrowUpRight className="w-4 h-4 text-[#00D2FF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />

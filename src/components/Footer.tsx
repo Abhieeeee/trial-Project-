@@ -71,7 +71,7 @@ export default function Footer() {
           {[0, 1].map((i) => (
             <span
               key={i}
-              className="text-[8px] uppercase tracking-[0.32em] font-mono font-bold text-neutral-700 flex items-center gap-8 mr-0"
+              className="text-[8px] uppercase tracking-[0.32em] font-mono font-bold text-neutral-600 flex items-center gap-8 mr-0"
               aria-hidden={i > 0}
             >
               <span className="text-[#00D2FF]/40">◆</span>
@@ -117,11 +117,11 @@ export default function Footer() {
                 <div className="relative">
                   <input
                     type="email"
-                    placeholder="YOUR EMAIL ADDRESS"
+                    placeholder="Your email address"
                     aria-label="Enter email address for drop notifications"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="w-full py-4 bg-white/[0.03] border border-white/12 focus:border-[#00D2FF]/60 rounded-2xl px-5 text-[10px] tracking-[0.2em] font-mono font-medium text-white placeholder:text-neutral-600 outline-none transition-all duration-300 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,210,255,0.08)]"
+                    className="w-full py-4 bg-white/[0.03] border border-white/10 focus:border-[#00D2FF]/60 rounded-xl px-5 text-[10px] tracking-[0.2em] font-mono font-medium text-white placeholder:text-neutral-600 outline-none transition-all duration-300 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(0,210,255,0.08)]"
                     required
                   />
                   <button
@@ -172,7 +172,7 @@ export default function Footer() {
                         className="group flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-all duration-300"
                         aria-label={`Follow on ${label}`}
                       >
-                        <span className="flex items-center justify-center w-7 h-7 rounded-xl border border-white/10 group-hover:border-[#00D2FF]/40 group-hover:bg-[#00D2FF]/[0.06] group-hover:text-[#00D2FF] transition-all duration-300 text-neutral-500">
+                        <span className="flex items-center justify-center w-8 h-8 rounded-xl border border-white/10 group-hover:border-[#00D2FF]/40 group-hover:bg-[#00D2FF]/[0.06] group-hover:text-[#00D2FF] transition-all duration-300 text-neutral-500">
                           <Icon />
                         </span>
                         {label}
@@ -187,7 +187,7 @@ export default function Footer() {
 
           {/* Bottom Strip */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] uppercase tracking-[0.22em] text-neutral-500 font-mono">
-            <div className="flex flex-wrap justify-center sm:justify-start gap-x-8 gap-y-2">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-x-4 sm:gap-x-8 gap-y-2">
               <span>© {new Date().getFullYear()} AURA STREET LTD.</span>
               <Link href="/privacy" className="hover:text-[#00D2FF] transition-colors duration-300">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-[#00D2FF] transition-colors duration-300">Terms of Use</Link>
@@ -197,7 +197,7 @@ export default function Footer() {
             <button
               onClick={scrollToTop}
               aria-label="Back to top of page"
-              className="group flex items-center gap-2.5 text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer border border-white/12 bg-white/[0.03] hover:border-[#00D2FF]/40 hover:bg-[#00D2FF]/[0.04] px-5 py-2.5 rounded-2xl backdrop-blur-md font-bold shadow-lg"
+              className="group flex items-center gap-2.5 text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer border border-white/[0.12] bg-white/[0.03] hover:border-[#00D2FF]/40 hover:bg-[#00D2FF]/[0.04] px-5 py-2.5 rounded-2xl backdrop-blur-md font-bold shadow-lg"
               data-magnetic
             >
               <span>Back to Top</span>
@@ -214,12 +214,12 @@ function FooterColumn({ title, links }: { title: string; links: [string, string]
   return (
     <div className="flex flex-col gap-6 font-mono">
       <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white">{title}</h4>
-      <ul className="flex flex-col gap-4 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-500">
+      <ul className="flex flex-col gap-4 text-[10px] uppercase tracking-[0.2em] font-medium text-neutral-400">
         {links.map(([label, href]) => (
           <li key={href}>
             <Link
               href={href}
-              className="hover:text-[#00D2FF] transition-colors duration-300 hover:translate-x-0.5 inline-block transition-transform"
+              className="hover:text-[#00D2FF] transition-all duration-300 hover:translate-x-0.5 inline-block"
             >
               {label}
             </Link>
