@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   ChevronRight,
   ArrowRight,
-  Mail,
   Sparkles,
   Lock,
   Eye,
@@ -20,19 +19,19 @@ import {
   CheckCircle2,
   AlertCircle,
   Zap,
-  UserCheck,
   Truck,
   Copy,
   Check,
   Crown,
   Key,
+  Info,
 } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import PageIntro from "@/components/PageIntro";
 import { createClient } from "@/lib/supabase/client";
 import { useWishlist } from "@/lib/wishlistContext";
 
-function GoogleIcon({ className = "w-5 h-5" }: { className?: string }) {
+function GoogleIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24">
       <path
@@ -117,6 +116,7 @@ export default function AccountPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [authFeedback, setAuthFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [showTelemetryTooltip, setShowTelemetryTooltip] = useState(false);
   const { totalWishlist } = useWishlist();
 
   const supabase = createClient();
@@ -261,123 +261,78 @@ export default function AccountPage() {
     <PageShell>
       {user && (
         <PageIntro
-          eyebrow="Customer Account // VIP Terminal"
-          title={`Welcome back, ${displayName}`}
-          text="Access active shipments, saved streetwear garments, and 450GSM Drop 01 privileges."
+          eyebrow="Customer Portal"
+          title={`Welcome, ${displayName}`}
+          text="Access active shipments, saved garments, and Drop 01 privileges."
         />
       )}
 
       <div className="w-full flex flex-col items-center justify-center font-sans">
         {loading && (
           <div className="min-h-[60vh] flex flex-col items-center justify-center py-16">
-            <div className="w-10 h-10 rounded-full border-2 border-[#00D2FF] border-t-transparent animate-spin mb-4" />
-            <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-[0.25em] animate-pulse">
-              Verifying Credentials...
+            <div className="w-8 h-8 rounded-full border-2 border-[#00D2FF] border-t-transparent animate-spin mb-3" />
+            <p className="text-[9px] font-mono text-neutral-400 uppercase tracking-[0.25em] animate-pulse">
+              Authenticating...
             </p>
           </div>
         )}
 
-        {/* ── UNAUTHENTICATED STATE: Minimalist Floating Glass Card ── */}
+        {/* ── CONCEPT 1: THE REFINED GLASS PLATE TERMINAL ── */}
         {!user && !loading && (
-          <div className="w-full min-h-[80vh] flex items-center justify-center px-4 sm:px-6 py-16 sm:py-24 relative">
+          <div className="w-full min-h-[82vh] flex flex-col items-center justify-center px-4 sm:px-6 py-20 relative">
+            
+            {/* Ambient Lighting Cones */}
+            <div className="absolute w-[500px] h-[500px] bg-[#00D2FF]/[0.06] rounded-full blur-[160px] pointer-events-none" />
+
             <motion.div
               initial={{ opacity: 0, scale: 0.97, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-md glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-3xl p-8 sm:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative z-10 my-auto space-y-6"
+              className="w-full max-w-sm glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-3xl p-8 sm:p-10 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-2xl relative z-10 my-auto space-y-6"
             >
-              {/* Card Header */}
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#00D2FF]/10 border border-[#00D2FF]/30 flex items-center justify-center mx-auto text-[#00D2FF] shadow-[0_0_20px_rgba(0,210,255,0.2)]">
-                  <Sparkles className="w-6 h-6 text-[#00D2FF]" />
+              {/* Minimal Terminal Header */}
+              <div className="text-center space-y-2">
+                <div className="w-10 h-10 rounded-2xl bg-[#00D2FF]/10 border border-[#00D2FF]/30 flex items-center justify-center mx-auto text-[#00D2FF]">
+                  <Sparkles className="w-5 h-5 text-[#00D2FF]" />
                 </div>
                 <div>
-                  <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#00D2FF] mb-1">
-                    Customer Portal
-                  </span>
-                  <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-display">
-                    Sign In
+                  <h1 className="text-xl font-bold uppercase tracking-wider text-white font-display">
+                    Customer Access
                   </h1>
-                  <p className="text-xs text-neutral-400 font-mono mt-1">
-                    Access orders, saved garments & drop access.
+                  <p className="text-[11px] text-neutral-400 font-mono mt-0.5">
+                    Enter email to access order telemetry
                   </p>
                 </div>
               </div>
 
-              {/* 1-Click Google Sign In */}
-              <button
-                type="button"
-                onClick={handleGoogleLogin}
-                disabled={signingIn}
-                className="w-full py-3.5 px-5 bg-white hover:bg-neutral-100 text-black font-mono font-bold rounded-xl transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-wider cursor-pointer active:scale-95 shadow-md"
-              >
-                <GoogleIcon className="w-4 h-4 shrink-0" />
-                <span>{signingIn ? "Authenticating..." : "Continue with Google"}</span>
-              </button>
-
-              {/* Minimal Divider */}
-              <div className="flex items-center gap-4">
-                <div className="h-[1px] flex-1 bg-white/10" />
-                <span className="text-[9px] uppercase tracking-[0.2em] text-neutral-500 font-mono">
-                  OR EMAIL
-                </span>
-                <div className="h-[1px] flex-1 bg-white/10" />
-              </div>
-
-              {/* Auth Mode Selector */}
-              <div className="grid grid-cols-2 p-1 bg-white/[0.03] border border-white/10 rounded-xl font-mono text-[10px] uppercase tracking-wider">
-                <button
-                  type="button"
-                  onClick={() => setAuthMode("magic")}
-                  className={`py-2.5 px-3 rounded-lg font-bold transition-all text-center cursor-pointer active:scale-95 ${
-                    authMode === "magic"
-                      ? "bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]"
-                      : "text-neutral-400 hover:text-white"
-                  }`}
-                >
-                  Magic Access
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode("password")}
-                  className={`py-2.5 px-3 rounded-lg font-bold transition-all text-center cursor-pointer active:scale-95 ${
-                    authMode === "password"
-                      ? "bg-[#00D2FF] text-black shadow-[0_0_15px_rgba(0,210,255,0.3)]"
-                      : "text-neutral-400 hover:text-white"
-                  }`}
-                >
-                  Password
-                </button>
-              </div>
-
-              {/* Feedback Banner */}
+              {/* Feedback Message */}
               <AnimatePresence>
                 {authFeedback && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className={`p-3 rounded-xl flex items-center gap-2.5 text-xs font-mono font-bold ${
+                    className={`p-3 rounded-xl flex items-center gap-2 text-[10px] font-mono font-bold ${
                       authFeedback.type === "success"
                         ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"
                         : "bg-red-500/10 border border-red-500/30 text-red-400"
                     }`}
                   >
                     {authFeedback.type === "success" ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                     )}
                     <span>{authFeedback.message}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Minimal Form Inputs */}
+              {/* Contextual Single Data-Line Form */}
               <form onSubmit={handleEmailSignIn} className="space-y-4 font-mono">
-                <div className="space-y-1 text-left">
-                  <label htmlFor="customer-email" className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-semibold">
-                    Email Address *
+                <div className="space-y-1">
+                  <label htmlFor="customer-email" className="block text-[10px] uppercase tracking-widest text-neutral-400 font-mono">
+                    Email Address
                   </label>
                   <div className="relative rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
                     <input
@@ -387,63 +342,125 @@ export default function AccountPage() {
                       placeholder="name@aurastreet.com"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      className="w-full bg-transparent py-3 px-4 text-xs uppercase tracking-wider focus:outline-none text-white placeholder:text-neutral-600"
+                      className="w-full bg-transparent py-3 px-4 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
                     />
                   </div>
                 </div>
 
-                {authMode === "password" && (
-                  <div className="space-y-1 text-left">
-                    <div className="flex justify-between items-center">
-                      <label htmlFor="customer-password" className="block text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-semibold">
-                        Password *
-                      </label>
-                      <span className="text-[9px] text-[#00D2FF] hover:underline cursor-pointer">Forgot?</span>
-                    </div>
-                    <div className="relative rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] focus-within:shadow-[0_0_15px_rgba(0,210,255,0.15)] transition-all">
-                      <input
-                        id="customer-password"
-                        type={showPassword ? "text" : "password"}
-                        required
-                        placeholder="••••••••••••"
-                        value={passwordInput}
-                        onChange={(e) => setPasswordInput(e.target.value)}
-                        className="w-full bg-transparent py-3 pl-4 pr-10 text-xs focus:outline-none text-white placeholder:text-neutral-600"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-                      >
-                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {/* Contextual Expansion when Email is Entered */}
+                <AnimatePresence>
+                  {emailInput.trim().length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-3 pt-1"
+                    >
+                      {authMode === "password" && (
+                        <div className="space-y-1">
+                          <label htmlFor="customer-password" className="block text-[10px] uppercase tracking-widest text-neutral-400 font-mono">
+                            Password Key
+                          </label>
+                          <div className="relative rounded-xl bg-white/[0.03] border border-white/10 focus-within:border-[#00D2FF] transition-all">
+                            <input
+                              id="customer-password"
+                              type={showPassword ? "text" : "password"}
+                              required
+                              placeholder="••••••••••••"
+                              value={passwordInput}
+                              onChange={(e) => setPasswordInput(e.target.value)}
+                              className="w-full bg-transparent py-3 pl-4 pr-10 text-xs text-white placeholder:text-neutral-600 focus:outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                            >
+                              {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center text-[9px] text-neutral-500 font-mono">
+                        <button
+                          type="button"
+                          onClick={() => setAuthMode(authMode === "magic" ? "password" : "magic")}
+                          className="text-[#00D2FF] hover:underline cursor-pointer"
+                        >
+                          Use {authMode === "magic" ? "Password" : "Magic Link"}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <button
                   type="submit"
                   disabled={signingIn}
                   className="w-full py-3.5 px-5 bg-[#00D2FF] hover:bg-cyan-400 text-black font-extrabold rounded-xl transition-all text-xs uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-[0_0_20px_rgba(0,210,255,0.3)]"
                 >
-                  <span>{signingIn ? "Authorizing..." : authMode === "magic" ? "Send Magic Link" : "Sign In"}</span>
+                  <span>{signingIn ? "Authorizing..." : authMode === "magic" ? "Send Access Link" : "Sign In"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
 
-              {/* Instant VIP Demo Button */}
-              <button
-                type="button"
-                onClick={handleDemoSignIn}
-                disabled={signingIn}
-                className="w-full py-3 px-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 text-neutral-300 font-mono text-[10px] uppercase tracking-[0.18em] rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
-              >
-                <Zap className="w-3.5 h-3.5 text-[#00D2FF]" />
-                <span>Instant Demo Sign In</span>
-              </button>
+              {/* Integrated Transparent Google Auth Pill */}
+              <div className="pt-1 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  disabled={signingIn}
+                  className="w-full py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-neutral-300 hover:text-white font-mono text-[10px] uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <GoogleIcon className="w-3.5 h-3.5" />
+                  <span>Google 1-Tap Sign In</span>
+                </button>
 
-              <div className="flex items-center justify-center gap-2 text-[8px] uppercase tracking-widest text-neutral-500 font-mono pt-2 border-t border-white/5">
-                <ShieldCheck className="w-3 h-3 text-[#00D2FF]" /> 256-BIT SSL ENCRYPTED SESSION
+                <button
+                  type="button"
+                  onClick={handleDemoSignIn}
+                  disabled={signingIn}
+                  className="w-full py-2 px-3 text-[9px] font-mono text-neutral-400 hover:text-[#00D2FF] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Zap className="w-3 h-3 text-[#00D2FF]" />
+                  <span>Instant VIP Demo Access</span>
+                </button>
+              </div>
+
+              {/* Consolidated Bottom Corner Telemetry Indicator */}
+              <div className="relative pt-3 border-t border-white/5 flex items-center justify-between text-[8px] font-mono text-neutral-500 uppercase tracking-widest">
+                <span className="flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-[#00D2FF]" /> 256-BIT SSL
+                </span>
+                
+                <button
+                  type="button"
+                  onClick={() => setShowTelemetryTooltip(!showTelemetryTooltip)}
+                  className="flex items-center gap-1 hover:text-neutral-300 transition-colors cursor-pointer"
+                >
+                  <Info className="w-3 h-3 text-[#00D2FF]" />
+                  <span>System Specs</span>
+                </button>
+
+                <AnimatePresence>
+                  {showTelemetryTooltip && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      className="absolute bottom-8 right-0 w-48 p-3 rounded-xl bg-black/95 border border-white/15 shadow-2xl text-[8px] font-mono text-neutral-400 space-y-1 font-normal text-left z-20 backdrop-blur-xl"
+                    >
+                      <div className="text-white font-bold uppercase tracking-wider border-b border-white/10 pb-1">
+                        System Telemetry
+                      </div>
+                      <p>Auth Protocol: OAuth2 / MagicLink</p>
+                      <p>Encryption: TLS 1.3 256-Bit</p>
+                      <p>Database: PostgreSQL SSR</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </div>
@@ -451,70 +468,70 @@ export default function AccountPage() {
 
         {/* ── AUTHENTICATED STATE: Minimalist Customer Portal ── */}
         {user && (
-          <section className="px-6 md:px-12 max-w-5xl w-full mx-auto pb-28 font-sans">
+          <section className="px-6 md:px-12 max-w-4xl w-full mx-auto pb-24 font-sans">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="space-y-8 mt-2"
+              className="space-y-6 mt-2"
             >
               {/* Customer Profile Header */}
-              <div className="glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
-                <div className="flex items-center gap-5 text-center sm:text-left">
-                  <div className="w-14 h-14 rounded-xl bg-[#00D2FF]/20 border border-[#00D2FF]/40 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
-                    <span className="text-lg font-black text-[#00D2FF] font-mono">
+              <div className="glass-panel-glow bg-[#0a0a0e]/90 border border-white/15 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xl">
+                <div className="flex items-center gap-4 text-center sm:text-left">
+                  <div className="w-12 h-12 rounded-xl bg-[#00D2FF]/20 border border-[#00D2FF]/40 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
+                    <span className="text-base font-bold text-[#00D2FF] font-mono">
                       {displayName.substring(0, 2).toUpperCase()}
                     </span>
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     <div className="flex items-center gap-2 justify-center sm:justify-start">
-                      <h2 className="text-lg font-bold text-white font-display uppercase tracking-wider">{displayName}</h2>
+                      <h2 className="text-base font-bold text-white font-display uppercase tracking-wider">{displayName}</h2>
                       {isGoogleUser && (
-                        <span className="px-2 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase tracking-widest">
+                        <span className="px-2 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-mono font-bold uppercase">
                           Verified
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-neutral-400 font-mono">{displayEmail}</p>
+                    <p className="text-[11px] text-neutral-400 font-mono">{displayEmail}</p>
                   </div>
                 </div>
 
                 <button
                   onClick={handleSignOut}
-                  className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="px-3.5 py-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[9px] font-mono font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                 >
                   <LogOut className="w-3.5 h-3.5" /> Sign Out
                 </button>
               </div>
 
               {/* VIP Member Privileges */}
-              <div className="glass-panel p-6 rounded-2xl border border-white/10 bg-[#0a0a0e]/70 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <Crown className="w-5 h-5 text-[#00D2FF]" />
+              <div className="glass-panel p-5 rounded-2xl border border-white/10 bg-[#0a0a0e]/70 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <Crown className="w-4 h-4 text-[#00D2FF]" />
                   <div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#00D2FF]">
-                      CYBER VIP COLLECTOR // TIER 02
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#00D2FF]">
+                      CYBER VIP COLLECTOR
                     </span>
-                    <p className="text-[10px] text-neutral-400 font-mono mt-0.5">
-                      Free Worldwide Express Shipping + Drop 01 Priority Dispatch
+                    <p className="text-[9px] text-neutral-400 font-mono">
+                      Express Shipping + Drop 01 Priority Dispatch
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => copyToClipboard("AURA-VIP-20")}
-                  className="px-3.5 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#00D2FF]/40 text-[#00D2FF] text-[9px] font-mono font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                  className="px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 hover:border-[#00D2FF]/40 text-[#00D2FF] text-[9px] font-mono font-bold uppercase tracking-widest flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
                 >
-                  <span>Code: AURA-VIP-20</span>
+                  <span>AURA-VIP-20</span>
                   {copiedCode === "AURA-VIP-20" ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                 </button>
               </div>
 
               {/* Active Shipments */}
-              <div className="space-y-4 font-mono">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white flex items-center gap-2">
+              <div className="space-y-3 font-mono">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
                     <Truck className="w-4 h-4 text-[#00D2FF]" />
                     Active Shipments
                   </h3>
@@ -523,16 +540,14 @@ export default function AccountPage() {
                   </a>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {mockOrders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="glass-panel p-5 rounded-2xl border border-white/10 bg-[#0a0a0e]/80 hover:border-[#00D2FF]/30 transition-all space-y-3"
+                      className="glass-panel p-4 rounded-xl border border-white/10 bg-[#0a0a0e]/80 hover:border-[#00D2FF]/30 transition-all space-y-2"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#00D2FF]">
-                          {ord.id}
-                        </span>
+                        <span className="text-[10px] font-bold text-[#00D2FF] uppercase">{ord.id}</span>
                         <span className="px-2 py-0.5 rounded-full bg-[#00D2FF]/10 text-[#00D2FF] border border-[#00D2FF]/30 text-[8px] font-bold uppercase">
                           {ord.status}
                         </span>
@@ -544,7 +559,7 @@ export default function AccountPage() {
                         <span>ETA: {ord.eta}</span>
                         <button
                           onClick={() => copyToClipboard(ord.trackingCode)}
-                          className="flex items-center gap-1 text-neutral-300 hover:text-white transition-colors"
+                          className="flex items-center gap-1 text-neutral-300 hover:text-white"
                         >
                           <span>{ord.trackingCode}</span>
                           {copiedCode === ord.trackingCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
@@ -555,9 +570,9 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Portal Shortcuts */}
+              {/* Shortcuts Grid */}
               <div className="space-y-3 font-mono pt-2">
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-white flex items-center gap-2 border-b border-white/10 pb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2 border-b border-white/10 pb-2.5">
                   <Key className="w-4 h-4 text-[#00D2FF]" />
                   Portal Shortcuts
                 </h3>
@@ -567,7 +582,7 @@ export default function AccountPage() {
                     <a
                       key={item.title}
                       href={item.href}
-                      className="glass-panel border border-white/10 hover:border-[#00D2FF]/40 bg-[#0a0a0e]/70 rounded-xl p-4 flex items-center justify-between group transition-all"
+                      className="glass-panel border border-white/10 hover:border-[#00D2FF]/40 bg-[#0a0a0e]/70 rounded-xl p-3.5 flex items-center justify-between group transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <item.icon className="w-4 h-4 text-neutral-400 group-hover:text-[#00D2FF] transition-colors" />
