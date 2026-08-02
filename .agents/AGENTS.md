@@ -32,13 +32,11 @@
 
 ## ⚡ Mandatory Execution Workflows (Always Active)
 - **GSD (Get Shit Done)**: Structure all tasks into explicit phases (Discuss & Align -> Plan & Decompose -> Autonomous Execution -> Nyquist Verification).
-- **UI/UX Pro Max**: Enforce elite dark high-fashion aesthetics, glassmorphic surfaces, HSL/OKLCH color scales, custom typography, dynamic micro-animations, and zero layout shift.
-- **UI/UX Master Workflow**: Execute end-to-end 5-phase web creation:
-  - *Phase 1 (Tokens)*: Token-first design system foundation (OKLCH/HSL palettes, `--color-brand-sky` `#00D2FF`, `--color-surface-base` `#030305`, fluid typography `clamp()`).
-  - *Phase 2 (Components)*: Accessible component-driven primitives (shadcn/ui & Radix UI patterns, floating glass inputs, zero dependency lock-in).
-  - *Phase 3 (Animations)*: Visual polish & micro-animations (backdrop blur 12px-28px, elevation shadows, Framer Motion/GSAP transitions, `active:scale-95` tactile press feedback).
-  - *Phase 4 (Accessibility)*: WCAG 2.2 AA compliance (4.5:1 text contrast ratio, visible `*:focus-visible` outline rings, zero CLS with fixed header clearance `pt-[80px] md:pt-[100px]`).
-  - *Phase 5 (Audit)*: Verification & quality audit (`npx tsc --noEmit`, `npm run build`, E2E user flow tests, CodeRabbit anti-slop review).
+- **UI/UX Refinement Master Pipeline**:
+  - *Spotlight Cursor Glow*: Wrap elevated cards/containers in `<SpotlightCard>` to render interactive mouse-following cyan radial illumination.
+  - *Magic UI Border Beam*: Use `<BorderBeam>` on active product image frames to render rotating metallic beam highlights.
+  - *Tactile Fabric Texture*: Apply `.bg-noise` to dark surfaces for 3% tactile noise overlay (mimics 450GSM heavy cotton texture).
+  - *Spring Physics Micro-Interactions*: Use Framer Motion `type: "spring", stiffness: 400, damping: 25` with `whileHover={{ y: -4 }}` and `whileTap={{ scale: 0.95 }}` on all interactive triggers.
 - **Ralph Loop**: Perform continuous test-fix-verify iterations autonomously until `npx tsc --noEmit` and `npm run build` succeed with 0 errors.
 - **CodeRabbit AI Reviewer**: Perform automated line-by-line code reviews, diff impact analysis, anti-slop checks, and security scans on all new or modified code before final verification.
 

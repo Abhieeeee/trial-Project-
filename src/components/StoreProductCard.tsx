@@ -9,6 +9,8 @@ import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
 
+import BorderBeam from "@/components/BorderBeam";
+
 export default function StoreProductCard({ product }: { product: Product }) {
   const { formatPrice } = useCurrency();
   const { addItem } = useCart();
@@ -55,7 +57,8 @@ export default function StoreProductCard({ product }: { product: Product }) {
   return (
     <article className="group relative font-sans">
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="aspect-[3/4] w-full bg-[#0a0a0e] rounded-2xl overflow-hidden relative mb-4 border border-white/10 group-hover:border-[#00D2FF]/40 transition-all duration-500 shadow-xl group-hover:shadow-[0_20px_40px_rgba(0,210,255,0.15)]">
+        <div className="aspect-[3/4] w-full bg-[#0a0a0e] rounded-2xl overflow-hidden relative mb-4 border border-white/10 group-hover:border-[#00D2FF]/40 transition-all duration-500 shadow-xl group-hover:shadow-[0_20px_40px_rgba(0,210,255,0.15)] bg-noise">
+          <BorderBeam className="opacity-0 group-hover:opacity-100 transition-opacity duration-300" duration={6} size={180} />
           <Image
             src={product.image}
             alt={product.name}
