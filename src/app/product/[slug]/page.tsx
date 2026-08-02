@@ -7,6 +7,8 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Heart, PackageCheck, Ruler, ShieldCheck, ShoppingBag, Star, Truck, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import Product360Rotator from "@/components/Product360Rotator";
+import StickyAddBar from "@/components/StickyAddBar";
 import PageShell from "@/components/PageShell";
 import StoreProductCard from "@/components/StoreProductCard";
 import ProductReviews from "@/components/ProductReviews";
@@ -73,6 +75,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   const [activeImage, setActiveImage] = useState(product.image);
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "M");
+  const [activeColor, setActiveColor] = useState("Obsidian Cyan");
   const [addedToast, setAddedToast] = useState(false);
 
   // AI Fit Calculator state
@@ -143,6 +146,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 </button>
               ))}
             </div>
+
+            {/* 3D 360° Colorway Rotator Canvas */}
+            <Product360Rotator
+              productName={product.name}
+              activeColor={activeColor}
+              onColorChange={(color) => setActiveColor(color)}
+            />
           </div>
 
           {/* Right Selection details */}
@@ -417,6 +427,19 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           </>
         )}
       </AnimatePresence>
+
+      {/* Sticky Floating Glass Add to Bag Bottom Bar on Scroll */}
+      <StickyAddBar
+        productId={product.id}
+        productName={product.name}
+        price={product.price}
+        numericPrice={rawPrice}
+        category={product.category}
+        image={product.image}
+        selectedSize={selectedSize}
+        onSizeChange={(size) => setSelectedSize(size)}
+        availableSizes={product.sizes}
+      />
     </PageShell>
   );
 }
