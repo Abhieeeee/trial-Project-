@@ -37,6 +37,10 @@
   - *Magic UI Border Beam*: Use `<BorderBeam>` on active product image frames to render rotating metallic beam highlights.
   - *Tactile Fabric Texture*: Apply `.bg-noise` to dark surfaces for 3% tactile noise overlay (mimics 450GSM heavy cotton texture).
   - *Spring Physics Micro-Interactions*: Use Framer Motion `type: "spring", stiffness: 400, damping: 25` with `whileHover={{ y: -4 }}` and `whileTap={{ scale: 0.95 }}` on all interactive triggers.
+- **Continuous State Audit & Reporting**: After completing any task phase or major edit cycle:
+  - Run `npx tsc --noEmit` to verify type safety.
+  - Generate/update a structured walkthrough or audit report summarizing what was done.
+  - Outline the next highest-impact, easy-to-implement UI/UX upgrade with clear rationale.
 - **Ralph Loop**: Perform continuous test-fix-verify iterations autonomously until `npx tsc --noEmit` and `npm run build` succeed with 0 errors.
 - **CodeRabbit AI Reviewer**: Perform automated line-by-line code reviews, diff impact analysis, anti-slop checks, and security scans on all new or modified code before final verification.
 

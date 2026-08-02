@@ -206,14 +206,20 @@ export default function Header() {
 
           {/* Action Icons */}
           <div className="flex items-center gap-1 sm:gap-2">
-            <Link
+            <button
+              type="button"
+              onClick={() => {
+                window.dispatchEvent(
+                  new KeyboardEvent("keydown", { key: "k", ctrlKey: true, metaKey: true, bubbles: true })
+                );
+              }}
               className="p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"
-              aria-label="Search products"
-              href="/shop"
+              aria-label="Open search console (CMD+K)"
+              title="Search console (CMD+K)"
               data-magnetic
             >
               <Search className="w-4 h-4" />
-            </Link>
+            </button>
 
             <Link
               className="flex p-3 min-w-[44px] min-h-[44px] items-center justify-center text-neutral-400 hover:text-white active:scale-95 transition-all cursor-pointer rounded-xl hover:bg-white/[0.05]"

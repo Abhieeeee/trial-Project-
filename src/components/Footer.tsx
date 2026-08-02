@@ -46,14 +46,18 @@ const socials = [
   { label: "Pinterest", icon: IconPinterest, href: "#" },
 ];
 
+import { useToast } from "@/components/Toast";
+
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const { success } = useToast();
 
   const handleSubscribe = (event: React.FormEvent) => {
     event.preventDefault();
     if (email) {
       setSubscribed(true);
+      success("VIP Access Confirmed", `Subscribed '${email}' to AURA STREET Drop Alerts.`);
       setEmail("");
     }
   };

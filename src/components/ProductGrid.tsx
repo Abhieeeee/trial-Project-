@@ -104,27 +104,27 @@ export default function ProductGrid() {
           </div>
         </div>
 
-        {/* Product Cards */}
+        {/* Editorial Bento Grid Product Cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
           {items.map((product, index) => (
             <motion.div
               key={product.id}
               variants={cardVariants}
-              className="tilt-card-wrap"
+              className={`tilt-card-wrap ${index === 0 ? "sm:col-span-2 lg:col-span-2" : ""}`}
             >
-              <div className="tilt-card-inner">
+              <div className="tilt-card-inner h-full">
                 {/* NEW DROP ribbon on first item */}
                 {index === 0 && (
-                  <div className="relative">
-                    <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00D2FF] text-black text-[7px] uppercase tracking-[0.22em] font-black font-mono shadow-[0_0_12px_rgba(0,210,255,0.5)]">
-                      <span className="w-1 h-1 rounded-full bg-black animate-pulse" />
-                      New Drop
+                  <div className="relative h-full">
+                    <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#00D2FF] text-black text-[8px] uppercase tracking-[0.25em] font-black font-mono shadow-[0_0_15px_rgba(0,210,255,0.6)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+                      Featured Drop 01
                     </div>
                     <StoreProductCard product={product} />
                   </div>

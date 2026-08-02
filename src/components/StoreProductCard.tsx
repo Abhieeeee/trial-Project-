@@ -17,6 +17,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [selectedSize, setSelectedSize] = useState<string>("M");
+  const [selectedColor, setSelectedColor] = useState<string>("Obsidian Cyan");
   const [justAdded, setJustAdded] = useState<boolean>(false);
 
   const rawPrice = Number(product.price.replace(/[^0-9.]/g, ""));
@@ -156,8 +157,28 @@ export default function StoreProductCard({ product }: { product: Product }) {
             {formatPrice(rawPrice)}
           </span>
         </div>
-        <div className="mt-2 text-[9px] uppercase tracking-widest text-neutral-400 font-mono font-semibold px-1 flex items-center justify-between">
-          <span>{product.colorways} Colorways</span>
+        <div className="mt-2.5 text-[9px] uppercase tracking-widest text-neutral-400 font-mono font-semibold px-1 flex items-center justify-between">
+          <div className="flex items-center gap-1.5" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+            {[
+              { id: "cyan", hex: "#00D2FF", name: "Obsidian Cyan" },
+              { id: "black", hex: "#171717", name: "Matte Black" },
+              { id: "gray", hex: "#737373", name: "Stealth Gray" },
+            ].map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedColor(c.name)}
+                title={`Color: ${c.name}`}
+                className={`w-3 h-3 rounded-full border transition-all cursor-pointer ${
+                  selectedColor === c.name
+                    ? "scale-125 border-white ring-2 ring-[#00D2FF]/50 shadow-[0_0_8px_#00D2FF]"
+                    : "border-white/20 opacity-70 hover:opacity-100"
+                }`}
+                style={{ backgroundColor: c.hex }}
+              />
+            ))}
+            <span className="ml-1 text-[8px] text-neutral-400">{selectedColor}</span>
+          </div>
           <span className={`font-bold ${product.stock < 15 ? "text-amber-400" : "text-emerald-400"}`}>{product.stock} In Stock</span>
         </div>
       </Link>
