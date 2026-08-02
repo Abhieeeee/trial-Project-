@@ -23,7 +23,7 @@ export function WishlistDrawer() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeWishlist]);
 
-  const handleMoveToCart = (item: any) => {
+  const handleMoveToCart = (item: { id: string; name: string; price: string; numericPrice: number; category: string; image: string }) => {
     addItem({
       id: item.id,
       name: item.name,

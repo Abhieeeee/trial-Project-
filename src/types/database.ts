@@ -1,6 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export type UserRole = "super_admin" | "admin" | "user";
+export type UserRole = "super_admin" | "admin" | "staff" | "user";
 export type OrderStatus = "Pending" | "Shipped" | "Delivered" | "Cancelled";
 export type ProductCategory = "Hoodies" | "Jackets" | "Pants" | "Sneakers" | "Accessories";
 

@@ -121,6 +121,8 @@ const jsonLd = {
   ],
 };
 
+import { ToastProvider } from "@/components/Toast";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -138,17 +140,25 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-brand-black text-white selection:bg-brand-sky/30 selection:text-white font-sans">
-        <CartProvider>
-          <WishlistProvider>
-            <ScrollProgressBar />
-            <CustomCursor />
-            <SmoothScroll>{children}</SmoothScroll>
-            <CartDrawer />
-            <WishlistDrawer />
-            <AiAssistant />
-            <CommandMenu />
-          </WishlistProvider>
-        </CartProvider>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2.5 focus:bg-[#00D2FF] focus:text-black focus:font-mono focus:text-xs focus:uppercase focus:tracking-wider focus:font-bold focus:rounded-lg focus:shadow-2xl"
+        >
+          Skip to main content
+        </a>
+        <ToastProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <ScrollProgressBar />
+              <CustomCursor />
+              <SmoothScroll>{children}</SmoothScroll>
+              <CartDrawer />
+              <WishlistDrawer />
+              <AiAssistant />
+              <CommandMenu />
+            </WishlistProvider>
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

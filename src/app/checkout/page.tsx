@@ -26,7 +26,7 @@ import PageShell from "@/components/PageShell";
 import { checkoutFeatures } from "@/lib/catalog";
 import { useCurrency } from "@/lib/currency";
 import { useCart } from "@/lib/cartContext";
-import { createClient } from "@/lib/supabase/client";
+import { placeOrderAction } from "@/app/actions/checkout";
 
 export default function CheckoutPage() {
   return (
@@ -78,8 +78,6 @@ function CheckoutForm() {
   } | null>(null);
   const [copiedAccount, setCopiedAccount] = useState(false);
 
-  const supabase = createClient();
-
   // Convert NPR for Nepal market estimation (1 EUR ~ 145 NPR)
   const nprAmount = Math.round(subtotal * 145);
 
@@ -109,36 +107,40 @@ function CheckoutForm() {
 
     try {
       const isNepal = regionTab === "nepal";
-      const generatedCode = `AUR-${isNepal ? "NP" : "INT"}${Math.floor(10000 + Math.random() * 90000)}`;
+      const payloadItems = items.length > 0
+        ? items.map((i) => ({ id: i.id, name: i.name, quantity: i.quantity, unitPrice: i.numericPrice }))
+        : [{ id: "aura-item", name: "Aura Street Apparel Piece", quantity: 1, unitPrice: subtotal }];
 
-      const orderPayload = {
-        order_code: generatedCode,
-        customer_name: name,
-        customer_email: email,
-        status: "Pending",
-        total: subtotal,
-        items: items.length > 0
-          ? items.map((i) => ({ product_id: i.id, product_name: i.name, quantity: i.quantity, unit_price: i.numericPrice }))
-          : [{ product_name: "Aura Street Apparel Piece", quantity: 1, unit_price: subtotal }],
-        shipping_address: `${address || "Street Address"}, ${city}, ${zip}, ${country}`,
-        notes: `Payment via ${paymentMethod.toUpperCase()} (${isNepal ? "Nepal Market" : "International"})`,
-      };
+      const res = await placeOrderAction({
+        name,
+        email,
+        phone,
+        address,
+        city,
+        zip,
+        country,
+        items: payloadItems,
+        subtotal,
+        paymentMethod,
+        region: isNepal ? "nepal" : "international",
+      });
 
-      const { error } = await supabase.from("orders").insert([orderPayload]);
-
-      if (error) throw error;
+      if (!res.success || !res.orderCode) {
+        throw new Error(res.error || "Failed to process order.");
+      }
 
       // Reset cart and display confirmation
       clearCart();
       setOrderSuccess({
-        orderCode: generatedCode,
+        orderCode: res.orderCode,
         method: paymentMethod.toUpperCase().replace("_", " "),
-        total: subtotal,
+        total: res.total || subtotal,
         timestamp: new Date().toLocaleString(),
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Please check details.";
       console.error("Checkout order error:", err);
-      alert(`Order processing failed: ${err.message || "Please check details."}`);
+      alert(`Order processing failed: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }

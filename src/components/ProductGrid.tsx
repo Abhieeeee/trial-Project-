@@ -28,7 +28,7 @@ export default function ProductGrid() {
             name: p.name,
             price: `€${p.price}.00`,
             numericPrice: Number(p.price),
-            category: p.category as any,
+            category: String(p.category),
             stock: p.stock,
             colorways: p.colorways || 1,
             material: p.material || "Technical Fabric",

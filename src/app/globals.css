@@ -188,7 +188,6 @@ html.lenis body {
 
 .animate-ticker {
   animation: ticker 28s linear infinite;
-  will-change: transform;
 }
 
 /* Subtle Vertical Float */

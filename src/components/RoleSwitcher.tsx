@@ -5,14 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Shield, ShieldAlert, Users, User, ChevronDown, Check, RefreshCw } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-export type RoleType = "super_admin" | "admin" | "staff" | "user";
+import { resolveRole, type UserRole } from "@/lib/roles";
+
+export type RoleType = UserRole;
 
 interface RoleOption {
   id: RoleType;
   label: string;
   badge: string;
   color: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   href: string;
 }
 

@@ -2,6 +2,8 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 
+import { resolveRole } from "@/lib/roles";
+
 /**
  * Securely retrieves the user's role from the database profiles table.
  * Executed server-side using the service_role key to bypass client-side RLS limitations.
@@ -20,17 +22,7 @@ export async function getUserRole(userId: string): Promise<string> {
       return "user";
     }
 
-    if (data.email === "super@aurastreet.com") {
-      return "super_admin";
-    }
-    if (data.email === "admin@aurastreet.com") {
-      return "admin";
-    }
-    if (data.email === "staff@aurastreet.com") {
-      return "staff";
-    }
-
-    return data.role || "user";
+    return resolveRole(data.email, data.role);
   } catch (err) {
     console.error("Exception in getUserRole server action:", err);
     return "user";

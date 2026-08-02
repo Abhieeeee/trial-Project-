@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveRole } from "@/lib/roles";
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -53,15 +54,7 @@ export async function proxy(request: NextRequest) {
       .single();
 
     const userEmail = profile?.email || user.email;
-    if (userEmail === "super@aurastreet.com") {
-      role = "super_admin";
-    } else if (userEmail === "admin@aurastreet.com") {
-      role = "admin";
-    } else if (userEmail === "staff@aurastreet.com") {
-      role = "staff";
-    } else {
-      role = profile?.role ?? "user";
-    }
+    role = resolveRole(userEmail, profile?.role);
   }
 
   // Handle /admin/login GET navigation auto-redirect if logged in

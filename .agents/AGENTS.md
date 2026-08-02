@@ -27,6 +27,8 @@
 - Always verify TypeScript compilation: `npx tsc --noEmit`
 - Always verify Next.js build: `npm run build`
 - Production target: `git push origin main` -> Vercel Production (`https://trial-project-bice.vercel.app`)
+- **Always verify middleware exists:** Check that `src/middleware.ts` (or root `middleware.ts`) exists, exports a `middleware` function, and has a `config.matcher` covering all protected routes (`/admin/*`, `/super-admin/*`, `/user-dashboard/*`). A proxy file that is never imported is dead code.
+- **Never use client-side Supabase for write operations on sensitive tables** (orders, payments, profiles). Always use Server Actions with `createAdminClient()` and recalculate totals server-side.
 
 ## ⚡ Mandatory Execution Workflows (Always Active)
 - **GSD (Get Shit Done)**: Structure all tasks into explicit phases (Discuss & Align -> Plan & Decompose -> Autonomous Execution -> Nyquist Verification).

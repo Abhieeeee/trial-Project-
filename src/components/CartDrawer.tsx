@@ -8,6 +8,8 @@ import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, Truck, Tag, Check, Ale
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currency";
 
+import { useFocusTrap } from "@/lib/useFocusTrap";
+
 export function CartDrawer() {
   const {
     items,
@@ -25,6 +27,8 @@ export function CartDrawer() {
     discountAmount,
     finalTotal,
   } = useCart();
+
+  const drawerRef = useFocusTrap(isOpen);
 
   const { formatPrice } = useCurrency();
   const [promoInput, setPromoInput] = useState("");
@@ -67,6 +71,7 @@ export function CartDrawer() {
 
           {/* Slide-over Drawer Panel */}
           <motion.div
+            ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="cart-drawer-title"

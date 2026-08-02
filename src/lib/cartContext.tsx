@@ -134,7 +134,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setDiscountPercent(5);
       return { success: true, message: "Code FREESHIP applied: Free Shipping & 5% Off!" };
     } else {
-      return { success: false, message: "Invalid promo code. Try 'AURA10' or 'NEPAL2026'." };
+      return { success: false, message: "Invalid promo code. Try 'AURA10', 'NEPAL2026' or 'FREESHIP'." };
     }
   };
 
